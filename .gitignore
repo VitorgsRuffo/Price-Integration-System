@@ -1,0 +1,9 @@
+# Git Ignore
+
+# Files creating in LaTex build by VSCode
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
