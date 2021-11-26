@@ -1,0 +1,25 @@
+----------------------------------------------------------------------------------------------------------
+SITES
+
+https://www.americanas.com.br/categoria/celulares-e-smartphones/smartphone/iphone/f/sistema-operacional-iphone%20ios/g/condicao-novo?limit=24&offset=0
+.
+https://www.shoptime.com.br/categoria/celulares-e-smartphones/smartphone/iphone/g/tipo-de-produto-Iphone/pagina-5?ordenacao=relevance&origem=blanca
+.
+https://www.magazineluiza.com.br/iphone/celulares-e-smartphones/s/te/teip?page=1
+
+
+----------------------------------------------------------------------------------------------------------
+Modelo de dados:  
+
+Entidades:
+    - (ER)  Loja   ((cnpj), nome, telefone, endereco)
+    - (ER)  iPhone ((cod:int), link:string, titulo:string, preco:composto:float, cor:string, tam_tela, res_cam_front, res_cam_tras, mem_int, mem_ram)
+    - (EF)  Avaliacao (valor:int, titulo:string, descricao, avaliador_nome:string, data:date, likes:int, deslikes:int)
+    - (EF)  Duvida  (descricao, nome_pessoa, data_duvida, resposta, data_resposta, likes:int, deslikes:int)
+    
+Relacionamentos:
+    - Loja possui Iphone.      (1:N)
+    - iPhone possui Avaliacao. (1:N)
+    - iPhone possui Duvida.    (1:N)
+
+
