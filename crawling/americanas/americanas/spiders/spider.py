@@ -5,12 +5,21 @@ class AmericanasSpider(scrapy.Spider):
 
     def start_requests(self):
         url = 'https://www.americanas.com.br/categoria/celulares-e-smartphones/smartphone/iphone/f/sistema-operacional-iphone%20ios/g/condicao-novo?limit=24&offset=0'  
-        yield scrapy.Request(url=url, callback=self.parse_home_page)
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36'}
+        yield scrapy.Request(url=url, headers=headers, callback=self.parse_home_page)
 
 
     def parse_home_page(self, response):
         #Alg:
         #1. Selecionar divs de produto da pagina.
+
+        for iphone_link in response.css('div div.src__Wrapper-sc-1k0ejj6-3.eflURh a::attr(href)').getall():
+            yield {
+                'link': iphone_link
+            }
+
+        
+
         #2. Para cada div:
         #   2.1. extrair link.
         #   2.2. yieldar request para a pagina passando parse_iphone_page como callback.
@@ -34,9 +43,9 @@ class AmericanasSpider(scrapy.Spider):
         #     next_page = response.urljoin(next_page)
         #     yield scrapy.Request(next_page, callback=self.parse)
 
-    def parse_loja() : list
+    #def parse_loja() : list
 
-    def parse_iphone_page(self, response):
+    #def parse_iphone_page(self, response):
         #Alg:
         #1. Selecionar todas as infos necessarias e guardar em vars.
         # lista_loja = parse_loja()
