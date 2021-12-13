@@ -2,74 +2,68 @@ import scrapy
 
 class AmericanasSpider(scrapy.Spider):
     name = "americanas"
+    store_attributes = None
 
     def start_requests(self):
-        url = 'https://www.americanas.com.br/categoria/celulares-e-smartphones/smartphone/iphone/f/sistema-operacional-iphone%20ios/g/condicao-novo?limit=24&offset=0'  
+        url = 'https://www.americanas.com.br/categoria/celulares-e-smartphones/smartphone/iphone/f/sistema-operacional-iphone%20ios/g/condicao-novo?limit=1000&offset=0'  
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36'}
         yield scrapy.Request(url=url, headers=headers, callback=self.parse_home_page)
 
 
     def parse_home_page(self, response):
-        #Alg:
-        #1. Selecionar divs de produto da pagina.
-
-        for iphone_link in response.css('div div.src__Wrapper-sc-1k0ejj6-3.eflURh a::attr(href)').getall():
-            yield {
-                'link': iphone_link
-            }
-
-        
-
-        #2. Para cada div:
-        #   2.1. extrair link.
-        #   2.2. yieldar request para a pagina passando parse_iphone_page como callback.
-        # 
-        #3. Selecionar link da prox pagina.
-        #4. yieldar request para a pagina passando parse_home_page como callback.
+        self.parse_store(response)
+        yield {
+            'nome': store_attributes[0],
+            'endereco': store_attributes[1],
+            'telefone': store_attributes[2],
+            'nome_logo': store_attributes[3]
+        }
+        for iphone_rel_link in response.css('div div.src__Wrapper-sc-1k0ejj6-3.eflURh a::attr(href)').getall():
+            iphone_abs_link = response.urljoin(iphone_rel_link)
+            yield scrapy.Request(iphone_abs_link, callback=self.parse_iphone_page)
 
 
+    def parse_iphone_page(self, response):
+        iphone_attributes = self.parse_iphone(response)
+        ratings = self.parse_ratings(response)
+        doubts = self.parse_doubts(response)
+        yield {
+            'iphone': {
+                'cod': iphone_attributes[0],
+                'loja_nome': store_attributes[0],
+                'link_iphone': iphone_attributes[1],
+                'link_imagem': iphone_attributes[2],
+                'titulo': iphone_attributes[3],
+                'cor': iphone_attributes[4],
+                'preco_avista': iphone_attributes[5],
+                'preco_aprazo': iphone_attributes[6],
+                'tam_tela': iphone_attributes[7],
+                'resolucao_cam_front': iphone_attributes[8],
+                'resolucao_cam_tras': iphone_attributes[9]
+                'mem_int': iphone_attributes[10],
+                'mem_ram': iphone_attributes[11]
+            },
+            'avaliacao': ratings,
+            'duvida': doubts
+        }
+
+    # for quote in response.css('div.quote'):
+    #     yield {
+    #         'text': quote.css('span.text::text').get(),
+    #         'author': quote.css('small.author::text').get(),
+    #         'tags': quote.css('div.tags a.tag::text').getall(),
+    #     }
 
 
+    def parse_store(self, response):
+        pass
 
-        # for quote in response.css('div.quote'):
-        #     yield {
-        #         'text': quote.css('span.text::text').get(),
-        #         'author': quote.css('small.author::text').get(),
-        #         'tags': quote.css('div.tags a.tag::text').getall(),
-        #     }
+    def parse_iphone(self, response):
+        pass
 
-        # next_page = response.css('li.next a').attrib['href']
-        # if next_page is not None:
-        #     next_page = response.urljoin(next_page)
-        #     yield scrapy.Request(next_page, callback=self.parse)
+    def parse_ratings(self, response):
+        pass
 
-    #def parse_loja() : list
-
-    #def parse_iphone_page(self, response):
-        #Alg:
-        #1. Selecionar todas as infos necessarias e guardar em vars.
-        # lista_loja = parse_loja()
-        # lista_iphone = parse_iphone()
-        # ...
-
-        #2. yield {
-        #   'loja' : {
-        #       'nome': lista_loja[0],
-        #        ...
-        #   },
-        
-        #   'iphone': {
-        #       'cod': lista_iphone[0],
-        #        ...
-        #   },
-        #
-        #   'avaliacao': {
-        #   
-        #   },
-        #
-        #   'duvida': {
-        #       
-        #   }
-        # }
-        #
-
+    def parse_doubts(self, response):
+        pass
+    
