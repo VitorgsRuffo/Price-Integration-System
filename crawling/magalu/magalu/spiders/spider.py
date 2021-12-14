@@ -16,6 +16,7 @@ class MagaluSpider(scrapy.Spider):
         next_page = response.css('.css-1a9p55p.css-197gxuo + .css-1a9p55p a::text').get()
         if next_page is not None:
             next_page = response.url[:-1] + next_page
+            print(next_page+'\n\n')
             yield scrapy.Request(next_page, callback=self.parse_home_page)
 
 
@@ -44,21 +45,20 @@ class MagaluSpider(scrapy.Spider):
                 'tam_tela': iphone_infos[8],
                 'resolucao_cam_front': iphone_infos[9],
                 'resolucao_cam_tras': iphone_infos[10],
-                'mem_int': iphone_infos[11],
-                'mem_ram': iphone_infos[12]
-            },
-
-            'avaliacao' : {
-                'titulo' : rating_infos[0],
-                'descricao' : rating_infos[1],
-                'data' : rating_infos[2],
-                'avaliador_nome' : rating_infos[3],
-                'likes' : rating_infos[4],
-                'deslikes' : rating_infos[5],
-                'nota' : rating_infos[6],
-                'iphone_cod ': rating_infos[7],
-                'nome_loja' : rating_infos[8]
+                'mem_int': iphone_infos[11]
             }
+
+        #    'avaliacao' : {
+        #        'titulo' : rating_infos[0],
+        #        'descricao' : rating_infos[1],
+        #        'data' : rating_infos[2],
+        #        'avaliador_nome' : rating_infos[3],
+        #        'likes' : rating_infos[4],
+        #        'deslikes' : rating_infos[5],
+        #        'nota' : rating_infos[6],
+        #        'iphone_cod ': rating_infos[7],
+        #        'nome_loja' : rating_infos[8]
+        #    }
         }
         
 
@@ -93,18 +93,26 @@ class MagaluSpider(scrapy.Spider):
         # preco_avista
         infos.append(response.css('.price-template__text::text').get())
         # preco_aprazo
-        infos.append(response.css('.price-template::text')[2].get())
+        try:
+            infos.append(response.css('.price-template::text')[2].get())
+        except:
+            infos.append(response.css('.price-template::text')[1].get())
+        
+        # tabels with informations
+        tables = response.css('.description__container-text table')
+        
         # cor
-        #infos.append()
+        infos.append(self.parseTable(tables, "Cor"))
         # tam_tela
-        #infos.append()
+        infos.append(infos.append(self.parseTable(tables, "Tamanho da tela")))
         # resolucao_cam_front
-        #infos.append()
+        infos.append(infos.append(self.parseTable(tables, "Resolução da câmera frontal")))
         # resolucao_cam_tras
-        #infos.append()
+        infos.append(infos.append(self.parseTable(tables, "Resolução da câmera traseira")))
         # mem_int
-        #infos.append()
+        infos.append(infos.append(self.parseTable(tables, "Memória interna")))
         #mem_ram
+        #infos.append(infos.append(self.parseTable(tables, "Memória interna")))  
 
         print(infos)
         return infos
@@ -135,6 +143,13 @@ class MagaluSpider(scrapy.Spider):
         print(infos)
         return infos
 
+
+
+    def parseTable(self, tables, key):
+        for t in tables:
+            if t.css('.description__information-left::text').get() == key :
+                return t.css('.description__information-box-right::text').get().strip()
+        
 # BUGS 
         # likes e deslikes com mesmo nome de classes
         # Como pegar os dados das tabelas de especificações
