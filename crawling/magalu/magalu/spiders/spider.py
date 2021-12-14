@@ -16,7 +16,7 @@ class MagaluSpider(scrapy.Spider):
         next_page = response.css('.css-1a9p55p.css-197gxuo + .css-1a9p55p a::text').get()
         if next_page is not None:
             next_page = response.url[:-1] + next_page
-            print(next_page+'\n\n')
+            #print(next_page+'\n\n')
             yield scrapy.Request(next_page, callback=self.parse_home_page)
 
 
@@ -111,8 +111,6 @@ class MagaluSpider(scrapy.Spider):
         infos.append(infos.append(self.parseTable(tables, "Resolução da câmera traseira")))
         # mem_int
         infos.append(infos.append(self.parseTable(tables, "Memória interna")))
-        #mem_ram
-        #infos.append(infos.append(self.parseTable(tables, "Memória interna")))  
 
         print(infos)
         return infos
@@ -144,14 +142,7 @@ class MagaluSpider(scrapy.Spider):
         return infos
 
 
-
     def parseTable(self, tables, key):
         for t in tables:
             if t.css('.description__information-left::text').get() == key :
                 return t.css('.description__information-box-right::text').get().strip()
-        
-# BUGS 
-        # likes e deslikes com mesmo nome de classes
-        # Como pegar os dados das tabelas de especificações
-        # Como pegar a nota da avaliacao
-        # Fazer loop nas avaliacoes
