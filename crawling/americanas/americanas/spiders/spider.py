@@ -1,17 +1,30 @@
 import scrapy
 import time
+#to do:
+#   - corrigir selecao de elementos (parse_home_page).
+#   - implementar rotacao de proxy.
+#   - selecionar toda a tabela do iphone e filtrar atributos no codigo.
+#   - parsear comentarios.
+
 
 class AmericanasSpider(scrapy.Spider):
     name = "americanas"
     store_attributes = None
+    headers = {
+        "Accept": "test/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", 
+        "Accept-Encoding": "br,gzip,deflate", 
+        "Accept-Language": "en-gb", 
+        "Referer": "http://www.google.com/",
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.1 Safari/605.1.15"
+    }
 
     def start_requests(self):
-        url = 'https://www.americanas.com.br/categoria/celulares-e-smartphones/smartphone/iphone/f/sistema-operacional-iphone%20ios/g/condicao-novo?limit=10&offset=0'  
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36'}
-        yield scrapy.Request(url=url, headers=headers, callback=self.parse_home_page)
+        url = 'https://www.americanas.com.br/categoria/celulares-e-smartphones/smartphone/iphone/f/sistema-operacional-iphone%20ios/g/condicao-novo?limit=200&offset=0'  
+        yield scrapy.Request(url=url, headers=self.headers, callback=self.parse_home_page)
 
 
     def parse_home_page(self, response):
+    
         self.parse_store(response)
         yield {
             'nome': self.store_attributes[0],
@@ -19,21 +32,19 @@ class AmericanasSpider(scrapy.Spider):
             'telefone': self.store_attributes[2],
             'nome_logo': self.store_attributes[3]
         }
-        i = 0
-        limit = 24
-        for iphone_rel_link in response.css('div div.src__Wrapper-sc-1k0ejj6-3.eflURh a::attr(href)').getall():
+
+        for iphone_div in response.css('main div div.middle-area__WrapperRight-sc-1k81b14-0 div.product-grid-new-list__GridItem-sc-1suhvr9-1 div div.src__Wrapper-sc-1wgxjb2-0'):
+            if iphone_div.css('a.outOfStockCardList__Wrapper-sc-1ghgij6-0'): #o iphone nao se encontra no estoque, e, portanto, nao sera parseado.
+                continue
+            
+            iphone_rel_link = iphone_div.css('a::attr(href)').get()
             iphone_abs_link = response.urljoin(iphone_rel_link)
-            if i == limit:
-                time.sleep(3)
-                i = 0
-            yield scrapy.Request(iphone_abs_link, callback=self.parse_iphone_page)
-            i+=1
+            yield scrapy.Request(iphone_abs_link, headers=self.headers, callback=self.parse_iphone_page)
 
 
     def parse_iphone_page(self, response):
+
         iphone = self.parse_iphone(response)
-        if iphone is None: #se o iphone nao estiver disponivel no estoque não o salvamos...
-            return
         ratings = self.parse_ratings(response)
         doubts = self.parse_doubts(response)
         yield {
@@ -44,18 +55,16 @@ class AmericanasSpider(scrapy.Spider):
 
 
     def parse_store(self, response):
-        info_string = response.css('.ft-address::text').get()
+        info_string = response.css('address.ft-address::text').get()
         info = info_string.split(' / ')
-        phone_string = response.css('#list-level-2 li a::text').get()
+        #phone_string = response.css('.footer-item__Link-cgexy7-1.bwqVtN::text')[0].get()
         #phone = phone_string.split(' ')
+        #phone = phone[1]
         phone = "4003-4848"
         self.store_attributes =  [info[0], info[3], phone, 'americanas.png']
 
 
     def parse_iphone(self, response):
-        price = response.css('.src__BestPrice-sc-1jvw02c-5.cBWOIB.priceSales::text').getall()[1]
-        if not price:
-            return None
 
         attributes_table = response.css('table.src__SpecsCell-sc-70o4ee-5.gYhGqJ tbody')
         iphone = {
@@ -65,7 +74,7 @@ class AmericanasSpider(scrapy.Spider):
             'link_imagem': response.css('.main-image__Container-sc-1i1hq2n-1.iCNHlx div picture img::attr(src)').get(),
             'titulo': response.css('.product-title__Title-sc-1hlrxcw-0.jyetLr::text').get(),
             'cor': attributes_table.css('tr:nth-child(28) td:nth-child(2)::text').get(),
-            'preco_avista': price,
+            'preco_avista': ' ',
             'preco_aprazo': ' ',
             'tam_tela': attributes_table.css('tr:nth-child(10) td:nth-child(2)::text').get(),
             'resolucao_cam_front': attributes_table.css('tr:nth-child(14) td:nth-child(2)::text').get(),
@@ -77,8 +86,8 @@ class AmericanasSpider(scrapy.Spider):
 
 
     def parse_ratings(self, response):
-        pass
+        return None
 
 
     def parse_doubts(self, response):
-        pass
+        return None
