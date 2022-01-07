@@ -1,8 +1,6 @@
 import scrapy
 import time
 #to do:
-#   -x corrigir selecao de elementos (parse_home_page).
-#   - implementar rotacao de proxy.
 #   - selecionar toda a tabela do iphone e filtrar atributos no codigo.
 #   - parsear comentarios.
 
@@ -17,6 +15,7 @@ class AmericanasSpider(scrapy.Spider):
         "Referer": "http://www.google.com/",
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.1 Safari/605.1.15"
     }
+    maximum_iphones_to_process = 20
 
     def start_requests(self):
         url = 'https://www.americanas.com.br/categoria/celulares-e-smartphones/smartphone/iphone/f/sistema-operacional-iphone%20ios/g/condicao-novo?limit=200&offset=0'  
@@ -49,9 +48,18 @@ class AmericanasSpider(scrapy.Spider):
             yield scrapy.Request(iphone_abs_link, headers=self.headers, callback=self.parse_iphone_page)
             
             processed_iphones += 1
-            if processed_iphones >= 20:
+            if processed_iphones >= self.maximum_iphones_to_process:
                 break
-            
+
+
+    def parse_store(self, response):
+        info_string = response.css('address::text').get()
+        info = info_string.split(' / ')
+        #phone_string = response.css('.footer-item__Link-cgexy7-1.bwqVtN::text')[0].get()
+        #phone = phone_string.split(' ')
+        #phone = phone[1]
+        phone = "4003-4848"
+        self.store_attributes =  [info[0], info[3], phone, 'americanas.png']
 
 
     def parse_iphone_page(self, response):
@@ -65,34 +73,42 @@ class AmericanasSpider(scrapy.Spider):
         }
 
 
-    def parse_store(self, response):
-        info_string = response.css('address::text').get()
-        info = info_string.split(' / ')
-        #phone_string = response.css('.footer-item__Link-cgexy7-1.bwqVtN::text')[0].get()
-        #phone = phone_string.split(' ')
-        #phone = phone[1]
-        phone = "4003-4848"
-        self.store_attributes =  [info[0], info[3], phone, 'americanas.png']
-
-
     def parse_iphone(self, response):
-
-        attributes_table = response.css('table.src__SpecsCell-sc-70o4ee-5.gYhGqJ tbody')
-        iphone = {
-            'cod': attributes_table.css('tr:nth-child(1) td:nth-child(2)::text').get(),
-            'loja_nome': self.store_attributes[0],
-            'link_iphone': response.url,
-            'link_imagem': response.css('.main-image__Container-sc-1i1hq2n-1.iCNHlx div picture img::attr(src)').get(),
-            'titulo': response.css('.product-title__Title-sc-1hlrxcw-0.jyetLr::text').get(),
-            'cor': attributes_table.css('tr:nth-child(28) td:nth-child(2)::text').get(),
-            'preco_avista': ' ',
-            'preco_aprazo': ' ',
-            'tam_tela': attributes_table.css('tr:nth-child(10) td:nth-child(2)::text').get(),
-            'resolucao_cam_front': attributes_table.css('tr:nth-child(14) td:nth-child(2)::text').get(),
-            'resolucao_cam_tras': attributes_table.css('tr:nth-child(13) td:nth-child(2)::text').get(),
-            'mem_int': attributes_table.css('tr:nth-child(20) td:nth-child(2)::text').get(),
-            'mem_ram': attributes_table.css('tr:nth-child(19) td:nth-child(2)::text').get()
+        table_attributes_mapping = {
+            'Código': 'cod',
+            'Cor': 'cor',
+            'Tamanho do Display': 'tam_tela',
+            'Câmera Frontal': 'resolucao_cam_front',
+            'Câmera Traseira': 'resolucao_cam_tras',
+            'Memória Interna': 'mem_int',
+            'Memória RAM': 'mem_ram'
         }
+
+        iphone = {
+            'cod': '',
+            'loja_nome': self.store_attributes[0],
+            'link_iphone': response.url, 
+            'link_imagem': response.css('.main-image__Container-sc-1i1hq2n-1.iCNHlx div picture img::attr(src)').get(), 
+            'titulo': response.css('.product-title__Title-sc-1hlrxcw-0.jyetLr::text').get(), 
+            'cor': '', 
+            'preco_avista': '', 
+            'preco_aprazo': '', 
+            'tam_tela': '', 
+            'resolucao_cam_front': '', 
+            'resolucao_cam_tras': '', 
+            'mem_int': '', 
+            'mem_ram': '', 
+        }
+
+        attributes_table = response.css('table.src__SpecsCell-sc-70o4ee-5.gYhGqJ tbody tr')
+        for row in attributes_table:
+            attribute_name, attribute_value = row.css('td::text').getall()
+            try:
+                mapped_attribute_name = table_attributes_mapping[attribute_name]
+            except:
+                continue
+            iphone[mapped_attribute_name] = attribute_value
+        
         return iphone
 
 
