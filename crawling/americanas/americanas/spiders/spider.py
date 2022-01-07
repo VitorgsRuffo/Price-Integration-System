@@ -1,7 +1,7 @@
 import scrapy
 import time
 #to do:
-#   - corrigir selecao de elementos (parse_home_page).
+#   -x corrigir selecao de elementos (parse_home_page).
 #   - implementar rotacao de proxy.
 #   - selecionar toda a tabela do iphone e filtrar atributos no codigo.
 #   - parsear comentarios.
@@ -24,7 +24,6 @@ class AmericanasSpider(scrapy.Spider):
 
 
     def parse_home_page(self, response):
-    
         self.parse_store(response)
         yield {
             'nome': self.store_attributes[0],
@@ -33,17 +32,29 @@ class AmericanasSpider(scrapy.Spider):
             'nome_logo': self.store_attributes[3]
         }
 
-        for iphone_div in response.css('main div div.middle-area__WrapperRight-sc-1k81b14-0 div.product-grid-new-list__GridItem-sc-1suhvr9-1 div div.src__Wrapper-sc-1wgxjb2-0'):
+        processed_iphones = 0
+        iphone_divs = response.css('main div div.middle-area__WrapperRight-sc-1k81b14-0 div.product-grid-new-list__GridItem-sc-1suhvr9-1 div div.src__Wrapper-sc-1wgxjb2-0')
+        
+        time.sleep(2)
+
+        for iphone_div in iphone_divs:
             if iphone_div.css('a.outOfStockCardList__Wrapper-sc-1ghgij6-0'): #o iphone nao se encontra no estoque, e, portanto, nao sera parseado.
                 continue
             
             iphone_rel_link = iphone_div.css('a::attr(href)').get()
             iphone_abs_link = response.urljoin(iphone_rel_link)
+
+            time.sleep(2)
+
             yield scrapy.Request(iphone_abs_link, headers=self.headers, callback=self.parse_iphone_page)
+            
+            processed_iphones += 1
+            if processed_iphones >= 20:
+                break
+            
 
 
     def parse_iphone_page(self, response):
-
         iphone = self.parse_iphone(response)
         ratings = self.parse_ratings(response)
         doubts = self.parse_doubts(response)
@@ -55,7 +66,7 @@ class AmericanasSpider(scrapy.Spider):
 
 
     def parse_store(self, response):
-        info_string = response.css('address.ft-address::text').get()
+        info_string = response.css('address::text').get()
         info = info_string.split(' / ')
         #phone_string = response.css('.footer-item__Link-cgexy7-1.bwqVtN::text')[0].get()
         #phone = phone_string.split(' ')
