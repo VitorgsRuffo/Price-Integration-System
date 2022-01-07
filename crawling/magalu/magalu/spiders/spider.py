@@ -10,28 +10,49 @@ class MagaluSpider(scrapy.Spider):
 
     def parse_home_page(self, response):
 
+        current_page = response.css('.css-1a9p55p.css-197gxuo a::text').get()
+
+        # Salvando as informacoes da loja somente uma vez
+        if current_page == '1':
+            infos = self.parse_store(response)
+            yield {
+                'loja' : {
+                    'nome': infos[0],
+                    'endereco': infos[1],
+                    'telefone': infos[2],
+                    'nome_logo': infos[3]    
+                }
+            }
+        
         for magalu in response.css('#showcase ul a::attr(href)'):
             yield scrapy.Request(magalu.get(), callback=self.parse_iphone_page)
 
         next_page = response.css('.css-1a9p55p.css-197gxuo + .css-1a9p55p a::text').get()
         if next_page is not None:
             next_page = response.url[:-1] + next_page
-            #print(next_page+'\n\n')
             yield scrapy.Request(next_page, callback=self.parse_home_page)
+    
 
+    def parse_store(self, response):
+        infos = []
 
+        # nome da loja
+        infos.append(response.css('.container-left-top-header a::text').get())
+        # Endereco
+        infos.append(response.css('.bg-footer-address::text').get())
+        #telefone
+        infos.append(response.css('.phone-buyphone::text').get())
+        #nome-logo
+        infos.append(infos[0].replace(" ","").lower() + ".jpg")
+
+        return infos
+
+        
     def parse_iphone_page(self, response):
-        store_infos = self.parse_store(response)
         iphone_infos = self.parse_iphone(response)
         rating_infos = self.parse_ratings(response)
 
         yield {
-            'loja' : {
-                'nome': store_infos[0],
-                'endereco': store_infos[1],
-                'telefone': store_infos[2],
-                'nome_logo': store_infos[3]
-            },
 
             'iphone' : {
                 'cod': iphone_infos[0],
@@ -60,23 +81,7 @@ class MagaluSpider(scrapy.Spider):
         #        'nome_loja' : rating_infos[8]
         #    }
         }
-        
-
-    def parse_store(self, response):
-        infos = []
-
-        # nome da loja
-        infos.append(response.css('.container-left-top-header a::text').get())
-        # Endereco
-        infos.append(response.css('.bg-footer-address::text').get())
-        #telefone
-        infos.append(response.css('.phone-buyphone::text').get())
-        #nome-logo
-        infos.append(infos[0].replace(" ","").lower() + ".jpg")
-
-        print(infos)
-        return infos
-
+    
     
     def parse_iphone(self, response):
         infos = []
@@ -98,7 +103,7 @@ class MagaluSpider(scrapy.Spider):
         except:
             infos.append(response.css('.price-template::text')[1].get())
         
-        # tabels with informations
+        # tables with informations about iphone
         tables = response.css('.description__container-text table')
         
         # cor
