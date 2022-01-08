@@ -1,7 +1,6 @@
 import scrapy
 import time
 #to do:
-#   - selecionar toda a tabela do iphone e filtrar atributos no codigo.
 #   - parsear comentarios.
 
 
@@ -68,8 +67,8 @@ class AmericanasSpider(scrapy.Spider):
 
     def parse_iphone_page(self, response, preco_avista, preco_aprazo):
         iphone = self.parse_iphone(response, preco_avista, preco_aprazo)
-        ratings = self.parse_ratings(response)
-        doubts = self.parse_doubts(response)
+        ratings = self.parse_ratings(response, iphone['cod'])
+        doubts = self.parse_doubts(response, iphone['cod'])
         yield {
             'iphone': iphone,
             'avaliacao': ratings,
@@ -116,9 +115,44 @@ class AmericanasSpider(scrapy.Spider):
         return iphone
 
 
-    def parse_ratings(self, response):
-        return None
+    def parse_ratings(self, response, iphone_cod):
+        
+        ratings = {
+            'id': ' ',
+            'titulo': ' ',
+            'descricao': ' ',
+            'data': ' '
+            'avaliador_nome': ' ',
+            'likes': ' ',
+            'deslikes': ' ',
+            'nota': ' ',
+            'iphone_cod': iphone_cod,
+            'loja_nome': self.store_attributes[0]
+        }
+
+        for rating in response.css('.review__Wrapper-sc-18mpb23-1'):
+            rating_div = rating.css('div.review__WrapperReview-sc-18mpb23-2')
+            ratings['titulo'] = rating_div.css('h4::text').get()
+            ratings['descricao'] = rating_div.css('span::text').get()
+            rating_meta = review.css('div::text').getall()
+            ratings['data'] = rating_meta[2] 
+            ratings['avaliador_nome'] = rating_meta[0]
+            likes_div = rating.css('div.review__WrapperRecomendation-sc-18mpb23-6')
+            #.css('button span::text').get()
 
 
-    def parse_doubts(self, response):
-        return None
+
+    def parse_doubts(self, response, iphone_cod):
+        doubts = {
+            'id': ' ',
+            'titulo': ' ',
+            'descricao': ' ',
+            'data_duvida': ' '
+            'pessoa_nome': ' ',
+            'likes': ' ',
+            'deslikes': ' ',
+            'resposta': ' ',
+            'data_resposta': ' ',
+            'iphone_cod': iphone_cod,
+            'loja_nome': self.store_attributes[0]
+        }
