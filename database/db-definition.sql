@@ -33,7 +33,7 @@ CREATE SEQUENCE pis.avaliacao_id_seq;
 CREATE TABLE pis.avaliacao(
 	id INT DEFAULT nextval('pis.avaliacao_id_seq'),
 	titulo VARCHAR(30),
-	descricao VARCHAR(150),
+	descricao VARCHAR(1000),
 	data DATE,
 	avaliador_nome VARCHAR(30),
 	likes INT DEFAULT 0,
