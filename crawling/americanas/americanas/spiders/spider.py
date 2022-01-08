@@ -32,6 +32,7 @@ class AmericanasSpider(scrapy.Spider):
         }
 
         processed_iphones = 0
+        #another way of selecting iphone_divs: response.css('main div div.middle-area__WrapperRight-sc-1k81b14-0 div:nth-child(3) div div a')
         iphone_divs = response.css('main div div.middle-area__WrapperRight-sc-1k81b14-0 div.product-grid-new-list__GridItem-sc-1suhvr9-1 div div.src__Wrapper-sc-1wgxjb2-0')
         
         time.sleep(2)
@@ -42,10 +43,13 @@ class AmericanasSpider(scrapy.Spider):
             
             iphone_rel_link = iphone_div.css('a::attr(href)').get()
             iphone_abs_link = response.urljoin(iphone_rel_link)
+            preco_avista, preco_aprazo = iphone_div.css('div.price-info__ContainerPriceInstalmentCash-sc-1td1088-2 span')
+            preco_avista = preco_avista.css('::text').get()
+            preco_aprazo = preco_aprazo.css('::text').get()
 
             time.sleep(2)
 
-            yield scrapy.Request(iphone_abs_link, headers=self.headers, callback=self.parse_iphone_page)
+            yield scrapy.Request(iphone_abs_link, headers=self.headers, callback=self.parse_iphone_page, cb_kwargs=dict(preco_avista=preco_avista, preco_aprazo=preco_aprazo))
             
             processed_iphones += 1
             if processed_iphones >= self.maximum_iphones_to_process:
@@ -62,8 +66,8 @@ class AmericanasSpider(scrapy.Spider):
         self.store_attributes =  [info[0], info[3], phone, 'americanas.png']
 
 
-    def parse_iphone_page(self, response):
-        iphone = self.parse_iphone(response)
+    def parse_iphone_page(self, response, preco_avista, preco_aprazo):
+        iphone = self.parse_iphone(response, preco_avista, preco_aprazo)
         ratings = self.parse_ratings(response)
         doubts = self.parse_doubts(response)
         yield {
@@ -73,7 +77,7 @@ class AmericanasSpider(scrapy.Spider):
         }
 
 
-    def parse_iphone(self, response):
+    def parse_iphone(self, response, preco_avista, preco_aprazo):
         table_attributes_mapping = {
             'Código': 'cod',
             'Cor': 'cor',
@@ -91,8 +95,8 @@ class AmericanasSpider(scrapy.Spider):
             'link_imagem': response.css('.main-image__Container-sc-1i1hq2n-1.iCNHlx div picture img::attr(src)').get(), 
             'titulo': response.css('.product-title__Title-sc-1hlrxcw-0.jyetLr::text').get(), 
             'cor': '', 
-            'preco_avista': '', 
-            'preco_aprazo': '', 
+            'preco_avista': preco_avista, 
+            'preco_aprazo': preco_aprazo, 
             'tam_tela': '', 
             'resolucao_cam_front': '', 
             'resolucao_cam_tras': '', 
