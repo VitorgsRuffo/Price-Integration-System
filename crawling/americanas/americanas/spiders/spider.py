@@ -1,8 +1,7 @@
 import scrapy
 import time
 #to do:
-#   - parsear comentarios.
-#   - remover atributo "titulo" da entidade duvida (DER, Relacional e SQL).
+#   - remover entidade duvida (DER, Relacional e SQL).
 #   - shoptime...
 
 
@@ -70,11 +69,11 @@ class AmericanasSpider(scrapy.Spider):
     def parse_iphone_page(self, response, preco_avista, preco_aprazo):
         iphone = self.parse_iphone(response, preco_avista, preco_aprazo)
         ratings = self.parse_ratings(response, iphone['cod'])
-        doubts = self.parse_doubts(response, iphone['cod'])
+        #doubts = self.parse_doubts(response, iphone['cod'])
         yield {
             'iphone': iphone,
-            'avaliacao': ratings,
-            'duvida': doubts
+            'avaliacoes': ratings,
+            #'duvidas': doubts
         }
 
 
@@ -118,55 +117,53 @@ class AmericanasSpider(scrapy.Spider):
 
 
     def parse_ratings(self, response, iphone_cod):
-        ratings = {
-            'id': ' ', #it will be defined when inserting the element in the database.
-            'titulo': ' ',
-            'descricao': ' ',
-            'data': ' ',
-            'avaliador_nome': ' ',
-            'likes': ' ',
-            'deslikes': ' ',
-            'nota': ' ',
-            'iphone_cod': iphone_cod,
-            'loja_nome': self.store_attributes[0]
-        }
-        for rating in response.css('.review__Wrapper-sc-18mpb23-1'):
-            rating_div = rating.css('div.review__WrapperReview-sc-18mpb23-2')
-            ratings['titulo'] = rating_div.css('h4::text').get()
-            ratings['descricao'] = rating_div.css('span::text').get()
-            rating_meta = rating_div.css('div.review__User-sc-18mpb23-5::text').getall()
-            ratings['data'] = rating_meta[-1] 
+        rating_divs = response.css('.review__Wrapper-sc-18mpb23-1')
+        ratings_amount = len(rating_divs)
+        ratings = [dict() for j in range(0, ratings_amount)]
+        i = 0
+        for rating_div in rating_divs:
+            rating = rating_div.css('div.review__WrapperReview-sc-18mpb23-2')
+            ratings[i]['titulo'] = rating.css('h4::text').get()
+            ratings[i]['descricao'] = rating.css('span::text').get()
+            rating_meta = rating.css('div.review__User-sc-18mpb23-5::text').getall()
+            ratings[i]['data'] = rating_meta[-1] 
             if rating_meta[0] != ' em ':
-                ratings['avaliador_nome'] = rating_meta[0]
-            likes_div = rating.css('button.review__ActionRecommentation-sc-18mpb23-9')
-            likes_deslikes = likes_div.css('span::text').getall()
-            ratings['likes'] = likes_deslikes[1]
-            ratings['deslikes'] = likes_deslikes[4]
+                ratings[i]['avaliador_nome'] = rating_meta[0]
+            else:
+                ratings[i]['avaliador_nome'] = ' '
+
+            likes_deslikes = rating_div.css('button.review__ActionRecommentation-sc-18mpb23-9')
+            likes_deslikes = likes_deslikes.css('span::text').getall()
+            ratings[i]['likes'] = likes_deslikes[1]
+            ratings[i]['deslikes'] = likes_deslikes[4]
+            ratings[i]['nota'] = ' ' #Ainda nao foi encontrado um jeito de selecionar a nota...
+
+            ratings[i]['iphone_cod'] = iphone_cod
+            ratings[i]['loja_nome'] = self.store_attributes[0]
+            i += 1
         return ratings
 
 
+
     def parse_doubts(self, response, iphone_cod):
-        doubts = {
-            'id': ' ', #it will be defined when inserting the element in the database.
-            'descricao': ' ',
-            'data_duvida': ' ',
-            'pessoa_nome': ' ',
-            'likes': ' ',
-            'deslikes': ' ',
-            'resposta': ' ',
-            'data_resposta': ' ',
-            'iphone_cod': iphone_cod,
-            'loja_nome': self.store_attributes[0]
-        }
-        for doubt in response.css('.question__Wrapper-p6e9ij-0'):
-            doubt_div = doubt.css('div.question__QuestionAndAnswer-p6e9ij-1')
-            doubts['descricao'] = doubt_div.css('div div.question__QuestionText-p6e9ij-2 p::text').get()
-            doubt_meta = doubt_div.css('div p.question__Owner-p6e9ij-3::text').getall()
-            doubts['data_duvida'] = doubt_meta[3] 
-            doubts['pessoa_nome'] = doubt_meta[1]
-            doubts['resposta'] = doubt_div.css('p.answer-box__Answer-y7vmri-1 span::text').get()
-            doubts['data_resposta'] = doubt_div.css('span.answer-box__AnswerCreatedAt-y7vmri-2::text').get()
-            likes_deslikes = doubt.css('span.feedback__Count-sc-1hrd1kk-8::text').getall()
-            doubts['likes'] = likes_deslikes[1]
-            doubts['deslikes'] = likes_deslikes[4]
+        doubt_divs = response.css('.question__Wrapper-p6e9ij-0')
+        doubts_amount = len(doubt_divs)
+        doubts = [dict() for j in range(0, doubts_amount)]
+        i = 0
+        for doubt_div in doubt_divs:
+            doubt = doubt_div.css('div.question__QuestionAndAnswer-p6e9ij-1')
+            doubts[i]['descricao'] = doubt.css('div div.question__QuestionText-p6e9ij-2 p::text').get()
+            doubt_meta = doubt.css('div p.question__Owner-p6e9ij-3::text').getall()
+            doubts[i]['data_duvida'] = doubt_meta[3] 
+            doubts[i]['pessoa_nome'] = doubt_meta[1]
+            doubts[i]['resposta'] = doubt.css('p.answer-box__Answer-y7vmri-1 span::text').get()
+            doubts[i]['data_resposta'] = doubt.css('span.answer-box__AnswerCreatedAt-y7vmri-2::text').get()
+            
+            likes_deslikes = doubt_div.css('span.feedback__Count-sc-1hrd1kk-8::text').getall()
+            doubts[i]['likes'] = likes_deslikes[1]
+            doubts[i]['deslikes'] = likes_deslikes[4]
+
+            doubts[i]['iphone_cod'] = iphone_cod
+            doubts[i]['loja_nome'] = self.store_attributes[0]
+            i += 1
         return doubts
