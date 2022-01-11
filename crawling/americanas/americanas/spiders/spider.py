@@ -69,6 +69,7 @@ class AmericanasSpider(scrapy.Spider):
     def parse_iphone_page(self, response, preco_avista, preco_aprazo):
         iphone = self.parse_iphone(response, preco_avista, preco_aprazo)
         ratings = self.parse_ratings(response, iphone['cod'])
+        #Não ha como selecionar as duvidas pois elas são renderizadas no client-side por algum script .js...
         #doubts = self.parse_doubts(response, iphone['cod'])
         yield {
             'iphone': iphone,
@@ -132,17 +133,17 @@ class AmericanasSpider(scrapy.Spider):
             else:
                 ratings[i]['avaliador_nome'] = ' '
 
-            likes_deslikes = rating_div.css('button.review__ActionRecommentation-sc-18mpb23-9')
-            likes_deslikes = likes_deslikes.css('span::text').getall()
-            ratings[i]['likes'] = likes_deslikes[1]
-            ratings[i]['deslikes'] = likes_deslikes[4]
-            ratings[i]['nota'] = ' ' #Ainda nao foi encontrado um jeito de selecionar a nota...
+            #Atributos que ainda não foram possiveis de serem selecionados...
+            #likes_deslikes = rating_div.css('button.review__ActionRecommentation-sc-18mpb23-9')
+            #likes_deslikes = likes_deslikes.css('span::text').getall()
+            #ratings[i]['likes'] = likes_deslikes[1] #vem sempre zerado, porque?
+            #ratings[i]['deslikes'] = likes_deslikes[4]  #vem sempre zerado, porque?
+            #ratings[i]['nota'] = ' ' #Ainda nao foi encontrado um jeito de selecionar a nota...
 
             ratings[i]['iphone_cod'] = iphone_cod
             ratings[i]['loja_nome'] = self.store_attributes[0]
             i += 1
         return ratings
-
 
 
     def parse_doubts(self, response, iphone_cod):
