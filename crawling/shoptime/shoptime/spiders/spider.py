@@ -2,11 +2,10 @@ import scrapy
 import time
 #to do:
 #   - remover entidade duvida (DER, Relacional e SQL).
-#   - shoptime...
 
 
-class AmericanasSpider(scrapy.Spider):
-    name = "americanas"
+class ShoptimeSpider(scrapy.Spider):
+    name = "shoptime"
     store_attributes = None
     headers = {
         "Accept": "test/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", 
@@ -18,10 +17,10 @@ class AmericanasSpider(scrapy.Spider):
     maximum_iphones_to_process = 20
 
     def start_requests(self):
-        url = 'https://www.americanas.com.br/categoria/celulares-e-smartphones/smartphone/iphone/f/sistema-operacional-iphone%20ios/g/condicao-novo?limit=200&offset=0'  
+        url = 'https://www.shoptime.com.br/categoria/celulares-e-smartphones/smartphone/iphone/g/tipo-de-produto-Iphone/pagina-1?ordenacao=relevance&origem=blanca'  
         yield scrapy.Request(url=url, headers=self.headers, callback=self.parse_home_page)
 
-    #EmptyPage__Container-sc-1u8xkxt-3 wyPSV ViewUI-sc-1ijittn-6 NvLey
+
     def parse_home_page(self, response):
         self.parse_store(response)
         yield {
