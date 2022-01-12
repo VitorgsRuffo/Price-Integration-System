@@ -21,7 +21,7 @@ class AmericanasSpider(scrapy.Spider):
         url = 'https://www.americanas.com.br/categoria/celulares-e-smartphones/smartphone/iphone/f/sistema-operacional-iphone%20ios/g/condicao-novo?limit=200&offset=0'  
         yield scrapy.Request(url=url, headers=self.headers, callback=self.parse_home_page)
 
-    #EmptyPage__Container-sc-1u8xkxt-3 wyPSV ViewUI-sc-1ijittn-6 NvLey
+
     def parse_home_page(self, response):
         self.parse_store(response)
         yield {

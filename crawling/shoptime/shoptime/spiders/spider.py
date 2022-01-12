@@ -12,16 +12,21 @@ class ShoptimeSpider(scrapy.Spider):
         "Accept-Encoding": "br,gzip,deflate", 
         "Accept-Language": "en-gb", 
         "Referer": "http://www.google.com/",
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.1 Safari/605.1.15"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"
     }
     maximum_iphones_to_process = 20
+    
+    def generate_ith_home_page_link(self, i):
+        return f'https://www.shoptime.com.br/categoria/celulares-e-smartphones/smartphone/iphone/g/tipo-de-produto-Iphone/pagina-{i}?ordenacao=relevance&origem=blanca'
 
     def start_requests(self):
-        url = 'https://www.shoptime.com.br/categoria/celulares-e-smartphones/smartphone/iphone/g/tipo-de-produto-Iphone/pagina-1?ordenacao=relevance&origem=blanca'  
-        yield scrapy.Request(url=url, headers=self.headers, callback=self.parse_home_page)
-
-
-    def parse_home_page(self, response):
+        url = self.generate_ith_home_page_link(1)
+        yield scrapy.Request(url=url, headers=self.headers, callback=self.parse_home_page, cb_kwargs=dict(i=1))
+    
+    # to do:
+    #- EmptyPage__Container-sc-1u8xkxt-3 wyPSV ViewUI-sc-1ijittn-6 NvLey
+    #- parse_store only once.
+    def parse_home_page(self, response, i):
         self.parse_store(response)
         yield {
             'nome': self.store_attributes[0],
@@ -31,20 +36,20 @@ class ShoptimeSpider(scrapy.Spider):
         }
 
         processed_iphones = 0
-        #another way of selecting iphone_divs: response.css('main div div.middle-area__WrapperRight-sc-1k81b14-0 div:nth-child(3) div div a')
-        iphone_divs = response.css('main div div.middle-area__WrapperRight-sc-1k81b14-0 div.product-grid-new-list__GridItem-sc-1suhvr9-1 div div.src__Wrapper-sc-1wgxjb2-0')
+
+        iphone_divs = response.css('.product-grid-item.ProductGrid__GridColumn-sc-49j2r8-0 div div a.Link-bwhjk3-2')
         
         time.sleep(2)
 
         for iphone_div in iphone_divs:
-            if iphone_div.css('a.outOfStockCardList__Wrapper-sc-1ghgij6-0'): #o iphone nao se encontra no estoque, e, portanto, nao sera parseado.
+            if iphone_div.css('.UnavailableMessage-bwhjk3-16'): #o iphone nao se encontra no estoque, e, portanto, nao sera parseado.
                 continue
             
-            iphone_rel_link = iphone_div.css('a::attr(href)').get()
+            iphone_rel_link = iphone_div.css('::attr(href)').get()
             iphone_abs_link = response.urljoin(iphone_rel_link)
-            preco_avista, preco_aprazo = iphone_div.css('div.price-info__ContainerPriceInstalmentCash-sc-1td1088-2 span')
-            preco_avista = preco_avista.css('::text').get()
-            preco_aprazo = preco_aprazo.css('::text').get()
+            precos = iphone_div.css('section div.Info-bwhjk3-5 span::text').getall()
+            preco_avista = precos[-2]
+            preco_aprazo = precos[-1]
 
             time.sleep(2)
 
@@ -53,16 +58,16 @@ class ShoptimeSpider(scrapy.Spider):
             processed_iphones += 1
             if processed_iphones >= self.maximum_iphones_to_process:
                 break
+        
+        next_page_link = self.generate_ith_home_page_link(i+1)
+        yield scrapy.Request(next_page_link, headers=self.headers, callback=self.parse_home_page, cb_kwargs=dict(i=i+1))
 
 
     def parse_store(self, response):
         info_string = response.css('address::text').get()
         info = info_string.split(' / ')
-        #phone_string = response.css('.footer-item__Link-cgexy7-1.bwqVtN::text')[0].get()
-        #phone = phone_string.split(' ')
-        #phone = phone[1]
-        phone = "4003-4848"
-        self.store_attributes =  [info[0], info[3], phone, 'americanas.png']
+        phone = "4003-9898"
+        self.store_attributes =  ["shoptime", info[3], phone, 'shoptime.png']
 
 
     def parse_iphone_page(self, response, preco_avista, preco_aprazo):
