@@ -14,33 +14,30 @@ class ShoptimeSpider(scrapy.Spider):
         "Referer": "http://www.google.com/",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"
     }
-    maximum_iphones_to_process = 20
+    maximum_home_pages_to_process = 2
     
     def generate_ith_home_page_link(self, i):
         return f'https://www.shoptime.com.br/categoria/celulares-e-smartphones/smartphone/iphone/g/tipo-de-produto-Iphone/pagina-{i}?ordenacao=relevance&origem=blanca'
 
     def start_requests(self):
         url = self.generate_ith_home_page_link(1)
-        yield scrapy.Request(url=url, headers=self.headers, callback=self.parse_home_page, cb_kwargs=dict(i=1))
+        yield scrapy.Request(url=url, headers=self.headers, callback=self.parse_home_page, cb_kwargs=dict(ith_page=1))
     
-    # to do:
-    #- EmptyPage__Container-sc-1u8xkxt-3 wyPSV ViewUI-sc-1ijittn-6 NvLey
-    #- parse_store only once.
-    def parse_home_page(self, response, i):
-        self.parse_store(response)
-        yield {
-            'nome': self.store_attributes[0],
-            'endereco': self.store_attributes[1],
-            'telefone': self.store_attributes[2],
-            'nome_logo': self.store_attributes[3]
-        }
 
-        processed_iphones = 0
-
+    def parse_home_page(self, response, ith_page):
         iphone_divs = response.css('.product-grid-item.ProductGrid__GridColumn-sc-49j2r8-0 div div a.Link-bwhjk3-2')
-        
-        time.sleep(2)
+        if not iphone_divs:
+            return 
+        if ith_page == 1:
+            self.parse_store(response)
+            yield {
+                'nome': self.store_attributes[0],
+                'endereco': self.store_attributes[1],
+                'telefone': self.store_attributes[2],
+                'nome_logo': self.store_attributes[3]
+            }
 
+        time.sleep(2)
         for iphone_div in iphone_divs:
             if iphone_div.css('.UnavailableMessage-bwhjk3-16'): #o iphone nao se encontra no estoque, e, portanto, nao sera parseado.
                 continue
@@ -52,15 +49,12 @@ class ShoptimeSpider(scrapy.Spider):
             preco_aprazo = precos[-1]
 
             time.sleep(2)
-
             yield scrapy.Request(iphone_abs_link, headers=self.headers, callback=self.parse_iphone_page, cb_kwargs=dict(preco_avista=preco_avista, preco_aprazo=preco_aprazo))
             
-            processed_iphones += 1
-            if processed_iphones >= self.maximum_iphones_to_process:
-                break
         
-        next_page_link = self.generate_ith_home_page_link(i+1)
-        yield scrapy.Request(next_page_link, headers=self.headers, callback=self.parse_home_page, cb_kwargs=dict(i=i+1))
+        if ith_page < self.maximum_home_pages_to_process:
+            next_page_link = self.generate_ith_home_page_link(ith_page+1)
+            yield scrapy.Request(next_page_link, headers=self.headers, callback=self.parse_home_page, cb_kwargs=dict(ith_page=ith_page+1))
 
 
     def parse_store(self, response):
