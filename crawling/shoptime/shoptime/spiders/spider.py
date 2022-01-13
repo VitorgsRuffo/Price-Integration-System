@@ -14,7 +14,7 @@ class ShoptimeSpider(scrapy.Spider):
         "Referer": "http://www.google.com/",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36"
     }
-    maximum_home_pages_to_process = 2
+    maximum_home_pages_to_process = 1
     
     def generate_ith_home_page_link(self, i):
         return f'https://www.shoptime.com.br/categoria/celulares-e-smartphones/smartphone/iphone/g/tipo-de-produto-Iphone/pagina-{i}?ordenacao=relevance&origem=blanca'
@@ -91,8 +91,8 @@ class ShoptimeSpider(scrapy.Spider):
             'cod': '',
             'loja_nome': self.store_attributes[0],
             'link_iphone': response.url, 
-            'link_imagem': response.css('.main-image__Container-sc-1i1hq2n-1.iCNHlx div picture img::attr(src)').get(), 
-            'titulo': response.css('.product-title__Title-sc-1hlrxcw-0.jyetLr::text').get(), 
+            'link_imagem': response.css('.src__Container-sc-1a23x5b-3 picture img::attr(src)').get(), 
+            'titulo': response.css('.src__Title-sc-79cth1-0::text').get(), 
             'cor': '', 
             'preco_avista': preco_avista, 
             'preco_aprazo': preco_aprazo, 
@@ -103,7 +103,7 @@ class ShoptimeSpider(scrapy.Spider):
             'mem_ram': '', 
         }
 
-        attributes_table = response.css('table.src__SpecsCell-sc-70o4ee-5.gYhGqJ tbody tr')
+        attributes_table = response.css('table tbody tr')
         for row in attributes_table:
             attribute_name, attribute_value = row.css('td::text').getall()
             try:
@@ -116,15 +116,15 @@ class ShoptimeSpider(scrapy.Spider):
 
 
     def parse_ratings(self, response, iphone_cod):
-        rating_divs = response.css('.review__Wrapper-sc-18mpb23-1')
+        rating_divs = response.css('.review__Wrapper-l45my2-1')
         ratings_amount = len(rating_divs)
         ratings = [dict() for j in range(0, ratings_amount)]
         i = 0
         for rating_div in rating_divs:
-            rating = rating_div.css('div.review__WrapperReview-sc-18mpb23-2')
+            rating = rating_div.css('.review__WrapperReview-l45my2-2') 
             ratings[i]['titulo'] = rating.css('h4::text').get()
             ratings[i]['descricao'] = rating.css('span::text').get()
-            rating_meta = rating.css('div.review__User-sc-18mpb23-5::text').getall()
+            rating_meta = rating.css('div.review__User-l45my2-5::text').getall()
             ratings[i]['data'] = rating_meta[-1] 
             if rating_meta[0] != ' em ':
                 ratings[i]['avaliador_nome'] = rating_meta[0]
@@ -142,27 +142,3 @@ class ShoptimeSpider(scrapy.Spider):
             ratings[i]['loja_nome'] = self.store_attributes[0]
             i += 1
         return ratings
-
-
-    def parse_doubts(self, response, iphone_cod):
-        doubt_divs = response.css('.question__Wrapper-p6e9ij-0')
-        doubts_amount = len(doubt_divs)
-        doubts = [dict() for j in range(0, doubts_amount)]
-        i = 0
-        for doubt_div in doubt_divs:
-            doubt = doubt_div.css('div.question__QuestionAndAnswer-p6e9ij-1')
-            doubts[i]['descricao'] = doubt.css('div div.question__QuestionText-p6e9ij-2 p::text').get()
-            doubt_meta = doubt.css('div p.question__Owner-p6e9ij-3::text').getall()
-            doubts[i]['data_duvida'] = doubt_meta[3] 
-            doubts[i]['pessoa_nome'] = doubt_meta[1]
-            doubts[i]['resposta'] = doubt.css('p.answer-box__Answer-y7vmri-1 span::text').get()
-            doubts[i]['data_resposta'] = doubt.css('span.answer-box__AnswerCreatedAt-y7vmri-2::text').get()
-            
-            likes_deslikes = doubt_div.css('span.feedback__Count-sc-1hrd1kk-8::text').getall()
-            doubts[i]['likes'] = likes_deslikes[1]
-            doubts[i]['deslikes'] = likes_deslikes[4]
-
-            doubts[i]['iphone_cod'] = iphone_cod
-            doubts[i]['loja_nome'] = self.store_attributes[0]
-            i += 1
-        return doubts
