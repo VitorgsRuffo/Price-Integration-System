@@ -1,3 +1,5 @@
+from ast import Yield
+from cmath import inf
 import scrapy
 import time
 
@@ -54,49 +56,24 @@ class MagaluSpider(scrapy.Spider):
 
         
     def parse_iphone_page(self, response):
-        iphone_infos = self.parse_iphone(response)
-        rating_infos = self.parse_ratings(response)
+        iphone = self.parse_iphone(response)
+        ratings = self.parse_ratings(response)
 
         yield {
-
-            'iphone' : {
-                'cod': iphone_infos['cod'],
-                'nome_loja': iphone_infos['nome_loja'],
-                'link_iphone': iphone_infos['link_iphone'],
-                'link_imagem': iphone_infos['link_imagem'],
-                'titulo': iphone_infos['titulo'],
-                'preco_avista': iphone_infos['preco_avista'],
-                'preco_aprazo': iphone_infos['preco_aprazo'],
-                'cor': iphone_infos['cor'],
-                'tam_tela': iphone_infos['tam_tela'],
-                'resolucao_cam_front': iphone_infos['resolucao_cam_front'],
-                'resolucao_cam_tras': iphone_infos['resolucao_cam_tras'],
-                'mem_int': iphone_infos['mem_int']
-            },
-        
-            'avaliacao' : {
-                'titulo' : rating_infos['titulo'],
-                'descricao' : rating_infos['descricao'],
-                'data' : rating_infos['data'],
-                'avaliador_nome' : rating_infos['avaliador_nome'],
-                'likes' : rating_infos['likes'],
-                'deslikes' : rating_infos['deslikes'],
-                'nota' : rating_infos['nota'],
-                'iphone_cod': iphone_infos['cod'],
-                'nome_loja' : iphone_infos['nome_loja']
-            }
+            'iphone' : iphone,
+            'avaliacoes': ratings
         }
     
     
     def parse_iphone(self, response):
         iphone_infos = {}
 
-        iphone_infos['cod'] = response.css('.header-product__code::text').get()
-        iphone_infos['nome_loja'] = response.css('.container-left-top-header a::text').get()
-        iphone_infos['link_iphone'] = response.url
-        iphone_infos['link_imagem'] = response.css('.showcase-product__container-img a img::attr(src)').get()
-        iphone_infos['titulo'] = response.css('.header-product__title::text').get()
-        iphone_infos['preco_avista'] = response.css('.price-template__text::text').get()
+        #iphone_infos['cod'] = response.css('.header-product__code::text').get()
+        #iphone_infos['nome_loja'] = response.css('.container-left-top-header a::text').get()
+        #iphone_infos['link_iphone'] = response.url
+        #iphone_infos['link_imagem'] = response.css('.showcase-product__container-img a img::attr(src)').get()
+        #iphone_infos['titulo'] = response.css('.header-product__title::text').get()
+        #iphone_infos['preco_avista'] = response.css('.price-template__text::text').get()
         
         try:
             iphone_infos['preco_aprazo'] = (response.css('.price-template::text')[2].get())
@@ -111,29 +88,79 @@ class MagaluSpider(scrapy.Spider):
         iphone_infos['resolucao_cam_tras'] = self.parseTable(table, "Resolução da câmera traseira")
         iphone_infos['mem_int'] = self.parseTable(table, "Memória interna")
 
-        return iphone_infos
+        table_attributes_mapping = {
+            'Código': 'cod',
+            'Cor': 'cor',
+            'Tamanho do Display': 'tam_tela',
+            'Câmera Frontal': 'resolucao_cam_front',
+            'Câmera Traseira': 'resolucao_cam_tras',
+            'Memória Interna': 'mem_int',
+            'Memória RAM': 'mem_ram'
+        }
+
+        iphone = {
+            'cod': response.css('.header-product__code::text').get(),
+            'nome_loja': response.css('.container-left-top-header a::text').get(),
+            'link_iphone': response.url,
+            'link_imagem': response.css('.showcase-product__container-img a img::attr(src)').get(),
+            'titulo': response.css('.header-product__title::text').get(),
+            'preco_avista': response.css('.price-template__text::text').get(),
+            'preco_aprazo': iphone_infos['preco_aprazo'],
+            'cor': iphone_infos['cor'],
+            'tam_tela': iphone_infos['tam_tela'],
+            'resolucao_cam_front': iphone_infos['resolucao_cam_front'],
+            'resolucao_cam_tras': iphone_infos['resolucao_cam_tras'],
+            'mem_int': iphone_infos['mem_int']
+        }
+
+        #attributes_table = response.css('table.src__SpecsCell-sc-70o4ee-5.gYhGqJ tbody tr')
+        #for row in attributes_table:
+        #    attribute_name, attribute_value = row.css('td::text').getall()
+        #    try:
+        #        mapped_attribute_name = table_attributes_mapping[attribute_name]
+        #    except:
+        #        continue
+        #    iphone[mapped_attribute_name] = attribute_value
+
+        return iphone
 
 
     def parse_ratings(self, response):
-        rating_infos = {}
+        ratings = []
 
         for rating in response.css('.wrapper-review__comment'):
-            rating_infos['titulo'] = rating.css('.product-review__text-content--title::text').get()
-            rating_infos['descricao'] = rating.css('.product-review__post .product-review__text-content::text').get()
-            rating_infos['data'] = None
-            rating_infos['avaliador_nome'] = rating.css('.product-review__text-box .product-review__text-content::text').get()
-            rating_infos['likes'] = self.get_likes_deslikes(rating.css('.product-review__text-highlight.product-review__spacing::text')[0].getall())
-            rating_infos['deslikes'] = self.get_likes_deslikes(rating.css('.product-review__text-highlight.product-review__spacing::text')[1].getall())
-            rating_infos['nota'] = self.get_nota(rating.css('.rating-percent__small-star.product-review__post-stars .rating-percent__numbers::text').get())
-            rating_infos['nome_loja'] = rating.css('.container-left-top-header a::text').get()
-
-        return rating_infos
+            
+            avaliacao = {
+                'titulo' : rating.css('.product-review__text-content--title::text').get(),
+                'descricao' : rating.css('.product-review__post .product-review__text-content::text').get(),
+                'data' : 'None',
+                'avaliador_nome' : rating.css('.product-review__text-box .product-review__text-content::text').get(),
+                'likes' : self.get_likes_deslikes(rating.css('.product-review__text-highlight.product-review__spacing::text')[0].getall()),
+                'deslikes' : self.get_likes_deslikes(rating.css('.product-review__text-highlight.product-review__spacing::text')[1].getall()),
+                'nota' : self.get_nota(rating.css('.rating-percent__small-star.product-review__post-stars .rating-percent__numbers::text').get()),
+                'iphone_cod': response.css('.header-product__code::text').get(),
+                'nome_loja' : rating.css('.container-left-top-header a::text').get()
+            }
+            
+            ratings.append(avaliacao)
+            
+        return ratings
 
 
     def parseTable(self, table, key):
+        information = None
+
         for line in table:
             if line.css('.description__information-left::text').get() == key :
-                return line.css('.description__information-box-right::text').get().strip()
+                information = line.css('.description__information-box-right::text').get().strip()
+                break
+
+        if information is None:
+            for line in table:
+                if line.css('.description__information-box-left::text').get() == key :
+                    information = line.css('.description__information-box-right::text').get().strip()
+        
+        return information
 
 
     def get_likes_deslikes(self, like_crawled):
@@ -141,6 +168,7 @@ class MagaluSpider(scrapy.Spider):
         like_crawled = like_crawled.replace('(','')
         like_crawled = like_crawled.replace(')','')
         return like_crawled[0]
+
 
     def get_nota(self, nota_crawled):
         nota_crawled = nota_crawled.replace('(','')
