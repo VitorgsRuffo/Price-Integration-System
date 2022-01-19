@@ -2,7 +2,7 @@ from ast import Yield
 from cmath import inf
 import scrapy
 import time
-
+''
 class MagaluSpider(scrapy.Spider):
     name = "magalu"
     
@@ -23,7 +23,7 @@ class MagaluSpider(scrapy.Spider):
 
         current_page = response.css('.css-1a9p55p.css-197gxuo a::text').get()
 
-        # Salvando as informacoes da loja somente uma vez (Quando na pagina 1)
+        # Salvando as informacoes da loja somente uma vez (Quando estiver na pagina 1)
         if current_page == '1':
             store_infos = self.parse_store(response)
             yield {
@@ -67,36 +67,17 @@ class MagaluSpider(scrapy.Spider):
     
     def parse_iphone(self, response):
         iphone_infos = {}
-
-        #iphone_infos['cod'] = response.css('.header-product__code::text').get()
-        #iphone_infos['nome_loja'] = response.css('.container-left-top-header a::text').get()
-        #iphone_infos['link_iphone'] = response.url
-        #iphone_infos['link_imagem'] = response.css('.showcase-product__container-img a img::attr(src)').get()
-        #iphone_infos['titulo'] = response.css('.header-product__title::text').get()
-        #iphone_infos['preco_avista'] = response.css('.price-template__text::text').get()
         
         try:
             iphone_infos['preco_aprazo'] = (response.css('.price-template::text')[2].get())
         except:
             iphone_infos['preco_aprazo'] = (response.css('.price-template::text')[1].get())
         
-        table = response.css('.description__container-text table')
-        
-        iphone_infos['cor'] = self.parseTable(table, "Cor")
-        iphone_infos['tam_tela'] = self.parseTable(table, "Tamanho da tela")
-        iphone_infos['resolucao_cam_front'] = self.parseTable(table, "Resolução da câmera frontal")
-        iphone_infos['resolucao_cam_tras'] = self.parseTable(table, "Resolução da câmera traseira")
-        iphone_infos['mem_int'] = self.parseTable(table, "Memória interna")
-
-        table_attributes_mapping = {
-            'Código': 'cod',
-            'Cor': 'cor',
-            'Tamanho do Display': 'tam_tela',
-            'Câmera Frontal': 'resolucao_cam_front',
-            'Câmera Traseira': 'resolucao_cam_tras',
-            'Memória Interna': 'mem_int',
-            'Memória RAM': 'mem_ram'
-        }
+        iphone_infos['cor'] = self.parseTable(response, "Cor")
+        iphone_infos['tam_tela'] = self.parseTable(response, "Tamanho da tela")
+        iphone_infos['resolucao_cam_front'] = self.parseTable(response, "Resolução da câmera frontal")
+        iphone_infos['resolucao_cam_tras'] = self.parseTable(response, "Resolução da câmera traseira")
+        iphone_infos['mem_int'] = self.parseTable(response, "Memória interna")
 
         iphone = {
             'cod': response.css('.header-product__code::text').get(),
@@ -112,15 +93,6 @@ class MagaluSpider(scrapy.Spider):
             'resolucao_cam_tras': iphone_infos['resolucao_cam_tras'],
             'mem_int': iphone_infos['mem_int']
         }
-
-        #attributes_table = response.css('table.src__SpecsCell-sc-70o4ee-5.gYhGqJ tbody tr')
-        #for row in attributes_table:
-        #    attribute_name, attribute_value = row.css('td::text').getall()
-        #    try:
-        #        mapped_attribute_name = table_attributes_mapping[attribute_name]
-        #    except:
-        #        continue
-        #    iphone[mapped_attribute_name] = attribute_value
 
         return iphone
 
@@ -139,7 +111,7 @@ class MagaluSpider(scrapy.Spider):
                 'deslikes' : self.get_likes_deslikes(rating.css('.product-review__text-highlight.product-review__spacing::text')[1].getall()),
                 'nota' : self.get_nota(rating.css('.rating-percent__small-star.product-review__post-stars .rating-percent__numbers::text').get()),
                 'iphone_cod': response.css('.header-product__code::text').get(),
-                'nome_loja' : rating.css('.container-left-top-header a::text').get()
+                'nome_loja' : response.css('.container-left-top-header a::text').get()
             }
             
             ratings.append(avaliacao)
@@ -147,18 +119,41 @@ class MagaluSpider(scrapy.Spider):
         return ratings
 
 
-    def parseTable(self, table, key):
+    def parseTable(self, response, key):
         information = None
+        table = response.css('.description__container-text table')
 
+        # No site há tres estruturas diferentes de tabelas, sendo assim é feito o tratamento para cada uma delas
+
+        # table 1
         for line in table:
-            if line.css('.description__information-left::text').get() == key :
-                information = line.css('.description__information-box-right::text').get().strip()
-                break
-
+            try:
+                if line.css('.description__information-left::text').get().strip().lower() == key.lower() :
+                    information = line.css('.description__information-box-right::text').get().strip()
+                    break
+            except:
+                continue
+            
+        # table 2
         if information is None:
             for line in table:
-                if line.css('.description__information-box-left::text').get() == key :
-                    information = line.css('.description__information-box-right::text').get().strip()
+                try:
+                    if line.css('.description__information-box-left::text').get().strip().lower() == key.lower():
+                        information = line.css('.description__information-box-right::text').get().strip()
+                        break
+                except:
+                    continue
+        
+        # table 3
+        if information is None:
+            table = response.css('.description__container-text.description__box')
+            for line in table:
+                try:
+                    if line.css('.description__information-box-left::text').get().strip().lower() == key.lower():
+                        information = line.css('.description__information-box-right::text').get().strip()
+                        break
+                except:
+                    continue
         
         return information
 
