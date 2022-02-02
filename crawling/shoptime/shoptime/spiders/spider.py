@@ -1,12 +1,11 @@
 import scrapy
 import time
-#to do:
-#   - remover entidade duvida (DER, Relacional e SQL).
+from datetime import date
+import re
 
 
 class ShoptimeSpider(scrapy.Spider):
     name = "shoptime"
-    store_attributes = None
     headers = {
         "Accept": "test/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", 
         "Accept-Encoding": "br,gzip,deflate", 
@@ -31,10 +30,8 @@ class ShoptimeSpider(scrapy.Spider):
         if ith_page == 1:
             self.parse_store(response)
             yield {
-                'nome': self.store_attributes[0],
-                'endereco': self.store_attributes[1],
-                'telefone': self.store_attributes[2],
-                'nome_logo': self.store_attributes[3]
+                'loja': 'shoptime',
+                'data': str(date.today())
             }
 
         time.sleep(2)
@@ -57,29 +54,20 @@ class ShoptimeSpider(scrapy.Spider):
             yield scrapy.Request(next_page_link, headers=self.headers, callback=self.parse_home_page, cb_kwargs=dict(ith_page=ith_page+1))
 
 
-    def parse_store(self, response):
-        info_string = response.css('address::text').get()
-        info = info_string.split(' / ')
-        phone = "4003-9898"
-        self.store_attributes =  ["shoptime", info[3], phone, 'shoptime.png']
-
-
     def parse_iphone_page(self, response, preco_avista, preco_aprazo):
         iphone = self.parse_iphone(response, preco_avista, preco_aprazo)
-        ratings = self.parse_ratings(response, iphone['cod'])
-        #Não ha como selecionar as duvidas pois elas são renderizadas no client-side por algum script .js...
-        #doubts = self.parse_doubts(response, iphone['cod'])
+        if iphone is None:
+            return
+        ratings = self.parse_ratings(response)
         yield {
             'iphone': iphone,
             'avaliacoes': ratings
-            #'duvidas': doubts
         }
 
 
     def parse_iphone(self, response, preco_avista, preco_aprazo):
         table_attributes_mapping = {
-            'Código': 'cod',
-            'Cor': 'cor',
+            'Código': 'modelo-cod',
             'Tamanho do Display': 'tam_tela',
             'Câmera Frontal': 'resolucao_cam_front',
             'Câmera Traseira': 'resolucao_cam_tras',
@@ -87,20 +75,28 @@ class ShoptimeSpider(scrapy.Spider):
             'Memória RAM': 'mem_ram'
         }
 
+        titulo = response.css('.src__Title-sc-79cth1-0::text').get()
+        titulo = titulo.lower()
+        modelo_nome = re.search("iphone ..? (mini|pro max|pro|max|plus)?", titulo)
+        if(modelo_nome is None):
+            return None
+        modelo_nome = modelo_nome.group()
+        
         iphone = {
-            'cod': '',
-            'loja_nome': self.store_attributes[0],
+            'mem_int': '', 
+            'modelo-nome' : modelo_nome,
+            'modelo-cod': '',
             'link_iphone': response.url, 
-            'link_imagem': response.css('.src__Container-sc-1a23x5b-3 picture img::attr(src)').get(), 
-            'titulo': response.css('.src__Title-sc-79cth1-0::text').get(), 
-            'cor': '', 
-            'preco_avista': preco_avista, 
-            'preco_aprazo': preco_aprazo, 
+            'link_imagem': response.css('.src__Container-sc-1a23x5b-3 picture img::attr(src)').get(),
             'tam_tela': '', 
             'resolucao_cam_front': '', 
             'resolucao_cam_tras': '', 
-            'mem_int': '', 
             'mem_ram': '', 
+            'titulo': response.css('.src__Title-sc-79cth1-0::text').get(), 
+            'preco_avista': preco_avista, 
+            'preco_aprazo': preco_aprazo, 
+            'media_nota': response.css('.header__RatingValue-sc-1o3gjvp-9::text').get(),
+            'quantidade_avaliacoes': response.css('.header__ReviewsValue-sc-1o3gjvp-8::text').getall()[1]
         }
 
         attributes_table = response.css('table tbody tr')
@@ -115,7 +111,7 @@ class ShoptimeSpider(scrapy.Spider):
         return iphone
 
 
-    def parse_ratings(self, response, iphone_cod):
+    def parse_ratings(self, response):
         rating_divs = response.css('.review__Wrapper-l45my2-1')
         ratings_amount = len(rating_divs)
         ratings = [dict() for j in range(0, ratings_amount)]
@@ -137,8 +133,5 @@ class ShoptimeSpider(scrapy.Spider):
             #ratings[i]['likes'] = likes_deslikes[1] #vem sempre zerado, porque?
             #ratings[i]['deslikes'] = likes_deslikes[4]  #vem sempre zerado, porque?
             #ratings[i]['nota'] = ' ' #Ainda nao foi encontrado um jeito de selecionar a nota...
-
-            ratings[i]['iphone_cod'] = iphone_cod
-            ratings[i]['loja_nome'] = self.store_attributes[0]
             i += 1
         return ratings

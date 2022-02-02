@@ -55,7 +55,7 @@ class AmericanasSpider(scrapy.Spider):
         iphone = self.parse_iphone(response, preco_avista, preco_aprazo)
         if iphone is None:
             return
-        ratings = self.parse_ratings(response, iphone['cod'])
+        ratings = self.parse_ratings(response)
         yield {
             'iphone': iphone,
             'avaliacoes': ratings
@@ -108,7 +108,7 @@ class AmericanasSpider(scrapy.Spider):
         return iphone
 
 
-    def parse_ratings(self, response, iphone_cod):
+    def parse_ratings(self, response):
         rating_divs = response.css('.review__Wrapper-sc-18mpb23-1')
         ratings_amount = len(rating_divs)
         ratings = [dict() for j in range(0, ratings_amount)]
