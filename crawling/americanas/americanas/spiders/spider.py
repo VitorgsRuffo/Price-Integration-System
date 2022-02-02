@@ -1,13 +1,11 @@
 import scrapy
 import time
-#to do:
-#   - remover entidade duvida (DER, Relacional e SQL).
-#   - shoptime...
+from datetime import date
+import re
 
 
 class AmericanasSpider(scrapy.Spider):
     name = "americanas"
-    store_attributes = None
     headers = {
         "Accept": "test/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8", 
         "Accept-Encoding": "br,gzip,deflate", 
@@ -23,12 +21,9 @@ class AmericanasSpider(scrapy.Spider):
 
 
     def parse_home_page(self, response):
-        self.parse_store(response)
         yield {
-            'nome': self.store_attributes[0],
-            'endereco': self.store_attributes[1],
-            'telefone': self.store_attributes[2],
-            'nome_logo': self.store_attributes[3]
+            'loja':'americanas',
+            'data': str(date.today())
         }
 
         processed_iphones = 0
@@ -56,32 +51,20 @@ class AmericanasSpider(scrapy.Spider):
                 break
 
 
-    def parse_store(self, response):
-        info_string = response.css('address::text').get()
-        info = info_string.split(' / ')
-        #phone_string = response.css('.footer-item__Link-cgexy7-1.bwqVtN::text')[0].get()
-        #phone = phone_string.split(' ')
-        #phone = phone[1]
-        phone = "4003-4848"
-        self.store_attributes =  [info[0], info[3], phone, 'americanas.png']
-
-
     def parse_iphone_page(self, response, preco_avista, preco_aprazo):
         iphone = self.parse_iphone(response, preco_avista, preco_aprazo)
+        if iphone is None:
+            return
         ratings = self.parse_ratings(response, iphone['cod'])
-        #Não ha como selecionar as duvidas pois elas são renderizadas no client-side por algum script .js...
-        #doubts = self.parse_doubts(response, iphone['cod'])
         yield {
             'iphone': iphone,
             'avaliacoes': ratings
-            #'duvidas': doubts
         }
 
 
     def parse_iphone(self, response, preco_avista, preco_aprazo):
         table_attributes_mapping = {
-            'Código': 'cod',
-            'Cor': 'cor',
+            'Código': 'modelo-cod',
             'Tamanho do Display': 'tam_tela',
             'Câmera Frontal': 'resolucao_cam_front',
             'Câmera Traseira': 'resolucao_cam_tras',
@@ -89,20 +72,28 @@ class AmericanasSpider(scrapy.Spider):
             'Memória RAM': 'mem_ram'
         }
 
+        titulo = response.css('.product-title__Title-sc-1hlrxcw-0.jyetLr::text').get()
+        titulo = titulo.lower()
+        modelo_nome = re.search("iphone ..? (mini|pro max|pro|max|plus)?", titulo)
+        if(modelo_nome is None):
+            return None
+        modelo_nome = modelo_nome.group()
+
         iphone = {
-            'cod': '',
-            'loja_nome': self.store_attributes[0],
+            'mem_int': '', 
+            'modelo-nome' : modelo_nome,
+            'modelo-cod': '',
             'link_iphone': response.url, 
             'link_imagem': response.css('.main-image__Container-sc-1i1hq2n-1.iCNHlx div picture img::attr(src)').get(), 
-            'titulo': response.css('.product-title__Title-sc-1hlrxcw-0.jyetLr::text').get(), 
-            'cor': '', 
-            'preco_avista': preco_avista, 
-            'preco_aprazo': preco_aprazo, 
             'tam_tela': '', 
             'resolucao_cam_front': '', 
             'resolucao_cam_tras': '', 
-            'mem_int': '', 
             'mem_ram': '', 
+            'titulo': titulo,
+            'preco_avista': preco_avista, 
+            'preco_aprazo': preco_aprazo, 
+            'media_nota': response.css('.header__RatingValue-sc-ibr017-9::text').get(),
+            'quantidade_avaliacoes': response.css('.header__ReviewsValue-sc-ibr017-8::text').getall()[1]
         }
 
         attributes_table = response.css('table.src__SpecsCell-sc-70o4ee-5.gYhGqJ tbody tr')
@@ -139,32 +130,5 @@ class AmericanasSpider(scrapy.Spider):
             #ratings[i]['likes'] = likes_deslikes[1] #vem sempre zerado, porque?
             #ratings[i]['deslikes'] = likes_deslikes[4]  #vem sempre zerado, porque?
             #ratings[i]['nota'] = ' ' #Ainda nao foi encontrado um jeito de selecionar a nota...
-
-            ratings[i]['iphone_cod'] = iphone_cod
-            ratings[i]['loja_nome'] = self.store_attributes[0]
             i += 1
         return ratings
-
-
-    def parse_doubts(self, response, iphone_cod):
-        doubt_divs = response.css('.question__Wrapper-p6e9ij-0')
-        doubts_amount = len(doubt_divs)
-        doubts = [dict() for j in range(0, doubts_amount)]
-        i = 0
-        for doubt_div in doubt_divs:
-            doubt = doubt_div.css('div.question__QuestionAndAnswer-p6e9ij-1')
-            doubts[i]['descricao'] = doubt.css('div div.question__QuestionText-p6e9ij-2 p::text').get()
-            doubt_meta = doubt.css('div p.question__Owner-p6e9ij-3::text').getall()
-            doubts[i]['data_duvida'] = doubt_meta[3] 
-            doubts[i]['pessoa_nome'] = doubt_meta[1]
-            doubts[i]['resposta'] = doubt.css('p.answer-box__Answer-y7vmri-1 span::text').get()
-            doubts[i]['data_resposta'] = doubt.css('span.answer-box__AnswerCreatedAt-y7vmri-2::text').get()
-            
-            likes_deslikes = doubt_div.css('span.feedback__Count-sc-1hrd1kk-8::text').getall()
-            doubts[i]['likes'] = likes_deslikes[1]
-            doubts[i]['deslikes'] = likes_deslikes[4]
-
-            doubts[i]['iphone_cod'] = iphone_cod
-            doubts[i]['loja_nome'] = self.store_attributes[0]
-            i += 1
-        return doubts
