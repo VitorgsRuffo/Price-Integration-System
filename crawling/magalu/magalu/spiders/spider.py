@@ -1,8 +1,10 @@
 from ast import Yield
 from cmath import inf
+from datetime import date
+from posixpath import split
+import re
 import scrapy
-import time
-''
+
 class MagaluSpider(scrapy.Spider):
     name = "magalu"
     
@@ -24,15 +26,10 @@ class MagaluSpider(scrapy.Spider):
         current_page = response.css('.css-1a9p55p.css-197gxuo a::text').get()
 
         # Salvando as informacoes da loja somente uma vez (Quando estiver na pagina 1)
-        if current_page == '1':
-            store_infos = self.parse_store(response)
+        if current_page == '1':            
             yield {
-                'loja' : {
-                    'nome': store_infos['nome_loja'],
-                    'endereco': store_infos['endereco'],
-                    'telefone': store_infos['telefone'],
-                    'nome_logo': store_infos['nome_logo']    
-                }
+                'loja' : 'magalu',
+                'data' : str(date.today())
             }
         
         for magalu in response.css('#showcase ul a::attr(href)'):
@@ -42,17 +39,6 @@ class MagaluSpider(scrapy.Spider):
         if next_page is not None:
             next_page = response.url[:-1] + next_page
             yield scrapy.Request(next_page, callback=self.parse_home_page)
-    
-
-    def parse_store(self, response):
-        store_infos = {}
-
-        store_infos['nome_loja'] = response.css('.container-left-top-header a::text').get()
-        store_infos['endereco'] = response.css('.bg-footer-address::text').get()
-        store_infos['telefone'] = response.css('.phone-buyphone::text').get()
-        store_infos['nome_logo'] = (store_infos['nome_loja']).replace(" ","").lower() + ".jpg"
-
-        return store_infos
 
         
     def parse_iphone_page(self, response):
@@ -73,25 +59,53 @@ class MagaluSpider(scrapy.Spider):
         except:
             iphone_infos['preco_aprazo'] = (response.css('.price-template::text')[1].get())
         
+        iphone_infos['mem_int'] = self.parseTable(response, "Memória interna")
         iphone_infos['cor'] = self.parseTable(response, "Cor")
         iphone_infos['tam_tela'] = self.parseTable(response, "Tamanho da tela")
         iphone_infos['resolucao_cam_front'] = self.parseTable(response, "Resolução da câmera frontal")
         iphone_infos['resolucao_cam_tras'] = self.parseTable(response, "Resolução da câmera traseira")
-        iphone_infos['mem_int'] = self.parseTable(response, "Memória interna")
+        iphone_infos['voltagem'] = self.parseTable(response, "Voltagem")
+
+
+        titulo = response.css('.header-product__title::text').get()
+        titulo = titulo.lower()
+        modelo_nome = re.search("iphone ..? (mini|pro max|pro|max|plus)?", titulo)
+        if(modelo_nome is None):
+            return None
+        modelo_nome = modelo_nome.group()
+
+        modelo_cod = response.css('.header-product__code::text').get()
+        if modelo_cod is not None:
+            modelo_cod = modelo_cod.split(' ')
+            modelo_cod = modelo_cod[1]
+
+        media_nota = response.css('.product-review__rating-average::text').get()
+        if media_nota is not None:
+            media_nota = media_nota.split(' ')
+            media_nota = media_nota[1]
+        
+        quantidade_avaliacoes = response.css('.product-review__rating-total::text').get()
+        if quantidade_avaliacoes is not None:
+            quantidade_avaliacoes = quantidade_avaliacoes.split(' ')
+            quantidade_avaliacoes = quantidade_avaliacoes[0]
 
         iphone = {
-            'cod': response.css('.header-product__code::text').get(),
-            'nome_loja': response.css('.container-left-top-header a::text').get(),
+            'mem_int': iphone_infos['mem_int'],
+            'modelo-nome' : modelo_nome,
+            'modelo-cod': modelo_cod,
             'link_iphone': response.url,
             'link_imagem': response.css('.showcase-product__container-img a img::attr(src)').get(),
-            'titulo': response.css('.header-product__title::text').get(),
-            'preco_avista': response.css('.price-template__text::text').get(),
-            'preco_aprazo': iphone_infos['preco_aprazo'],
-            'cor': iphone_infos['cor'],
             'tam_tela': iphone_infos['tam_tela'],
             'resolucao_cam_front': iphone_infos['resolucao_cam_front'],
             'resolucao_cam_tras': iphone_infos['resolucao_cam_tras'],
-            'mem_int': iphone_infos['mem_int']
+            'mem_ram': '', # site da magalu nao possui essa informacao
+            'titulo': response.css('.header-product__title::text').get(),
+            'preco_avista': response.css('.price-template__text::text').get(),
+            'preco_aprazo': iphone_infos['preco_aprazo'],
+            'voltagem': iphone_infos['mem_int'],
+            'media_nota': media_nota,
+            'quantidade_avaliacoes': quantidade_avaliacoes
+            #'cor': iphone_infos['cor'],
         }
 
         return iphone
@@ -110,8 +124,6 @@ class MagaluSpider(scrapy.Spider):
                 'likes' : self.get_likes_deslikes(rating.css('.product-review__text-highlight.product-review__spacing::text')[0].getall()),
                 'deslikes' : self.get_likes_deslikes(rating.css('.product-review__text-highlight.product-review__spacing::text')[1].getall()),
                 'nota' : self.get_nota(rating.css('.rating-percent__small-star.product-review__post-stars .rating-percent__numbers::text').get()),
-                'iphone_cod': response.css('.header-product__code::text').get(),
-                'nome_loja' : response.css('.container-left-top-header a::text').get()
             }
             
             ratings.append(avaliacao)
