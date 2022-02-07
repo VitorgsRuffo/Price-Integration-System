@@ -28,7 +28,6 @@ class ShoptimeSpider(scrapy.Spider):
         if not iphone_divs:
             return 
         if ith_page == 1:
-            self.parse_store(response)
             yield {
                 'loja': 'shoptime',
                 'data': str(date.today())
@@ -77,11 +76,16 @@ class ShoptimeSpider(scrapy.Spider):
 
         titulo = response.css('.src__Title-sc-79cth1-0::text').get()
         titulo = titulo.lower()
-        modelo_nome = re.search("iphone ..? (mini|pro max|pro|max|plus)?", titulo)
+        modelo_nome = re.search("iphone ..?( mini| pro max| pro| max| plus)?", titulo)
         if(modelo_nome is None):
             return None
         modelo_nome = modelo_nome.group()
         
+        try:
+            q_avaliacao = response.css('.header__ReviewsValue-sc-1o3gjvp-8::text').getall()[1]
+        except:
+            q_avaliacao = 0
+
         iphone = {
             'mem_int': '', 
             'modelo-nome' : modelo_nome,
@@ -96,7 +100,7 @@ class ShoptimeSpider(scrapy.Spider):
             'preco_avista': preco_avista, 
             'preco_aprazo': preco_aprazo, 
             'media_nota': response.css('.header__RatingValue-sc-1o3gjvp-9::text').get(),
-            'quantidade_avaliacoes': response.css('.header__ReviewsValue-sc-1o3gjvp-8::text').getall()[1]
+            'quantidade_avaliacoes': q_avaliacao
         }
 
         attributes_table = response.css('table tbody tr')
@@ -112,26 +116,23 @@ class ShoptimeSpider(scrapy.Spider):
 
 
     def parse_ratings(self, response):
-        rating_divs = response.css('.review__Wrapper-l45my2-1')
+        rating_divs = response.css('.review__WrapperReview-sc-l45my2-2')
         ratings_amount = len(rating_divs)
         ratings = [dict() for j in range(0, ratings_amount)]
         i = 0
         for rating_div in rating_divs:
-            rating = rating_div.css('.review__WrapperReview-l45my2-2') 
-            ratings[i]['titulo'] = rating.css('h4::text').get()
-            ratings[i]['descricao'] = rating.css('span::text').get()
-            rating_meta = rating.css('div.review__User-l45my2-5::text').getall()
+            titulo = rating_div.css('h4::text').get()
+            descricao = rating_div.css('span::text').get()
+            if titulo is None and descricao is None:
+                continue
+            ratings[i]['titulo'] = titulo
+            ratings[i]['descricao'] = descricao
+            rating_meta = rating_div.css('.review__User-sc-l45my2-5::text').getall()
             ratings[i]['data'] = rating_meta[-1] 
             if rating_meta[0] != ' em ':
                 ratings[i]['avaliador_nome'] = rating_meta[0]
             else:
                 ratings[i]['avaliador_nome'] = ' '
 
-            #Atributos que ainda não foram possiveis de serem selecionados...
-            #likes_deslikes = rating_div.css('button.review__ActionRecommentation-sc-18mpb23-9')
-            #likes_deslikes = likes_deslikes.css('span::text').getall()
-            #ratings[i]['likes'] = likes_deslikes[1] #vem sempre zerado, porque?
-            #ratings[i]['deslikes'] = likes_deslikes[4]  #vem sempre zerado, porque?
-            #ratings[i]['nota'] = ' ' #Ainda nao foi encontrado um jeito de selecionar a nota...
             i += 1
         return ratings
