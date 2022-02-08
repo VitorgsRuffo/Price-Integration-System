@@ -1,3 +1,7 @@
+# Git Ignore
+
+*.txt
+*.pyc
 __pycache__/
 *.json
 *.jl
