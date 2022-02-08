@@ -2,3 +2,7 @@
 
 *.txt
 *.pyc
+__pycache__/
+*.json
+*.jl
+/src/pes/target/
