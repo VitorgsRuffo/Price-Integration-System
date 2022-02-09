@@ -81,7 +81,13 @@ public abstract class DAOFactory implements AutoCloseable {
         }
     }
 
-    //public abstract UserDAO getUserDAO();
+    public abstract DAO getIphoneDAO();
+    public abstract DAO getIphoneVersionDAO();
+    public abstract DAO getRatingDAO();
+    public abstract DAO getScriptDAO();
+    public abstract DAO getScriptExecutionDAO();
+    public abstract DAO getScriptVersionDAO();
+    public abstract DAO getStoreDAO();
 
     @Override
     public void close() throws SQLException {

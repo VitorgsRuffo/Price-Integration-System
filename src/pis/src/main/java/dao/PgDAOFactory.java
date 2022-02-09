@@ -15,10 +15,39 @@ public class PgDAOFactory extends DAOFactory {
     public PgDAOFactory(Connection connection) {
         this.connection = connection;
     }
-
-//    @Override
-//    public UserDAO getUserDAO() {
-//        return new PgUserDAO(this.connection);
-//    }
     
+    @Override
+    public DAO getIphoneDAO() {
+        return new PgIPhoneDAO(this.connection);
+    }
+
+    @Override
+    public DAO getIphoneVersionDAO() {
+        return new PgIPhoneVersionDAO(this.connection);
+    }
+
+    @Override
+    public DAO getRatingDAO() {
+        return new PgRatingDAO(this.connection);
+    }
+
+    @Override
+    public DAO getScriptDAO() {
+        return new PgScriptDAO(this.connection);
+    }
+
+    @Override
+    public DAO getScriptExecutionDAO() {
+        return new PgScriptExecutionDAO(this.connection);
+    }
+
+    @Override
+    public DAO getScriptVersionDAO() {
+        return new PgScriptVersionDAO(this.connection);
+    }
+
+    @Override
+    public DAO getStoreDAO() {
+        return new PgStoreDAO(this.connection);
+    }
 }
