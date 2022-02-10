@@ -5,21 +5,19 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@include file="/view/templates/header.jsp"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <%@include file="/view/include/head.jsp"%>
+        <%@include file="/view/include/head.jsp"%>   
         <title>Price Integration System</title>
     </head>
     
     <body>
-        <%@include file="/view/templates/header.jsp"%>
-        <h2>Teste</h2>
-        
-        
-        
-        
-        <%@include file="/view/templates/footer.jsp"%>
+        <h2>Hello World</h2>
     </body>
+    
 </html>
+
+<%@include file="/view/templates/footer.jsp"%>

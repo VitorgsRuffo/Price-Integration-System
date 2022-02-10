@@ -5,10 +5,11 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@include file="/view/include/head.jsp"%>
+
 <!DOCTYPE html>
 <html>
     <head>
-        <%@include file="/view/include/head.jsp"%>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="./styles/header.css" />
     </head>

@@ -5,11 +5,12 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@include file="/view/include/head.jsp"%>
+
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <%@include file="/view/include/head.jsp"%>
         <link rel="stylesheet" href="./styles/footer.css" />
     </head>
     
@@ -29,7 +30,7 @@
                 </div>
             </div>    
         </div>
-        
-        <%@include file="/view/include/scripts.jsp"%>
     </body>
+    
+    <%@include file="/view/include/scripts.jsp"%>
 </html>
