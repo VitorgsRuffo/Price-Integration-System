@@ -19,7 +19,7 @@ public class PgScriptExecutionDAO implements DAO {
 
     @Override
     public void create(Object t) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
     }
 
     @Override
@@ -42,4 +42,7 @@ public class PgScriptExecutionDAO implements DAO {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
+    public List allByKey(int storeName, int scriptVersionNum) throws SQLException {
+        
+    }
 }

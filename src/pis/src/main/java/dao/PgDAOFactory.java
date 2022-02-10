@@ -42,11 +42,6 @@ public class PgDAOFactory extends DAOFactory {
     }
 
     @Override
-    public DAO getScriptVersionDAO() {
-        return new PgScriptVersionDAO(this.connection);
-    }
-
-    @Override
     public DAO getStoreDAO() {
         return new PgStoreDAO(this.connection);
     }

@@ -4,32 +4,36 @@
  */
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 /**
  *
  * @author vitor
  */
 public class Store {
+    private int id;
     private String name;
-    private String cnpj;
     private String address;
     private String phone;
     private String logoPath;
-    private int scriptId;
+    private List<Script> scripts = new ArrayList<Script>();
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+ 
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getCnpj() {
-        return cnpj;
-    }
-
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
     }
 
     public String getAddress() {
@@ -54,5 +58,13 @@ public class Store {
 
     public void setLogoPath(String logoPath) {
         this.logoPath = logoPath;
+    }
+
+    public List<Script> getScripts() {
+        return scripts;
+    }
+
+    public void setScripts(List<Script> scripts) {
+        this.scripts = scripts;
     }
 }

@@ -86,7 +86,6 @@ public abstract class DAOFactory implements AutoCloseable {
     public abstract DAO getRatingDAO();
     public abstract DAO getScriptDAO();
     public abstract DAO getScriptExecutionDAO();
-    public abstract DAO getScriptVersionDAO();
     public abstract DAO getStoreDAO();
 
     @Override

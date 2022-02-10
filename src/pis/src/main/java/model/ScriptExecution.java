@@ -12,25 +12,25 @@ import java.sql.Time;
  * @author vitor
  */
 public class ScriptExecution {
-    private int scriptId;
-    private int scriptNum;
+    private int storeName;
+    private int scriptVersionNum;
     private Date date;
     private Time time;
 
-    public int getScriptId() {
-        return scriptId;
+    public int getStoreName() {
+        return storeName;
     }
 
-    public void setScriptId(int scriptId) {
-        this.scriptId = scriptId;
+    public void setStoreName(int storeName) {
+        this.storeName = storeName;
     }
 
-    public int getScriptNum() {
-        return scriptNum;
+    public int getScriptVersionNum() {
+        return scriptVersionNum;
     }
 
-    public void setScriptNum(int scriptNum) {
-        this.scriptNum = scriptNum;
+    public void setScriptVersionNum(int scriptVersionNum) {
+        this.scriptVersionNum = scriptVersionNum;
     }
 
     public Date getDate() {
