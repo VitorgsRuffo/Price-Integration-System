@@ -168,5 +168,4 @@ public class PgStoreDAO implements DAO {
 
         return stores;
     }
-    
 }
