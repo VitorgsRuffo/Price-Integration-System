@@ -12,19 +12,19 @@ import java.sql.Time;
  * @author vitor
  */
 public class ScriptExecution {
-    private int storeName;
+    private int storeId;
     private int scriptVersionNum;
     private Date date;
     private Time time;
 
-    public int getStoreName() {
-        return storeName;
+    public int getStoreId() {
+        return storeId;
     }
 
-    public void setStoreName(int storeName) {
-        this.storeName = storeName;
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
     }
-
+    
     public int getScriptVersionNum() {
         return scriptVersionNum;
     }

@@ -35,7 +35,7 @@ public class PgStoreDAO implements DAO {
     private static final String READ_WITH_SCRIPT_QUERY = 
                                 "SELECT * " +
                                 "FROM store st JOIN scripts sc ON (st.id = sc.id) " +
-                                "WHERE st.id = ?" +
+                                "WHERE st.id = ? " +
                                 "ORDER BY sc.version_num DESC;";
 
     
@@ -44,7 +44,7 @@ public class PgStoreDAO implements DAO {
                                 "WHERE id = ?;";
     
     private static final String ALL_QUERY =
-                                "SELECT id" +
+                                "SELECT id " +
                                 "FROM store " +
                                 "ORDER BY id;";    
         
