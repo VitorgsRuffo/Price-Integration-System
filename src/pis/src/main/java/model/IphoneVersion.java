@@ -18,7 +18,7 @@ public class IphoneVersion {
     private Date date;
     private String cashPayment;
     private String installmentPayment;
-    private double ratingAverage;
+    private String ratingAverage;
     private int ratingAmount;
 
     public int getId() {
@@ -77,11 +77,11 @@ public class IphoneVersion {
         this.installmentPayment = installmentPayment;
     }
 
-    public double getRatingAverage() {
+    public String getRatingAverage() {
         return ratingAverage;
     }
 
-    public void setRatingAverage(double ratingAverage) {
+    public void setRatingAverage(String ratingAverage) {
         this.ratingAverage = ratingAverage;
     }
 
