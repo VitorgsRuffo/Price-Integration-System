@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.IphoneVersion;
-import model.ScriptExecution;
 
 /**
  *
@@ -30,7 +29,7 @@ public class PgIPhoneVersionDAO implements DAO {
     private static final String ALL_BY_KEY_QUERY =
                                 "SELECT date, cash_payment, installment_payment, rating_amout, rating_average " +
                                 "FROM iphoneVersion " +
-                                "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND store_id = ? AND id = ? " +
+                                "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND store_id = ? " +
                                 "ORDER BY date DESC, time DESC;";
 
     public PgIPhoneVersionDAO(Connection connection) {
@@ -85,7 +84,6 @@ public class PgIPhoneVersionDAO implements DAO {
             statement.setString(1, iphoneModel);
             statement.setInt(2, secondaryMemory);
             statement.setInt(3, storeId);
-            statement.setInt(4, id);
             
             try(ResultSet result = statement.executeQuery()) {
                 while (result.next()) {
