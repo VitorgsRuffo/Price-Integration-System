@@ -12,7 +12,7 @@ import java.sql.Date;
  */
 public class Rating {
     private int id;
-    private String store;
+    private int storeId;
     private String modelName;
     private int secondaryMemory;
     private String title;
@@ -31,12 +31,12 @@ public class Rating {
         this.id = id;
     }
 
-    public String getStore() {
-        return store;
+    public int getStoreId() {
+        return storeId;
     }
 
-    public void setStore(String store) {
-        this.store = store;
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
     }
 
     public String getModelName() {

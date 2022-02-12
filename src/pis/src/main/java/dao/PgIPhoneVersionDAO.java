@@ -16,7 +16,7 @@ import model.IphoneVersion;
 
 /**
  *
- * @author vitor
+ * @author wellinton
  */
 public class PgIPhoneVersionDAO implements DAO {
     
@@ -30,7 +30,7 @@ public class PgIPhoneVersionDAO implements DAO {
                                 "SELECT date, cash_payment, installment_payment, rating_amout, rating_average " +
                                 "FROM iphoneVersion " +
                                 "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND store_id = ? " +
-                                "ORDER BY date DESC, time DESC;";
+                                "ORDER BY date DESC";
 
     public PgIPhoneVersionDAO(Connection connection) {
         this.connection = connection;
