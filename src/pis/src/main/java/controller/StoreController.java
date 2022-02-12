@@ -86,8 +86,8 @@ public class StoreController extends HttpServlet {
                     DAO storeDao = daoFactory.getStoreDAO();
                     DAO scriptDao = daoFactory.getScriptDAO();
                        
-                    Store store = (Store) storeDao.read(storeId); //create this method...
-                    Script script = scriptDao.readLastVersion(storeId); //create this method...
+                    Store store = (Store) storeDao.read(storeId); 
+                    Script script = scriptDao.readLastVersion(storeId);
 
                     request.setAttribute("store", store);
                     request.setAttribute("script", script);
@@ -97,7 +97,7 @@ public class StoreController extends HttpServlet {
 
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
                     request.getSession().setAttribute("error", ex.getMessage());
-                    response.sendRedirect(request.getContextPath() + "/index.jsp");
+                    response.sendRedirect(request.getContextPath() + "/index?update=failure");
                 }
                 break;
             }
@@ -117,7 +117,7 @@ public class StoreController extends HttpServlet {
 
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
                     request.getSession().setAttribute("error", ex.getMessage());
-                    response.sendRedirect(request.getContextPath() + "/index.jsp");
+                    response.sendRedirect(request.getContextPath() + "/index?read=failure");
                 }
                 break;
             }
@@ -139,7 +139,7 @@ public class StoreController extends HttpServlet {
                     
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
                     request.getSession().setAttribute("error", ex.getMessage());
-                    response.sendRedirect(request.getContextPath() + "/store/read?id=" + String.valueOf(storeId));
+                    response.sendRedirect(request.getContextPath() + "/store/read?id=" + String.valueOf(storeId)+ "?read_history=failure");
                 }
                 break;
             }
@@ -158,8 +158,8 @@ public class StoreController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         RequestDispatcher dispatcher;
-        String servletPath = request.getServletPath();        
-        
+        String servletPath = request.getServletPath();
+
         switch (servletPath) {
             
             case "/store/create":
@@ -168,10 +168,12 @@ public class StoreController extends HttpServlet {
                     
                     Store store = new Store();
                     Script script = new Script();
+                    String operation = servletPath.split("/")[2];
                     
-                    if(request.getParameter("id") != null)
+                    if(request.getParameter("id") != null){
                         store.setId(Integer.parseInt(request.getParameter("id")));
                         script.setStoreId(store.getId());
+                    }
                     store.setName(request.getParameter("name"));
                     store.setAddress(request.getParameter("address"));
                     store.setPhone(request.getParameter("phone"));
@@ -186,21 +188,21 @@ public class StoreController extends HttpServlet {
                     DAO scriptDao = daoFactory.getScriptDAO();
                     
                     if(servletPath.equals("/user/create")){
-                       int storeId = storeDao.create(store); //return just created store id...
+                       int storeId = storeDao.createReturningId(store);
                        script.setStoreId(storeId);
                     }else{
                        storeDao.update(store);
                     }
                     scriptDao.create(script);
                     
-                    response.sendRedirect(request.getContextPath() + "/index");
+                    response.sendRedirect(request.getContextPath() + "/index?" + operation + "=success");
                     
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
                     Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
-                    response.sendRedirect(request.getContextPath() + servletPath);
+                    response.sendRedirect(request.getContextPath() + servletPath + "?operation=failure");
                 } catch (Exception ex) {
                     Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
-                    response.sendRedirect(request.getContextPath() + servletPath);
+                    response.sendRedirect(request.getContextPath() + servletPath + "?operation=failure");
                 }
                 break;
             }
@@ -265,15 +267,15 @@ public class StoreController extends HttpServlet {
                         
                         Iphone iphone = new Iphone();
                         iphone.setModelName(cIphone.getModelo_nome());
-                        iphone.setSecondaryMemory(cIphone.getMem_int()); //change it to string on model...
-                        iphone.setVoltage(cIphone.getVoltagem()); //change it to string on model...
+                        iphone.setSecondaryMemory(cIphone.getMem_int()); 
+                        iphone.setVoltage(cIphone.getVoltagem()); 
                         iphone.setModelCod(cIphone.getModelo_cod());
                         iphone.setIphoneLink(cIphone.getLink_iphone());
                         iphone.setImageLink(cIphone.getLink_imagem());
                         iphone.setDisplaySize(cIphone.getTam_tela());
                         iphone.setFrontCam(cIphone.getResolucao_cam_front());
                         iphone.setBackCam(cIphone.getResolucao_cam_tras());
-                        iphone.setRamMemory(cIphone.getMem_ram()); //change it to string on model...
+                        iphone.setRamMemory(cIphone.getMem_ram()); 
                         iphone.setTitle(cIphone.getTitulo());
                         iphoneDao.create(iphone);
                         
@@ -303,17 +305,17 @@ public class StoreController extends HttpServlet {
                         }
                     }
                     
-                    response.sendRedirect(request.getContextPath() + "/store/read?id=" + String.valueOf(storeId) + "&crawling_status=success");
+                    response.sendRedirect(request.getContextPath() + "/store/read?id=" + String.valueOf(storeId) + "&crawling=success");
 
                 } catch (FileUploadException ex) {
                     Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
-                    response.sendRedirect(request.getContextPath() + "/store/read?id=" + String.valueOf(storeId) + "&crawling_status=failure");
+                    response.sendRedirect(request.getContextPath() + "/store/read?id=" + String.valueOf(storeId) + "&crawling=failure");
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
                     Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
-                    response.sendRedirect(request.getContextPath() + "/store/read?id=" + String.valueOf(storeId) + "&crawling_status=failure");
+                    response.sendRedirect(request.getContextPath() + "/store/read?id=" + String.valueOf(storeId) + "&crawling=failure");
                 } catch (Exception ex) {
                     Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
-                    response.sendRedirect(request.getContextPath() + "/store/read?id=" + String.valueOf(storeId) + "&crawling_status=failure");
+                    response.sendRedirect(request.getContextPath() + "/store/read?id=" + String.valueOf(storeId) + "&crawling=failure");
                 }
                 
                 break;
