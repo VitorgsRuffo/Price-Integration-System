@@ -10,15 +10,15 @@ package model;
  */
 public class Iphone {
     private String modelName;
-    private int secondaryMemory;
-    private int voltage;
+    private String secondaryMemory;
+    private String voltage;
     private String modelCod;
     private String iphoneLink;
     private String imageLink;
     private String displaySize;
     private String frontCam;
     private String backCam;
-    private int ramMemory;
+    private String ramMemory;
     private String title;
 
     public String getModelName() {
@@ -29,19 +29,19 @@ public class Iphone {
         this.modelName = modelName;
     }
 
-    public int getSecondaryMemory() {
+    public String getSecondaryMemory() {
         return secondaryMemory;
     }
 
-    public void setSecondaryMemory(int secondaryMemory) {
+    public void setSecondaryMemory(String secondaryMemory) {
         this.secondaryMemory = secondaryMemory;
     }
 
-    public int getVoltage() {
+    public String getVoltage() {
         return voltage;
     }
 
-    public void setVoltage(int voltage) {
+    public void setVoltage(String voltage) {
         this.voltage = voltage;
     }
 
@@ -93,11 +93,11 @@ public class Iphone {
         this.backCam = backCam;
     }
 
-    public int getRamMemory() {
+    public String getRamMemory() {
         return ramMemory;
     }
 
-    public void setRamMemory(int ramMemory) {
+    public void setRamMemory(String ramMemory) {
         this.ramMemory = ramMemory;
     }
 

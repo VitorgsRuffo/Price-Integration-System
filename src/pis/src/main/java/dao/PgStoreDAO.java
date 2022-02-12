@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import model.Store;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -32,6 +33,11 @@ public class PgStoreDAO implements DAO {
                                 "SET name = ?, logo_path = ?, address = ?, phone = ? " +
                                 "WHERE id = ?;";
     
+    private static final String READ_QUERY =
+                                "SELECT name, logo_path, address, phone " +
+                                "FROM store " +
+                                "WHERE id = ?;";  
+    
     private static final String READ_WITH_SCRIPT_QUERY = 
                                 "SELECT * " +
                                 "FROM store st JOIN scripts sc ON (st.id = sc.id) " +
@@ -51,26 +57,63 @@ public class PgStoreDAO implements DAO {
     public PgStoreDAO(Connection connection) {
         this.connection = connection;
     }
-
+    
     @Override
     public void create(Object t) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public int createReturningId(Object t) throws SQLException {
         Store store = (Store) t;
-        try (PreparedStatement statement = connection.prepareStatement(CREATE_QUERY)) {
+        int storeId;
+        
+        try (PreparedStatement statement = connection.prepareStatement(CREATE_QUERY, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, store.getName());
             statement.setString(2, store.getLogoPath());
             statement.setString(3, store.getAddress());
             statement.setString(4, store.getPhone());
 
             statement.executeUpdate();
+            try (ResultSet keys = statement.getGeneratedKeys()) {
+                if(keys.next()){
+                    storeId = keys.getInt("id");
+
+                }else{
+                    throw new SQLException("create (returning id) error: store could not be created.");
+                }
+            }
+            
         } catch (SQLException ex) {
             Logger.getLogger(PgStoreDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
             throw ex;
         }
+        
+        return storeId;
     }
 
     @Override
     public Object read(Integer id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Store store = new Store();
+
+        try (PreparedStatement statement = connection.prepareStatement(READ_QUERY)) {
+            statement.setInt(1, id);
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    store.setId(id);
+                    store.setName(result.getString("name"));
+                    store.setAddress(result.getString("address"));
+                    store.setPhone(result.getString("phone"));
+                    store.setLogoPath(result.getString("logo_path"));
+                } else {
+                    throw new SQLException("read error: store not found.");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PgStoreDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            throw ex;
+        }
+
+        return store;
     }
     
     public Store readStoreWithScriptData(Integer id) throws SQLException{
