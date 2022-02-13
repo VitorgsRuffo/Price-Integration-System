@@ -76,17 +76,26 @@ class ShoptimeSpider(scrapy.Spider):
 
         titulo = response.css('.src__Title-sc-79cth1-0::text').get()
         titulo = titulo.lower()
+
         modelo_nome = re.search("iphone ..?( mini| pro max| pro| max| plus)?", titulo)
         if(modelo_nome is None):
             return None
         modelo_nome = modelo_nome.group()
-        
+
+        cor = re.search("red|vermelho|meia-noite|azul|prata|amarelo|branco|coral|roxo|cinza|cinza espacial|verde|grafite|estelar|azul-pacífico|rosa|rose gold|prateado|ouro|ouro rosa|preto|dourado|azul-sierra|azul sierra", titulo)
+        if(cor is None):
+            return None
+        cor = cor.group()
+        if cor == "red":
+            cor = "vermelho"
+
         try:
             q_avaliacao = response.css('.header__ReviewsValue-sc-1o3gjvp-8::text').getall()[1]
         except:
             q_avaliacao = 0
 
         iphone = {
+            'cor': cor,
             'mem_int': '', 
             'modelo-nome' : modelo_nome,
             'modelo-cod': '',
@@ -124,6 +133,7 @@ class ShoptimeSpider(scrapy.Spider):
             titulo = rating_div.css('h4::text').get()
             descricao = rating_div.css('span::text').get()
             if titulo is None and descricao is None:
+                ratings.pop(i)
                 continue
             ratings[i]['titulo'] = titulo
             ratings[i]['descricao'] = descricao

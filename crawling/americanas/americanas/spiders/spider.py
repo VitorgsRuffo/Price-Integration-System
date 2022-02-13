@@ -38,7 +38,7 @@ class AmericanasSpider(scrapy.Spider):
             
             iphone_rel_link = iphone_div.css('a::attr(href)').get()
             iphone_abs_link = response.urljoin(iphone_rel_link)
-            preco_avista, preco_aprazo = iphone_div.css('div.price-info__ContainerPriceInstalmentCash-sc-1td1088-2 span')
+            preco_avista, preco_aprazo = iphone_div.css('div.price-info__ContainerPriceInstalmentCash-sc-1td1088-2 span')[0:2]
             preco_avista = preco_avista.css('::text').get()
             preco_aprazo = preco_aprazo.css('::text').get()
 
@@ -74,10 +74,18 @@ class AmericanasSpider(scrapy.Spider):
 
         titulo = response.css('.product-title__Title-sc-1hlrxcw-0.jyetLr::text').get()
         titulo = titulo.lower()
+        
         modelo_nome = re.search("iphone ..?( mini| pro max| pro| max| plus)?", titulo)
         if(modelo_nome is None):
             return None
         modelo_nome = modelo_nome.group()
+
+        cor = re.search("red|vermelho|meia-noite|azul|prata|amarelo|branco|coral|roxo|cinza|cinza espacial|verde|grafite|estelar|azul-pacífico|rosa|rose gold|prateado|ouro|ouro rosa|preto|dourado|azul-sierra|azul sierra", titulo)
+        if(cor is None):
+            return None
+        cor = cor.group()
+        if cor == "red":
+            cor = "vermelho"
 
         try:
             q_avaliacao = response.css('.header__ReviewsValue-sc-ibr017-8::text').getall()[1]
@@ -85,6 +93,7 @@ class AmericanasSpider(scrapy.Spider):
             q_avaliacao = 0
 
         iphone = {
+            'cor': cor,
             'mem_int': '', 
             'modelo-nome' : modelo_nome,
             'modelo-cod': '',
@@ -122,6 +131,7 @@ class AmericanasSpider(scrapy.Spider):
             titulo = rating_div.css('h4::text').get()
             descricao = rating_div.css('span::text').get()
             if titulo is None and descricao is None:
+                ratings.pop(i)
                 continue
             ratings[i]['titulo'] = titulo 
             ratings[i]['descricao'] = descricao
