@@ -64,7 +64,7 @@ class AmericanasSpider(scrapy.Spider):
 
     def parse_iphone(self, response, preco_avista, preco_aprazo):
         table_attributes_mapping = {
-            'Código': 'modelo-cod',
+            'Código': 'modelo_cod',
             'Tamanho do Display': 'tam_tela',
             'Câmera Frontal': 'resolucao_cam_front',
             'Câmera Traseira': 'resolucao_cam_tras',
@@ -95,8 +95,8 @@ class AmericanasSpider(scrapy.Spider):
         iphone = {
             'cor': cor,
             'mem_int': '', 
-            'modelo-nome' : modelo_nome,
-            'modelo-cod': '',
+            'modelo_nome' : modelo_nome,
+            'modelo_cod': '',
             'link_iphone': response.url, 
             'link_imagem': response.css('.main-image__Container-sc-1i1hq2n-1.iCNHlx div picture img::attr(src)').get(), 
             'tam_tela': '', 
