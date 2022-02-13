@@ -48,8 +48,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  */
 @WebServlet(name = "StoreController", 
                     urlPatterns = {
-                        "/",
-                        "/index"
+                        "/", "/index",
                         "/store/create",
                         "/store/read",
                         "/store/update",
@@ -231,6 +230,33 @@ public class StoreController extends HttpServlet {
                     }
                     scriptDao.create(script);
                     
+                    response.sendRedirect(request.getContextPath() + "/index?" + operation + "=success");
+                    
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+                    Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
+                    response.sendRedirect(request.getContextPath() + servletPath + "?operation=failure");
+                } catch (Exception ex) {
+                    Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
+                    response.sendRedirect(request.getContextPath() + servletPath + "?operation=failure");
+                }
+                break;
+            }
+            
+            case "/store/delete": {
+                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    
+                    Store store = new Store();
+                    String operation = servletPath.split("/")[2];
+                    
+                    if(request.getParameter("id") != null){
+                        store.setId(Integer.parseInt(request.getParameter("id")));
+                        DAO storeDao = daoFactory.getStoreDAO();
+                        storeDao.delete(store.getId());
+                    } 
+                    else {
+                       response.sendRedirect(request.getContextPath() + servletPath + "?operation=failure");
+                    }
+
                     response.sendRedirect(request.getContextPath() + "/index?" + operation + "=success");
                     
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
