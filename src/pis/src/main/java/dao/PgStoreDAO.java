@@ -116,9 +116,9 @@ public class PgStoreDAO implements DAO {
         return store;
     }
     
-    public Store readStoreWithScriptData(Integer id) throws SQLException{
+    public Store readStoreWithScriptData(int id) throws SQLException{
         Store store = new Store();
-        List<Script> scripts = new ArrayList<Script>();
+        List<Script> scripts = new ArrayList<>();
 
         try (PreparedStatement statement = connection.prepareStatement(READ_WITH_SCRIPT_QUERY)){
             statement.setInt(1, id); 

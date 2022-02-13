@@ -134,6 +134,7 @@ public class CrawledIphone {
     }
 
     public void setMedia_nota(String media_nota) {
+        media_nota = media_nota.replace(",", ".");
         this.media_nota = media_nota;
     }
 

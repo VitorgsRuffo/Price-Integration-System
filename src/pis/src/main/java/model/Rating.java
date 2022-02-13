@@ -14,7 +14,7 @@ public class Rating {
     private int id;
     private int storeId;
     private String modelName;
-    private int secondaryMemory;
+    private String secondaryMemory;
     private String color;
     private String title;
     private String description;
@@ -48,11 +48,11 @@ public class Rating {
         this.modelName = modelName;
     }
 
-    public int getSecondaryMemory() {
+    public String getSecondaryMemory() {
         return secondaryMemory;
     }
 
-    public void setSecondaryMemory(int secondaryMemory) {
+    public void setSecondaryMemory(String secondaryMemory) {
         this.secondaryMemory = secondaryMemory;
     }
     

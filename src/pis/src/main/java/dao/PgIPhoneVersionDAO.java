@@ -41,14 +41,14 @@ public class PgIPhoneVersionDAO implements DAO {
         IphoneVersion iphoneVersion = (IphoneVersion) t;
         try (PreparedStatement statement = connection.prepareStatement(CREATE_QUERY)) {
             statement.setString(1, iphoneVersion.getModelName());
-            statement.setInt(2, iphoneVersion.getSecondaryMemory());
+            statement.setString(2, iphoneVersion.getSecondaryMemory());
             statement.setString(3, iphoneVersion.getColor());
             statement.setInt(4, iphoneVersion.getStoreId());
             statement.setDate(5, iphoneVersion.getDate());
             statement.setString(6, iphoneVersion.getCashPayment());
             statement.setString(7, iphoneVersion.getInstallmentPayment());
             statement.setInt(8, iphoneVersion.getRatingAmount());
-            statement.setString(9, iphoneVersion.getRatingAverage());
+            statement.setDouble(9, iphoneVersion.getRatingAverage());
 
             statement.executeUpdate();
             
@@ -94,7 +94,7 @@ public class PgIPhoneVersionDAO implements DAO {
                     iphoneVersion.setCashPayment(result.getString("cash_payment"));
                     iphoneVersion.setInstallmentPayment(result.getString("installment_payment"));
                     iphoneVersion.setRatingAmount(result.getInt("rating_amount"));
-                    iphoneVersion.setRatingAverage(result.getString("rating_average"));
+                    iphoneVersion.setRatingAverage(result.getDouble("rating_average"));
                     iphoneVersionsExec.add(iphoneVersion);
                 }
             }

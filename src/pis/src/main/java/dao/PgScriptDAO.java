@@ -55,7 +55,7 @@ public class PgScriptDAO implements DAO {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
-    public Script readLastVersion(Integer storeId) throws SQLException {
+    public Script readLastVersion(int storeId) throws SQLException {
          Script script = new Script();
 
         try (PreparedStatement statement = connection.prepareStatement(READ_LAST_VERSION_QUERY)) {

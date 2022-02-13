@@ -14,12 +14,12 @@ public class IphoneVersion {
     private int id;
     private int storeId;
     private String modelName;
-    private int secondaryMemory;
+    private String secondaryMemory;
     private String color;
     private Date date;
     private String cashPayment;
     private String installmentPayment;
-    private String ratingAverage;
+    private double ratingAverage;
     private int ratingAmount;
 
     public int getId() {
@@ -46,11 +46,11 @@ public class IphoneVersion {
         this.modelName = modelName;
     }
 
-    public int getSecondaryMemory() {
+    public String getSecondaryMemory() {
         return secondaryMemory;
     }
 
-    public void setSecondaryMemory(int secondaryMemory) {
+    public void setSecondaryMemory(String secondaryMemory) {
         this.secondaryMemory = secondaryMemory;
     }
     
@@ -86,11 +86,11 @@ public class IphoneVersion {
         this.installmentPayment = installmentPayment;
     }
 
-    public String getRatingAverage() {
+    public double getRatingAverage() {
         return ratingAverage;
     }
 
-    public void setRatingAverage(String ratingAverage) {
+    public void setRatingAverage(double ratingAverage) {
         this.ratingAverage = ratingAverage;
     }
 

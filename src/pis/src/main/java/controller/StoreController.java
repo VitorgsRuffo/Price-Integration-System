@@ -6,10 +6,12 @@ package controller;
 
 import dao.DAO;
 import dao.DAOFactory;
+import dao.PgScriptDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dao.PgScriptExecutionDAO;
+import dao.PgStoreDAO;
 import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
@@ -17,7 +19,6 @@ import static sun.font.CreatedFontTracker.MAX_FILE_SIZE;import java.sql.Date;
 import java.sql.Time;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -63,7 +64,7 @@ public class StoreController extends HttpServlet {
      * salvos na pasta de build do servidor. Ao limpar o projeto (clean),
      * pode-se perder estes arquivos. Façam backup antes de limpar.
      */
-    private static String SAVE_DIR = "crawling";
+    private static final String SAVE_DIR = "crawling";
     
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -81,7 +82,7 @@ public class StoreController extends HttpServlet {
         
         switch (request.getServletPath()) {
             case "/":
-            case "/index: {
+            case "/index": {
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     
                     DAO storeDao = daoFactory.getStoreDAO();                      
@@ -93,21 +94,15 @@ public class StoreController extends HttpServlet {
 
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
                     request.getSession().setAttribute("error", ex.getMessage());
-                    response.sendRedirect(request.getContextPath() + "/index?update=failure");
+                    response.sendRedirect(request.getContextPath() + "/index");
                 }
                 break;
             }
         
             case "/store/create": {
-                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     
-                    dispatcher = request.getRequestDispatcher("/view/store/create.jsp");
-                    dispatcher.forward(request, response);
-
-                } catch (ClassNotFoundException | IOException | SQLException ex) {
-                    request.getSession().setAttribute("error", ex.getMessage());
-                    response.sendRedirect(request.getContextPath() + "/index?read=failure");
-                }
+                dispatcher = request.getRequestDispatcher("/view/store/create.jsp");
+                dispatcher.forward(request, response);
                 break;
             }
 
@@ -117,7 +112,7 @@ public class StoreController extends HttpServlet {
                     int storeId = Integer.parseInt(request.getParameter("id"));
 
                     DAO storeDao = daoFactory.getStoreDAO();
-                    DAO scriptDao = daoFactory.getScriptDAO();
+                    PgScriptDAO scriptDao = (PgScriptDAO) daoFactory.getScriptDAO();
                        
                     Store store = (Store) storeDao.read(storeId); 
                     Script script = scriptDao.readLastVersion(storeId);
@@ -140,9 +135,9 @@ public class StoreController extends HttpServlet {
                     
                     int storeId = Integer.parseInt(request.getParameter("id"));
 
-                    DAO storeDao = daoFactory.getStoreDAO();
+                    PgStoreDAO storeDao = (PgStoreDAO) daoFactory.getStoreDAO();
                        
-                    Store store = (Store) storeDao.readWithScriptData(storeId); 
+                    Store store = (Store) storeDao.readStoreWithScriptData(storeId); 
 
                     request.setAttribute("store", store);
                     
@@ -158,13 +153,11 @@ public class StoreController extends HttpServlet {
             
             case "/store/read/script/executions": {
                 int storeId = Integer.parseInt(request.getParameter("storeId"));
-                
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
-                    
                     
                     int scriptVersionNum = Integer.parseInt(request.getParameter("scriptVersionNum"));
 
-                    DAO dao = daoFactory.getScriptExecutionDAO();
+                    PgScriptExecutionDAO dao = (PgScriptExecutionDAO) daoFactory.getScriptExecutionDAO();
                     List<ScriptExecution> exes = dao.allByKey(storeId, scriptVersionNum); 
                             
                     Gson gson = new GsonBuilder().create();
@@ -192,52 +185,85 @@ public class StoreController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        RequestDispatcher dispatcher;
+        
         String servletPath = request.getServletPath();
 
         switch (servletPath) {
             
-            case "/store/create":
-            case "/store/update": {
+            case "/store/create": {
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     
                     Store store = new Store();
-                    Script script = new Script();
-                    String operation = servletPath.split("/")[2];
                     
-                    if(request.getParameter("id") != null){
-                        store.setId(Integer.parseInt(request.getParameter("id")));
-                        script.setStoreId(store.getId());
-                    }
                     store.setName(request.getParameter("name"));
                     store.setAddress(request.getParameter("address"));
                     store.setPhone(request.getParameter("phone"));
+                    
+                    PgStoreDAO storeDao = (PgStoreDAO) daoFactory.getStoreDAO();
+                    int storeId = storeDao.createReturningId(store);
+                    
+                    Script script = new Script();
                     script.setText(request.getParameter("scriptText"));
-                   
+                    script.setStoreId(storeId);
                     
                     long millis = System.currentTimeMillis();  
                     script.setDate(new Date(millis));  
                     script.setTime(new Time(millis));
                     
-                    DAO storeDao = daoFactory.getStoreDAO();
                     DAO scriptDao = daoFactory.getScriptDAO();
-                    
-                    if(servletPath.equals("/user/create")){
-                       int storeId = storeDao.createReturningId(store);
-                       script.setStoreId(storeId);
-                    }else{
-                       storeDao.update(store);
-                    }
                     scriptDao.create(script);
                     
-                    response.sendRedirect(request.getContextPath() + "/index?" + operation + "=success");
+                    response.sendRedirect(request.getContextPath() + "/index?create=success");
                     
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
                     Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
-                    response.sendRedirect(request.getContextPath() + servletPath + "?operation=failure");
+                    response.sendRedirect(request.getContextPath() + servletPath + "?create=failure");
                 } catch (Exception ex) {
                     Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
-                    response.sendRedirect(request.getContextPath() + servletPath + "?operation=failure");
+                    response.sendRedirect(request.getContextPath() + servletPath + "?create=failure");
+                }
+                break;
+            }
+            
+            case "/store/update": {
+                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    
+                    /* store */
+                    Store store = new Store();
+                    
+                    store.setId(Integer.parseInt(request.getParameter("id")));
+                    store.setName(request.getParameter("name"));
+                    store.setAddress(request.getParameter("address"));
+                    store.setPhone(request.getParameter("phone"));
+                    
+                    DAO storeDao = daoFactory.getStoreDAO();
+                    storeDao.update(store);
+                    
+                    /* script */
+                    PgScriptDAO scriptDao = (PgScriptDAO) daoFactory.getScriptDAO();
+                    Script lastScript = scriptDao.readLastVersion(store.getId());
+                    
+                    if(!(lastScript.getText().equals(request.getParameter("scriptText")))) {
+                        Script script = new Script();
+
+                        script.setStoreId(store.getId());
+                        script.setText(request.getParameter("scriptText"));
+
+                        long millis = System.currentTimeMillis();  
+                        script.setDate(new Date(millis));  
+                        script.setTime(new Time(millis));
+                    
+                        scriptDao.create(script);
+                    }
+
+                    response.sendRedirect(request.getContextPath() + "/index?update=success");
+                    
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+                    Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
+                    response.sendRedirect(request.getContextPath() + servletPath + "?id="+request.getParameter("id")+"&update=failure");
+                } catch (Exception ex) {
+                    Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
+                    response.sendRedirect(request.getContextPath() + servletPath + "?id="+request.getParameter("id")+"&update=failure");
                 }
                 break;
             }
@@ -245,26 +271,18 @@ public class StoreController extends HttpServlet {
             case "/store/delete": {
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     
-                    Store store = new Store();
-                    String operation = servletPath.split("/")[2];
-                    
-                    if(request.getParameter("id") != null){
-                        store.setId(Integer.parseInt(request.getParameter("id")));
-                        DAO storeDao = daoFactory.getStoreDAO();
-                        storeDao.delete(store.getId());
-                    } 
-                    else {
-                       response.sendRedirect(request.getContextPath() + servletPath + "?operation=failure");
-                    }
+                    DAO storeDao = daoFactory.getStoreDAO();
+                    int storeId = Integer.parseInt(request.getParameter("id"));
+                    storeDao.delete(storeId);
 
-                    response.sendRedirect(request.getContextPath() + "/index?" + operation + "=success");
+                    response.sendRedirect(request.getContextPath() + "/index?delete=success");
                     
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
                     Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
-                    response.sendRedirect(request.getContextPath() + servletPath + "?operation=failure");
+                    response.sendRedirect(request.getContextPath() + "/index?delete=failure");
                 } catch (Exception ex) {
                     Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
-                    response.sendRedirect(request.getContextPath() + servletPath + "?operation=failure");
+                    response.sendRedirect(request.getContextPath() + "/index?delete=failure");
                 }
                 break;
             }

@@ -41,7 +41,7 @@ public class PgRatingDAO implements DAO {
          Rating rating = (Rating) t;
         try (PreparedStatement statement = connection.prepareStatement(CREATE_QUERY)) {
             statement.setString(1, rating.getModelName());
-            statement.setInt(2, rating.getSecondaryMemory());
+            statement.setString(2, rating.getSecondaryMemory());
             statement.setInt(3, rating.getStoreId());
             statement.setString(4, rating.getTitle());
             statement.setString(5, rating.getDescription());
@@ -79,12 +79,12 @@ public class PgRatingDAO implements DAO {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
-    public List<Rating> allByKey(String iphoneModel, int secondaryMemory, int storeId, String color) throws SQLException {
+    public List<Rating> allByKey(String iphoneModel, String secondaryMemory, int storeId, String color) throws SQLException {
         List<Rating> ratingList = new ArrayList<>();
 
         try (PreparedStatement statement = connection.prepareStatement(ALL_BY_KEY_QUERY)){
             statement.setString(1, iphoneModel);
-            statement.setInt(2, secondaryMemory);
+            statement.setString(2, secondaryMemory);
             statement.setInt(3, storeId);
             statement.setString(4, color);
             
