@@ -1,0 +1,18 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Feb 9, 2022, 9:06:10 PM
+    Author     : wellinton
+*/
+@import url("main.css");
+
+.header {
+    background-color: var(--corPrimaria);
+    height: 100px;
+    color: var(--corQuinaria);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
