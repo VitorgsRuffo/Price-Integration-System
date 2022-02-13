@@ -91,8 +91,8 @@ class MagaluSpider(scrapy.Spider):
 
         iphone = {
             'mem_int': iphone_infos['mem_int'],
-            'modelo-nome' : modelo_nome,
-            'modelo-cod': modelo_cod,
+            'modelo_nome' : modelo_nome,
+            'modelo_cod': modelo_cod,
             'link_iphone': response.url,
             'link_imagem': response.css('.showcase-product__container-img a img::attr(src)').get(),
             'tam_tela': iphone_infos['tam_tela'],
@@ -102,7 +102,7 @@ class MagaluSpider(scrapy.Spider):
             'titulo': response.css('.header-product__title::text').get(),
             'preco_avista': response.css('.price-template__text::text').get(),
             'preco_aprazo': iphone_infos['preco_aprazo'],
-            'voltagem': iphone_infos['mem_int'],
+            'voltagem': iphone_infos['voltagem'],
             'media_nota': media_nota,
             'quantidade_avaliacoes': quantidade_avaliacoes
             #'cor': iphone_infos['cor'],
