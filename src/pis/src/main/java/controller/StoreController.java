@@ -48,6 +48,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  */
 @WebServlet(name = "StoreController", 
                     urlPatterns = {
+                        "/",
+                        "/index"
                         "/store/create",
                         "/store/read",
                         "/store/update",
@@ -93,6 +95,19 @@ public class StoreController extends HttpServlet {
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
                     request.getSession().setAttribute("error", ex.getMessage());
                     response.sendRedirect(request.getContextPath() + "/index?update=failure");
+                }
+                break;
+            }
+        
+            case "/store/create": {
+                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    
+                    dispatcher = request.getRequestDispatcher("/view/store/create.jsp");
+                    dispatcher.forward(request, response);
+
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+                    request.getSession().setAttribute("error", ex.getMessage());
+                    response.sendRedirect(request.getContextPath() + "/index?read=failure");
                 }
                 break;
             }
@@ -338,7 +353,7 @@ public class StoreController extends HttpServlet {
                     Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
                     response.sendRedirect(request.getContextPath() + "/store/read?id=" + String.valueOf(storeId) + "&crawling=failure");
                 }
-                
+
                 break;
             }
         }
