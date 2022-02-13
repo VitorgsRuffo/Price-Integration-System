@@ -9,6 +9,7 @@ package model.crawling;
  * @author vitor
  */
 public class CrawledIphone {
+    String cor;
     String mem_int;
     String modelo_nome;
     String modelo_cod;
@@ -25,6 +26,14 @@ public class CrawledIphone {
     String media_nota;
     String quantidade_avaliacoes;
 
+    public String getCor() {
+        return cor;
+    }
+
+    public void setCor(String cor) {
+        this.cor = cor;
+    }
+    
     public String getMem_int() {
         return mem_int;
     }

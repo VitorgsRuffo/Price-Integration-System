@@ -14,8 +14,8 @@ public class Rating {
     private int id;
     private int storeId;
     private String modelName;
-    private String secondaryMemory;
     private String color;
+    private String secondaryMemory;
     private String title;
     private String description;
     private Date date;
@@ -47,14 +47,6 @@ public class Rating {
     public void setModelName(String modelName) {
         this.modelName = modelName;
     }
-
-    public String getSecondaryMemory() {
-        return secondaryMemory;
-    }
-
-    public void setSecondaryMemory(String secondaryMemory) {
-        this.secondaryMemory = secondaryMemory;
-    }
     
     public String getColor() {
         return color;
@@ -62,6 +54,14 @@ public class Rating {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public String getSecondaryMemory() {
+        return secondaryMemory;
+    }
+
+    public void setSecondaryMemory(String secondaryMemory) {
+        this.secondaryMemory = secondaryMemory;
     }
 
     public String getTitle() {

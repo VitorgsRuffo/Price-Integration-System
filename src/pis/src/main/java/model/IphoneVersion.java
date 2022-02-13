@@ -14,8 +14,8 @@ public class IphoneVersion {
     private int id;
     private int storeId;
     private String modelName;
-    private String secondaryMemory;
     private String color;
+    private String secondaryMemory;
     private Date date;
     private String cashPayment;
     private String installmentPayment;
@@ -45,14 +45,6 @@ public class IphoneVersion {
     public void setModelName(String modelName) {
         this.modelName = modelName;
     }
-
-    public String getSecondaryMemory() {
-        return secondaryMemory;
-    }
-
-    public void setSecondaryMemory(String secondaryMemory) {
-        this.secondaryMemory = secondaryMemory;
-    }
     
     public String getColor() {
         return color;
@@ -60,6 +52,14 @@ public class IphoneVersion {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public String getSecondaryMemory() {
+        return secondaryMemory;
+    }
+
+    public void setSecondaryMemory(String secondaryMemory) {
+        this.secondaryMemory = secondaryMemory;
     }
 
     public Date getDate() {

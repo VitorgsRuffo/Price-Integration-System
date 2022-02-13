@@ -21,7 +21,7 @@ public class PgIPhoneDAO implements DAO {
     private final Connection connection;
     
     private static final String CREATE_QUERY =
-                                "INSERT INTO iphone(model_name, sec_mem, color, title, iphone_link, image_link, model_code, display_size, front_cam, back_cam, ram_mem, voltagem) " +
+                                "INSERT INTO iphone(model_name, sec_mem, color, title, iphone_link, image_link, model_cod, display_size, front_cam, back_cam, ram_mem, voltage) " +
                                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
     public PgIPhoneDAO(Connection connection) {

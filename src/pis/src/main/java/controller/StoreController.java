@@ -15,7 +15,8 @@ import dao.PgStoreDAO;
 import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
-import static sun.font.CreatedFontTracker.MAX_FILE_SIZE;import java.sql.Date;
+import static sun.font.CreatedFontTracker.MAX_FILE_SIZE;
+import java.sql.Date;
 import java.sql.Time;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -347,6 +348,7 @@ public class StoreController extends HttpServlet {
                         
                         Iphone iphone = new Iphone();
                         iphone.setModelName(cIphone.getModelo_nome());
+                        iphone.setColor(cIphone.getCor());
                         iphone.setSecondaryMemory(cIphone.getMem_int()); 
                         iphone.setVoltage(cIphone.getVoltagem()); 
                         iphone.setModelCod(cIphone.getModelo_cod());
@@ -362,6 +364,7 @@ public class StoreController extends HttpServlet {
                         IphoneVersion iphoneVersion = new IphoneVersion();
                         iphoneVersion.setStoreId(storeId);
                         iphoneVersion.setModelName(iphone.getModelName());
+                        iphoneVersion.setColor(iphone.getColor());
                         iphoneVersion.setSecondaryMemory(iphone.getSecondaryMemory());
                         iphoneVersion.setDate(sqlDate);
                         iphoneVersion.setCashPayment(cIphone.getPreco_avista());
@@ -376,6 +379,7 @@ public class StoreController extends HttpServlet {
                             Rating rating = new Rating();
                             rating.setStoreId(storeId);
                             rating.setModelName(iphone.getModelName());
+                            rating.setColor(iphone.getColor());
                             rating.setSecondaryMemory(iphone.getSecondaryMemory());
                             rating.setTitle(cRating.getTitulo());
                             rating.setDescription(cRating.getDescricao());

@@ -10,8 +10,8 @@ package model;
  */
 public class Iphone {
     private String modelName;
-    private String secondaryMemory;
     private String color;
+    private String secondaryMemory;
     private String voltage;
     private String modelCod;
     private String iphoneLink;
@@ -25,17 +25,9 @@ public class Iphone {
     public String getModelName() {
         return modelName;
     }
-
+    
     public void setModelName(String modelName) {
         this.modelName = modelName;
-    }
-
-    public String getSecondaryMemory() {
-        return secondaryMemory;
-    }
-
-    public void setSecondaryMemory(String secondaryMemory) {
-        this.secondaryMemory = secondaryMemory;
     }
     
     public String getColor() {
@@ -44,6 +36,15 @@ public class Iphone {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    
+    public String getSecondaryMemory() {
+        return secondaryMemory;
+    }
+
+    public void setSecondaryMemory(String secondaryMemory) {
+        this.secondaryMemory = secondaryMemory;
     }
 
     public String getVoltage() {
