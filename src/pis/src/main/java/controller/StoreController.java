@@ -44,7 +44,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 /**
  *
- * @author vitor
+ * @author vitor and wellinton
  */
 @WebServlet(name = "StoreController", 
                     urlPatterns = {
@@ -75,9 +75,28 @@ public class StoreController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         RequestDispatcher dispatcher;
         
         switch (request.getServletPath()) {
+            case "/":
+            case "/index: {
+                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    
+                    DAO storeDao = daoFactory.getStoreDAO();                      
+                    List<Store> storeList = storeDao.all(); 
+                    request.setAttribute("storeList", storeList);
+                    
+                    dispatcher = request.getRequestDispatcher("/view/index.jsp");
+                    dispatcher.forward(request, response);
+
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+                    request.getSession().setAttribute("error", ex.getMessage());
+                    response.sendRedirect(request.getContextPath() + "/index?update=failure");
+                }
+                break;
+            }
+
             case "/store/update": {
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     
@@ -101,6 +120,7 @@ public class StoreController extends HttpServlet {
                 }
                 break;
             }
+            
             case "/store/read": {
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     
@@ -121,6 +141,7 @@ public class StoreController extends HttpServlet {
                 }
                 break;
             }
+            
             case "/store/read/script/executions": {
                 int storeId = Integer.parseInt(request.getParameter("storeId"));
                 
@@ -206,8 +227,8 @@ public class StoreController extends HttpServlet {
                 }
                 break;
             }
-            case "/store/crawling":{
-                
+            
+            case "/store/crawling":{                
                 //receiving .json file...
                 int storeId = -1;
                 String savePath = "";
