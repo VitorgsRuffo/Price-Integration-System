@@ -11,6 +11,7 @@ package model;
 public class Iphone {
     private String modelName;
     private String secondaryMemory;
+    private String color;
     private String voltage;
     private String modelCod;
     private String iphoneLink;
@@ -35,6 +36,14 @@ public class Iphone {
 
     public void setSecondaryMemory(String secondaryMemory) {
         this.secondaryMemory = secondaryMemory;
+    }
+    
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public String getVoltage() {

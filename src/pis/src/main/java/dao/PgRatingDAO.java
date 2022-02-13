@@ -23,13 +23,13 @@ public class PgRatingDAO implements DAO {
     private final Connection connection;
 
     private static final String CREATE_QUERY =
-                                "INSERT INTO rating(iphone_model_name, iphone_sec_mem, store_id, title, description, rater_name, rating, likes, deslikes, date) " +
+                                "INSERT INTO rating(iphone_model_name, iphone_sec_mem, iphone_color, store_id, title, description, rater_name, rating, likes, deslikes, date) " +
                                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     
     private static final String ALL_BY_KEY_QUERY =
                                 "SELECT title, description, rater_name, date, rating, likes, deslikes" +
                                 "FROM rating " +
-                                "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND store_id = ? " +
+                                "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND store_id = ? AND iphone_color = ? " +
                                 "ORDER BY date DESC";
 
     public PgRatingDAO(Connection connection) {
@@ -79,13 +79,14 @@ public class PgRatingDAO implements DAO {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
-    public List<Rating> allByKey(String iphoneModel, int secondaryMemory, int storeId, int id) throws SQLException {
+    public List<Rating> allByKey(String iphoneModel, int secondaryMemory, int storeId, String color) throws SQLException {
         List<Rating> ratingList = new ArrayList<>();
 
         try (PreparedStatement statement = connection.prepareStatement(ALL_BY_KEY_QUERY)){
             statement.setString(1, iphoneModel);
             statement.setInt(2, secondaryMemory);
             statement.setInt(3, storeId);
+            statement.setString(4, color);
             
             try(ResultSet result = statement.executeQuery()) {
                 while (result.next()) {
