@@ -50,9 +50,9 @@ public class PgStoreDAO implements DAO {
                                 "WHERE id = ?;";
     
     private static final String ALL_QUERY =
-                                "SELECT id " +
+                                "SELECT id, name " +
                                 "FROM store " +
-                                "ORDER BY id;";    
+                                "ORDER BY id ASC;";    
         
     public PgStoreDAO(Connection connection) {
         this.connection = connection;
