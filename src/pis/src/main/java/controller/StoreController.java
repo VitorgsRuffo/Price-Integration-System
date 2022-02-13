@@ -385,6 +385,9 @@ public class StoreController extends HttpServlet {
                             rating.setDescription(cRating.getDescricao());
                             rating.setDate(sqlDate);
                             rating.setRaterName(cRating.getAvaliador_nome());
+                            rating.setLikes(Integer.parseInt(cRating.getLikes()));
+                            rating.setDeslikes(Integer.parseInt(cRating.getDeslikes()));
+                            rating.setRating(Double.parseDouble(cRating.getNota()));
                             ratingDao.create(rating);                       
                         }
                     }

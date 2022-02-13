@@ -14,6 +14,9 @@ public class CrawledRating {
     String descricao;
     String data;
     String avaliador_nome;
+    String likes;
+    String deslikes;
+    String nota;
 
     public String getTitulo() {
         return titulo;
@@ -45,5 +48,29 @@ public class CrawledRating {
 
     public void setAvaliador_nome(String avaliador_nome) {
         this.avaliador_nome = avaliador_nome;
+    }
+
+    public String getLikes() {
+        return likes;
+    }
+
+    public void setLikes(String likes) {
+        this.likes = likes;
+    }
+
+    public String getDeslikes() {
+        return deslikes;
+    }
+
+    public void setDeslikes(String deslikes) {
+        this.deslikes = deslikes;
+    }
+
+    public String getNota() {
+        return nota;
+    }
+
+    public void setNota(String nota) {
+        this.nota = nota;
     }
 }
