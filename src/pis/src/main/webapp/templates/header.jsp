@@ -5,7 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@include file="/view/include/head.jsp"%>
+<%@include file="../include/head.jsp"%>
 
 <!DOCTYPE html>
 <html>
@@ -15,9 +15,9 @@
     </head>
     
     <body>
-        <header class="container-fluid">
-            <div class="header">
-                <h2>Price Integration System</h2>
+        <header class="container-fluid m-0 p-0">
+            <div class="header py-4 d-flex align-items-center justify-content-center bg-success">
+                <h2 class="text-white">Price Integration System</h2>
             </div>
         </header>
     </body>
