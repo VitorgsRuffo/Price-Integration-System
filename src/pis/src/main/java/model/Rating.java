@@ -11,7 +11,6 @@ import java.sql.Date;
  * @author vitor
  */
 public class Rating {
-    private int id;
     private int storeId;
     private String modelName;
     private String color;
@@ -24,13 +23,6 @@ public class Rating {
     private int deslikes;
     private double rating;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public int getStoreId() {
         return storeId;

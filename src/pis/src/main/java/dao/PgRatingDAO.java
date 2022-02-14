@@ -29,7 +29,7 @@ public class PgRatingDAO implements DAO {
     private static final String ALL_BY_KEY_QUERY =
                                 "SELECT title, description, rater_name, date, rating, likes, deslikes" +
                                 "FROM rating " +
-                                "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND store_id = ? AND iphone_color = ? " +
+                                "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND iphone_color = ? AND store_id = ? " +
                                 "ORDER BY date DESC";
 
     public PgRatingDAO(Connection connection) {
@@ -79,15 +79,17 @@ public class PgRatingDAO implements DAO {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
-    public List<Rating> allByKey(String iphoneModel, String secondaryMemory, int storeId, String color) throws SQLException {
+    //"WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND iphone_color = ? AND store_id = ? AND title = ? AND description = ?" +
+
+    public List<Rating> allByKey(String iphoneModel, String secondaryMemory, String color, int storeId) throws SQLException {
         List<Rating> ratingList = new ArrayList<>();
 
         try (PreparedStatement statement = connection.prepareStatement(ALL_BY_KEY_QUERY)){
             statement.setString(1, iphoneModel);
             statement.setString(2, secondaryMemory);
-            statement.setInt(3, storeId);
-            statement.setString(4, color);
-            
+            statement.setString(3, color);
+            statement.setInt(4, storeId);
+
             try(ResultSet result = statement.executeQuery()) {
                 while (result.next()) {
                     Rating rating = new Rating();
