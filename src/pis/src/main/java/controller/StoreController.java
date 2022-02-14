@@ -91,7 +91,7 @@ public class StoreController extends HttpServlet {
                     List<Store> storeList = storeDao.all(); 
                     request.setAttribute("storeList", storeList);
                     
-                    dispatcher = request.getRequestDispatcher("/view/index.jsp");
+                    dispatcher = request.getRequestDispatcher("/index.jsp");
                     dispatcher.forward(request, response);
 
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
@@ -103,14 +103,13 @@ public class StoreController extends HttpServlet {
         
             case "/store/create": {
                     
-                dispatcher = request.getRequestDispatcher("/view/store/create.jsp");
+                dispatcher = request.getRequestDispatcher("/store/create.jsp");
                 dispatcher.forward(request, response);
                 break;
             }
 
             case "/store/update": {
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
-                    
                     int storeId = Integer.parseInt(request.getParameter("id"));
 
                     DAO storeDao = daoFactory.getStoreDAO();
@@ -122,7 +121,8 @@ public class StoreController extends HttpServlet {
                     request.setAttribute("store", store);
                     request.setAttribute("script", script);
                     
-                    dispatcher = request.getRequestDispatcher("/view/store/update.jsp");
+                   
+                    dispatcher = request.getRequestDispatcher("/store/update.jsp");
                     dispatcher.forward(request, response);
 
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
@@ -143,7 +143,7 @@ public class StoreController extends HttpServlet {
 
                     request.setAttribute("store", store);
                     
-                    dispatcher = request.getRequestDispatcher("/view/store/read.jsp");
+                    dispatcher = request.getRequestDispatcher("/store/read.jsp");
                     dispatcher.forward(request, response);
 
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
