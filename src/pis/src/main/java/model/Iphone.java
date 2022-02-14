@@ -21,6 +21,7 @@ public class Iphone {
     private String backCam;
     private String ramMemory;
     private String title;
+    private String mainSource;
 
     public String getModelName() {
         return modelName;
@@ -117,5 +118,13 @@ public class Iphone {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+    
+    public String getMainSource() {
+        return mainSource;
+    }
+
+    public void setMainSource(String mainSourcse) {
+        this.mainSource = mainSource;
     }
 }

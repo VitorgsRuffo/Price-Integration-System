@@ -10,6 +10,7 @@ import dao.PgScriptDAO;
 import java.io.IOException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dao.PgIPhoneDAO;
 import dao.PgScriptExecutionDAO;
 import dao.PgStoreDAO;
 import java.io.File;
@@ -333,7 +334,7 @@ public class StoreController extends HttpServlet {
                     
                     
                     //inserting crawled data on db...
-                    DAO iphoneDao = daoFactory.getIphoneDAO();
+                    PgIPhoneDAO iphoneDao = (PgIPhoneDAO) daoFactory.getIphoneDAO();
                     DAO iphoneVersionDao = daoFactory.getIphoneVersionDAO();
                     DAO ratingDao = daoFactory.getRatingDAO();
 
@@ -341,6 +342,8 @@ public class StoreController extends HttpServlet {
                     String dateString = data[0].getData();
                     java.util.Date date = format.parse(dateString);
                     Date sqlDate = new Date(date.getTime());
+                    
+                    String source = data[0].getLoja();
                     
                     for(int i = 1; i<data.length; i++){
                         
@@ -359,7 +362,7 @@ public class StoreController extends HttpServlet {
                         iphone.setBackCam(cIphone.getResolucao_cam_tras());
                         iphone.setRamMemory(cIphone.getMem_ram()); 
                         iphone.setTitle(cIphone.getTitulo());
-                        iphoneDao.create(iphone);
+                        iphoneDao.integrate(iphone, source);
                         
                         IphoneVersion iphoneVersion = new IphoneVersion();
                         iphoneVersion.setStoreId(storeId);

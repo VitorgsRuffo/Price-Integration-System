@@ -6,6 +6,7 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,6 +24,16 @@ public class PgIPhoneDAO implements DAO {
     private static final String CREATE_QUERY =
                                 "INSERT INTO iphone(model_name, sec_mem, color, title, iphone_link, image_link, model_cod, display_size, front_cam, back_cam, ram_mem, voltage) " +
                                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+    
+    private static final String MASTER_UPDATE_QUERY = 
+                                "UPDATE iphone SET voltage = ?, iphone_link = ?, image_link = ?, display_size = ?, front_cam = ?, back_cam = ?, ram_mem = ?, title = ?, main_source = ? " +
+                                "WHERE model_name = ? AND sec_mem = ? AND color = ?;";
+    
+    private static final String NOT_MASTER_UPDATE_QUERY = 
+                                "UPDATE iphone SET model_cod = ? WHERE model_name = ? AND sec_mem = ? AND color = ?;";
+    
+    private static final String MAIN_SOURCE_QUERY = 
+                                "SELECT main_source FROM iphone WHERE model_name = ? AND sec_mem = ? AND color = ?;";
 
     public PgIPhoneDAO(Connection connection) {
         this.connection = connection;
@@ -52,6 +63,78 @@ public class PgIPhoneDAO implements DAO {
             throw ex;
         }
     }
+    
+    public void integrate(Object t, String source) throws SQLException {
+        
+        String master = "magalu";
+        Iphone iphone = (Iphone) t;
+        
+        try (PreparedStatement statement = connection.prepareStatement(MAIN_SOURCE_QUERY)) {
+            statement.setString(1, iphone.getModelName());
+            statement.setString(2, iphone.getSecondaryMemory());
+            statement.setString(3, iphone.getColor());
+            
+            try (ResultSet result = statement.executeQuery()) {
+                if (!result.next()) {
+                    this.create(t);
+                } else {
+                    if(source.equals(master)) { // Sobrescreve o que tem no banco, independente se for master ou nao
+                        this.masterUpdate(iphone);
+                        return;
+                    }
+                    
+                    if (result.getString("main_source").equals(master)) {
+                        this.notMasterUpdate(iphone);
+                        return;
+                    }
+                }   
+            }
+        
+        } catch (SQLException ex) {
+            Logger.getLogger(PgIPhoneDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            throw ex;
+        }
+    }
+    
+    public void masterUpdate(Iphone iphone) throws SQLException {
+        
+        try (PreparedStatement statement = connection.prepareStatement(MASTER_UPDATE_QUERY)) {
+            statement.setString(1, iphone.getVoltage());
+            statement.setString(2, iphone.getIphoneLink());
+            statement.setString(3, iphone.getImageLink());
+            statement.setString(4, iphone.getDisplaySize());
+            statement.setString(5, iphone.getFrontCam());
+            statement.setString(6, iphone.getBackCam());
+            statement.setString(7, iphone.getRamMemory());
+            statement.setString(8, iphone.getTitle());
+            statement.setString(9, iphone.getMainSource());
+            statement.setString(10, iphone.getModelName());
+            statement.setString(11, iphone.getSecondaryMemory());
+            statement.setString(12, iphone.getColor());
+            
+            statement.executeUpdate();
+           
+        } catch (SQLException ex) {
+            Logger.getLogger(PgIPhoneDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            throw ex;
+        }
+    }
+    
+    public void notMasterUpdate(Iphone iphone) throws SQLException {
+        try (PreparedStatement statement = connection.prepareStatement(NOT_MASTER_UPDATE_QUERY)) {
+            statement.setString(1, iphone.getModelCod());
+            statement.setString(2, iphone.getModelName());
+            statement.setString(3, iphone.getSecondaryMemory());
+            statement.setString(4, iphone.getColor());
+            
+            statement.executeUpdate();
+           
+        } catch (SQLException ex) {
+            Logger.getLogger(PgIPhoneDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            throw ex;
+        }
+    }
+    
 
     @Override
     public Object read(Integer id) throws SQLException {
