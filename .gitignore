@@ -6,4 +6,4 @@ __pycache__/
 *.json
 *.jl
 /src/pis/target/
-*.properties
+src/pis/src/main/webapp/conf/datasource.properties
