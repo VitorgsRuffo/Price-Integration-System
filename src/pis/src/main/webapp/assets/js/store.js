@@ -1,5 +1,5 @@
 
-function deleteUser(e) {
+function deleteStore(e) {
     e.preventDefault();
     $('.link-confirmation-delete-store').attr('href', $(this).data('href'));
     $('.modal-delete-store').modal();
@@ -26,6 +26,6 @@ function readScript(e) {
 }
 
 $(document).ready(function () {
-   $(document).on('click', '.link-delete-store', deleteUser);
+   $(document).on('click', '.link-delete-store', deleteStore);
    $(document).on('click', '.button-execute-crawling', uploadCrawling);
 });
