@@ -15,8 +15,8 @@
         <%@include file="../include/head.jsp"  %>
         <title>PIS - Cadastrar Site</title>
     </head>
-    
-    <div class="container mt-3 p-0">
+    <body>
+        <div class="container mt-3 p-0">
             <h2 class="text-center">Cadastro de site</h2>
 
             <form
@@ -68,8 +68,5 @@
                 
             </form>
         </div>
-        
-        
-        
     </body>
 </html>

@@ -107,6 +107,24 @@ public class StoreController extends HttpServlet {
                 dispatcher.forward(request, response);
                 break;
             }
+            case "/store/delete": {
+                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    
+                    DAO storeDao = daoFactory.getStoreDAO();
+                    int storeId = Integer.parseInt(request.getParameter("id"));
+                    storeDao.delete(storeId);
+
+                    response.sendRedirect(request.getContextPath() + "/index?delete=success");
+                    
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+                    Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
+                    response.sendRedirect(request.getContextPath() + "/index?delete=failure");
+                } catch (Exception ex) {
+                    Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
+                    response.sendRedirect(request.getContextPath() + "/index?delete=failure");
+                }
+                break;
+            }
 
             case "/store/update": {
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
@@ -269,24 +287,7 @@ public class StoreController extends HttpServlet {
                 break;
             }
             
-            case "/store/delete": {
-                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
-                    
-                    DAO storeDao = daoFactory.getStoreDAO();
-                    int storeId = Integer.parseInt(request.getParameter("id"));
-                    storeDao.delete(storeId);
-
-                    response.sendRedirect(request.getContextPath() + "/index?delete=success");
-                    
-                } catch (ClassNotFoundException | IOException | SQLException ex) {
-                    Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
-                    response.sendRedirect(request.getContextPath() + "/index?delete=failure");
-                } catch (Exception ex) {
-                    Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
-                    response.sendRedirect(request.getContextPath() + "/index?delete=failure");
-                }
-                break;
-            }
+            
             
             case "/store/crawling":{                
                 //receiving .json file...
