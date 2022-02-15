@@ -22,8 +22,8 @@ public class PgIPhoneDAO implements DAO {
     private final Connection connection;
     
     private static final String CREATE_QUERY =
-                                "INSERT INTO iphone(model_name, sec_mem, color, title, iphone_link, image_link, model_cod, display_size, front_cam, back_cam, ram_mem, voltage) " +
-                                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+                                "INSERT INTO iphone(model_name, sec_mem, color, title, iphone_link, image_link, model_cod, display_size, front_cam, back_cam, ram_mem, voltage, main_source) " +
+                                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     
     private static final String MASTER_UPDATE_QUERY = 
                                 "UPDATE iphone SET voltage = ?, iphone_link = ?, image_link = ?, display_size = ?, front_cam = ?, back_cam = ?, ram_mem = ?, title = ?, main_source = ? " +
@@ -55,6 +55,7 @@ public class PgIPhoneDAO implements DAO {
             statement.setString(10, iphone.getBackCam());
             statement.setString(11, iphone.getRamMemory());
             statement.setString(12, iphone.getVoltage());
+            statement.setString(13, iphone.getMainSource());
 
             statement.executeUpdate();
             
@@ -64,10 +65,11 @@ public class PgIPhoneDAO implements DAO {
         }
     }
     
-    public void integrate(Object t, String source) throws SQLException {
+    public void integrate(Object t) throws SQLException {
         
         String master = "magalu";
         Iphone iphone = (Iphone) t;
+        String source = iphone.getMainSource();
         
         try (PreparedStatement statement = connection.prepareStatement(MAIN_SOURCE_QUERY)) {
             statement.setString(1, iphone.getModelName());

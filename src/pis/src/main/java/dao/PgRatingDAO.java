@@ -24,7 +24,7 @@ public class PgRatingDAO implements DAO {
 
     private static final String CREATE_QUERY =
                                 "INSERT INTO rating(iphone_model_name, iphone_sec_mem, iphone_color, store_id, title, description, rater_name, rating, likes, deslikes, date) " +
-                                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+                                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     
     private static final String ALL_BY_KEY_QUERY =
                                 "SELECT title, description, rater_name, date, rating, likes, deslikes" +
@@ -42,14 +42,15 @@ public class PgRatingDAO implements DAO {
         try (PreparedStatement statement = connection.prepareStatement(CREATE_QUERY)) {
             statement.setString(1, rating.getModelName());
             statement.setString(2, rating.getSecondaryMemory());
-            statement.setInt(3, rating.getStoreId());
-            statement.setString(4, rating.getTitle());
-            statement.setString(5, rating.getDescription());
-            statement.setString(6, rating.getRaterName());
-            statement.setDouble(7, rating.getRating());
-            statement.setInt(8, rating.getLikes());
-            statement.setInt(9, rating.getDeslikes());
-            statement.setDate(10, rating.getDate());
+            statement.setString(3, rating.getColor());
+            statement.setInt(4, rating.getStoreId());
+            statement.setString(5, rating.getTitle());
+            statement.setString(6, rating.getDescription());
+            statement.setString(7, rating.getRaterName());
+            statement.setDouble(8, rating.getRating());
+            statement.setInt(9, rating.getLikes());
+            statement.setInt(10, rating.getDeslikes());
+            statement.setDate(11, rating.getDate());
 
             statement.executeUpdate();
             
@@ -78,8 +79,6 @@ public class PgRatingDAO implements DAO {
     public List all() throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
-    //"WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND iphone_color = ? AND store_id = ? AND title = ? AND description = ?" +
 
     public List<Rating> allByKey(String iphoneModel, String secondaryMemory, String color, int storeId) throws SQLException {
         List<Rating> ratingList = new ArrayList<>();

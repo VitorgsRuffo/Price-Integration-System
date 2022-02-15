@@ -362,7 +362,8 @@ public class StoreController extends HttpServlet {
                         iphone.setBackCam(cIphone.getResolucao_cam_tras());
                         iphone.setRamMemory(cIphone.getMem_ram()); 
                         iphone.setTitle(cIphone.getTitulo());
-                        iphoneDao.integrate(iphone, source);
+                        iphone.setMainSource(source);
+                        iphoneDao.integrate(iphone);
                         
                         IphoneVersion iphoneVersion = new IphoneVersion();
                         iphoneVersion.setStoreId(storeId);
