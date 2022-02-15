@@ -15,7 +15,7 @@
     </head>
     
     <body>
-        <div class="container-fluid m-0 p-0">
+        <div class="container-fluid m-0 p-0 position-absolute bottom-0">
             <div class="footer w-100 px-4 py-2 d-flex justify-content-between align-items-center bg-success">
                 <div d-flex flex-column justify-content-center align-items-center>
                     <p class="text-white m-0">Disciplina de Banco de Dados</p>

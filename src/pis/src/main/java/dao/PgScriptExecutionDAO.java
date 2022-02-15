@@ -23,12 +23,12 @@ public class PgScriptExecutionDAO implements DAO {
     private final Connection connection;
 
     private static final String CREATE_QUERY =
-                                "INSERT INTO scriptExecution(store_id, script_version_num, date, time) " +
+                                "INSERT INTO pis.scriptExecution(store_id, script_version_num, date, time) " +
                                 "VALUES(?, ?, ?, ?);";
     
     private static final String ALL_BY_KEY_QUERY =
                                 "SELECT date, time " +
-                                "FROM scriptExecution " +
+                                "FROM pis.scriptExecution " +
                                 "WHERE store_id = ? AND script_version_num = ? " +
                                 "ORDER BY date DESC, time DESC;";   
     

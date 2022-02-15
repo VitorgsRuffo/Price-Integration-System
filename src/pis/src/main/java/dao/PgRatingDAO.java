@@ -23,12 +23,12 @@ public class PgRatingDAO implements DAO {
     private final Connection connection;
 
     private static final String CREATE_QUERY =
-                                "INSERT INTO rating(iphone_model_name, iphone_sec_mem, iphone_color, store_id, title, description, rater_name, rating, likes, deslikes, date) " +
+                                "INSERT INTO pis.rating(iphone_model_name, iphone_sec_mem, iphone_color, store_id, title, description, rater_name, rating, likes, deslikes, date) " +
                                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     
     private static final String ALL_BY_KEY_QUERY =
                                 "SELECT title, description, rater_name, date, rating, likes, deslikes" +
-                                "FROM rating " +
+                                "FROM pis.rating " +
                                 "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND iphone_color = ? AND store_id = ? " +
                                 "ORDER BY date DESC";
 

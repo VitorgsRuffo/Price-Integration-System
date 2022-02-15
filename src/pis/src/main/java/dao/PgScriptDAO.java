@@ -22,12 +22,12 @@ public class PgScriptDAO implements DAO {
     private final Connection connection;
 
     private static final String CREATE_QUERY =
-                                "INSERT INTO script(store_id, date, time, text) " +
+                                "INSERT INTO pis.script(store_id, date, time, text) " +
                                 "VALUES(?, ?, ?, ?);";
     
     private static final String READ_LAST_VERSION_QUERY =
                                 "SELECT *, MAX(version_num) " +
-                                "FROM script " +
+                                "FROM pis.script " +
                                 "WHERE store_id = ?;";
     
     public PgScriptDAO(Connection connection) {

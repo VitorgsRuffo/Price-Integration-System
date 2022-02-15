@@ -51,7 +51,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  */
 @WebServlet(name = "StoreController", 
                     urlPatterns = {
-                        "/", "/index",
+                        "", "/index",
                         "/store/create",
                         "/store/read",
                         "/store/update",
@@ -83,7 +83,7 @@ public class StoreController extends HttpServlet {
         RequestDispatcher dispatcher;
         
         switch (request.getServletPath()) {
-            case "/":
+            case "":
             case "/index": {
                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
                     

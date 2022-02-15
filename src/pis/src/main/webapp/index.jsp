@@ -26,7 +26,7 @@
             <!-- Lista de lojas -->
             <ul class="list-inline">
                 <c:forEach var="store" items="${requestScope.storeList}">
-                    <li class="list-inline-item">
+                    <li class="list-inline-item d-flex">
                         <a class="btn btn-default" href="${pageContext.servletContext.contextPath}/store/read?id=${store.id}"><c:out value="${store.name}"/></a>
                         <a class="btn btn-default" href="${pageContext.servletContext.contextPath}/store/update?id=${store.id}"><i class="fa fa-pencil"></i></a>
                         <a class="btn btn-default link-delete-store" 

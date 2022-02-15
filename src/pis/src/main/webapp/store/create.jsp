@@ -29,12 +29,14 @@
                     <input id="site-name" class="form-control" type="text" name="name" required autofocus/>
                     <p class="help-block"></p>
                 </div>
-
+                
+                <!--
                 <div class="form-group">
                     <label class="control-label" for="site-url-logo">Link da logo do site</label>
                     <input id="site-url-logo" class="form-control" type="url" name="url-logo" required autofocus/>
                     <p class="help-block"></p>
                 </div>
+                -->
 
                 <div class="form-group">
                     <label class="control-label" for="site-address">Endereço</label>
@@ -48,19 +50,26 @@
                     <p class="help-block"></p>
                 </div>
                 
+                <div class="form-group">
+                    <label class="control-label" for="site-script">Script</label>
+                    <TextArea id="site-script" class="form-control" rows="20" type="text" name="scriptText" required autofocus></textarea>
+                    <p class="help-block"></p>
+                </div>
+                
                 <div class="d-flex">
                     <div class="text-center">
                     <a class="btn btn-lg btn-white" href="${pageContext.servletContext.contextPath}/index.jsp">Voltar</a>
                 </div>
                 
                 <div class="text-center">
-                    <button class="btn btn-lg btn-primary" type="submit">Salvar</button>
+                    <button class="btn btn-lg btn-success" type="submit">Salvar</button>
                 </div>
                 </div>
                 
             </form>
         </div>
-
-        <%@include file="../templates/footer.jsp"%>
+        
+        
+        
     </body>
 </html>

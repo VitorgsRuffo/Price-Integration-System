@@ -23,12 +23,12 @@ public class PgIPhoneVersionDAO implements DAO {
     private final Connection connection;
 
     private static final String CREATE_QUERY =
-                                "INSERT INTO iphoneVersion(iphone_model_name, iphone_sec_mem, color, store_id, date, cash_payment, installment_payment, rating_amount, rating_average) " +
+                                "INSERT INTO pis.iphoneVersion(iphone_model_name, iphone_sec_mem, color, store_id, date, cash_payment, installment_payment, rating_amount, rating_average) " +
                                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
     
     private static final String ALL_BY_KEY_QUERY =
                                 "SELECT date, cash_payment, installment_payment, rating_amout, rating_average " +
-                                "FROM iphoneVersion " +
+                                "FROM pis.iphoneVersion " +
                                 "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND store_id = ? AND color = ?" +
                                 "ORDER BY date DESC";
 

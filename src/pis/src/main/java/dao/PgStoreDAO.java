@@ -25,33 +25,33 @@ public class PgStoreDAO implements DAO {
     private final Connection connection;
 
     private static final String CREATE_QUERY =
-                                "INSERT INTO store(name, logo_path, address, phone) " +
+                                "INSERT INTO pis.store(name, logo_path, address, phone) " +
                                 "VALUES(?, ?, ?, ?);";
     
     private static final String UPDATE_QUERY =
-                                "UPDATE store " +
+                                "UPDATE pis.store " +
                                 "SET name = ?, logo_path = ?, address = ?, phone = ? " +
                                 "WHERE id = ?;";
     
     private static final String READ_QUERY =
                                 "SELECT name, logo_path, address, phone " +
-                                "FROM store " +
+                                "FROM pis.store " +
                                 "WHERE id = ?;";  
     
     private static final String READ_WITH_SCRIPT_QUERY = 
                                 "SELECT * " +
-                                "FROM store st JOIN scripts sc ON (st.id = sc.id) " +
+                                "FROM pis.store st JOIN pis.script sc ON (st.id = sc.id) " +
                                 "WHERE st.id = ? " +
                                 "ORDER BY sc.version_num DESC;";
 
     
     private static final String DELETE_QUERY =
-                                "DELETE FROM store " +
+                                "DELETE FROM pis.store " +
                                 "WHERE id = ?;";
     
     private static final String ALL_QUERY =
                                 "SELECT id, name " +
-                                "FROM store " +
+                                "FROM pis.store " +
                                 "ORDER BY id ASC;";    
         
     public PgStoreDAO(Connection connection) {
@@ -202,6 +202,7 @@ public class PgStoreDAO implements DAO {
             while (result.next()) {
                 Store store = new Store();
                 store.setId(result.getInt("id"));
+                store.setName(result.getString("name"));
                 stores.add(store);
             }
         } catch (SQLException ex) {
