@@ -1,66 +1,84 @@
---Definicao do banco de dados em SQL com base no modelo relacional.
-
 CREATE SCHEMA pis;
 
-CREATE TABLE pis.loja (
-	nome VARCHAR(20),
-	endereco VARCHAR(80),
-	telefone VARCHAR(15),
-	nome_logo VARCHAR(20),
-	CONSTRAINT pk_loja PRIMARY KEY (nome)
+CREATE SEQUENCE pis.store_id_seq;
+CREATE TABLE pis.store (
+	id INT DEFAULT nextval('pis.store_id_seq'),
+	name VARCHAR(20) NOT NULL,
+	logo_path VARCHAR(20),
+	address VARCHAR(80),
+	phone VARCHAR(15),
+	CONSTRAINT pk_store PRIMARY KEY (id)
 );
 
-CREATE TABLE pis.iphone(
-    cod VARCHAR(15),
-	loja_nome VARCHAR(20),
-	link_iphone VARCHAR(100) NOT NULL,
-	link_imagem VARCHAR(100) NOT NULL,
-	titulo VARCHAR(30) NOT NULL,
-	cor VARCHAR(15),
-	preco_avista VARCHAR(15) NOT NULL,
-	preco_aprazo VARCHAR(15) NOT NULL,
-	tam_tela NUMERIC(2, 1),
-	resolucao_cam_front VARCHAR(6),
-	resolucao_cam_tras VARCHAR(6),
-	mem_int VARCHAR(6),
-	mem_ram VARCHAR(6),
-	CONSTRAINT pk_iphone PRIMARY KEY(cod, loja_nome),
-	CONSTRAINT fk_iphone FOREIGN KEY(loja_nome)
-		REFERENCES pis.loja(nome) ON DELETE CASCADE
+CREATE SEQUENCE pis.version_num_seq;
+CREATE TABLE pis.script (
+	store_id INT,
+	version_num INT DEFAULT nextval('pis.version_num_seq'),
+	date DATE,
+	time TIME,
+	text VARCHAR(2000),
+	CONSTRAINT pk_script PRIMARY KEY (store_id, version_num),
+	CONSTRAINT fk_script FOREIGN KEY (store_id)
+		REFERENCES pis.store(id) ON DELETE CASCADE
 );
 
-CREATE SEQUENCE pis.avaliacao_id_seq;
-CREATE TABLE pis.avaliacao(
-	id INT DEFAULT nextval('pis.avaliacao_id_seq'),
-	titulo VARCHAR(30),
-	descricao VARCHAR(1000),
-	data DATE,
-	avaliador_nome VARCHAR(30),
-	likes INT DEFAULT 0,
-	deslikes INT DEFAULT 0,
-	nota INT NOT NULL,
-	iphone_cod VARCHAR(15) NOT NULL,
-	loja_nome VARCHAR(20) NOT NULL,
-	CONSTRAINT pk_avaliacao PRIMARY KEY(id),
-	CONSTRAINT fk_avaliacao_iphone FOREIGN KEY(iphone_cod, loja_nome)
-		REFERENCES pis.iphone(cod, loja_nome),
-	CONSTRAINT ck_nota CHECK (nota >= 0 AND nota <= 5)
+CREATE TABLE pis.scriptExecution (
+	store_id INT,
+	script_version_num INT,
+	date DATE,
+	time TIME,
+	CONSTRAINT pk_script_execution PRIMARY KEY(store_id, script_version_num, date, time),
+	CONSTRAINT fk_script_execution FOREIGN KEY (store_id,script_version_num)
+		REFERENCES pis.script(store_id,version_num) ON DELETE CASCADE
 );
 
-CREATE SEQUENCE pis.duvida_id_seq;
-CREATE TABLE pis.duvida(
-	id INT DEFAULT nextval('pis.duvida_id_seq'),
-	titulo VARCHAR(30),
-	descricao VARCHAR(150),
-	data_duvida DATE,
-	pessoa_nome VARCHAR(30),
-	likes INT DEFAULT 0,
-	deslikes INT DEFAULT 0,
-	resposta VARCHAR(150),
-	data_resposta DATE,
-	iphone_cod VARCHAR(15) NOT NULL,
-	loja_nome VARCHAR(20) NOT NULL,
-	CONSTRAINT pk_duvida PRIMARY KEY(id),
-	CONSTRAINT fk_duvida_iphone FOREIGN KEY(iphone_cod, loja_nome)
-		REFERENCES pis.iphone(cod, loja_nome)
+CREATE TABLE pis.iphone (
+	model_name VARCHAR(20),
+	sec_mem VARCHAR(20),
+	color VARCHAR(30),
+	title VARCHAR(80),
+	iphone_link VARCHAR(200),
+	image_link VARCHAR(200),
+	model_cod VARCHAR(20),
+	display_size VARCHAR(20),
+	front_cam VARCHAR(20),
+	back_cam VARCHAR(20),
+	ram_mem VARCHAR(20),
+	voltage VARCHAR(20),
+	main_source VARCHAR(20),
+	CONSTRAINT pk_iphone PRIMARY KEY(model_name, sec_mem, color)
+);
+
+CREATE SEQUENCE pis.iphoneVersion_id_seq;
+CREATE TABLE pis.iphoneVersion (
+	id INT DEFAULT nextval('pis.iphoneVersion_id_seq'),
+	iphone_model_name VARCHAR(20),
+	iphone_sec_mem VARCHAR(10),
+	iphone_color VARCHAR(30),
+	store_id INT,
+	date date,
+	cash_payment VARCHAR(30),
+	installment_payment VARCHAR(40),
+	rating_amount INT,
+	rating_average NUMERIC,
+	CONSTRAINT pk_iphoneVersion PRIMARY KEY(id, iphone_model_name, iphone_sec_mem, iphone_color, store_id),
+	CONSTRAINT fk_iphoneVersion FOREIGN KEY (iphone_model_name, iphone_sec_mem, iphone_color)
+		REFERENCES pis.iphone(model_name, sec_mem, color)
+);
+
+CREATE TABLE pis.rating (
+	iphone_model_name VARCHAR(20),
+	iphone_sec_mem VARCHAR(10),
+	iphone_color VARCHAR(30),
+	store_id INT,
+	title VARCHAR(50),
+	description VARCHAR(300),
+	rater_name VARCHAR(35),
+	rating NUMERIC,
+	likes INT,
+	deslikes INT,
+	date DATE,
+	CONSTRAINT pk_rating PRIMARY KEY(iphone_model_name, iphone_sec_mem, iphone_color, store_id, title, description),
+	CONSTRAINT fk_rating FOREIGN KEY(iphone_model_name, iphone_sec_mem, iphone_color)
+		REFERENCES pis.iphone(model_name, sec_mem, color)
 );
