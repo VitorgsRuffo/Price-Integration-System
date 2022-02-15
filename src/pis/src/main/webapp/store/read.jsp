@@ -33,8 +33,8 @@
             <div>
                 <h4>Histórico de Scripts</h4>
 
-                <c:forEach var="script" items="${requestScope.exes}">
-                    <a class="link_version-history" href="#" data-href="${pageContext.servletContext.contextPath}/read/id?${script.id}">Script V${script.id}</a>
+                <c:forEach var="script" items="${store.scripts}">
+                    <a class="link_version-history" href="#" data-href="${pageContext.servletContext.contextPath}/read/script/executions?storeId=${script.storeId}&scriptVersionNum=${script.versionNum}">Script V${script.versionNum}</a>
                 </c:forEach>
             </div>
                 

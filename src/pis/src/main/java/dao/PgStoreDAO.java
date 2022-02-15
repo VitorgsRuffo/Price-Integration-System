@@ -40,9 +40,9 @@ public class PgStoreDAO implements DAO {
     
     private static final String READ_WITH_SCRIPT_QUERY = 
                                 "SELECT * " +
-                                "FROM pis.store st JOIN pis.script sc ON (st.id = sc.id) " +
-                                "WHERE st.id = ? " +
-                                "ORDER BY sc.version_num DESC;";
+                                "FROM pis.store JOIN pis.script ON (id = store_id) " +
+                                "WHERE id = ? " +
+                                "ORDER BY version_num DESC;";
 
     
     private static final String DELETE_QUERY =
@@ -125,16 +125,16 @@ public class PgStoreDAO implements DAO {
             try (ResultSet result = statement.executeQuery()) {
                 if(result.next()){
                     store.setId(id);
-                    store.setName(result.getString("st.name"));
-                    store.setName(result.getString("st.address"));
-                    store.setName(result.getString("st.phone"));
-                    store.setName(result.getString("st.logo_path"));
+                    store.setName(result.getString("name"));
+                    store.setAddress(result.getString("address"));
+                    store.setPhone(result.getString("phone"));
+                    store.setLogoPath(result.getString("logo_path"));
 
                     Script script = new Script();
-                    script.setVersionNum(result.getInt("sc.version_num"));
-                    script.setDate(result.getDate("sc.date"));
-                    script.setTime(result.getTime("sc.time"));
-                    script.setText(result.getString("sc.text"));
+                    script.setVersionNum(result.getInt("version_num"));
+                    script.setDate(result.getDate("date"));
+                    script.setTime(result.getTime("time"));
+                    script.setText(result.getString("text"));
                     scripts.add(script);
 
                 }else{
@@ -143,10 +143,10 @@ public class PgStoreDAO implements DAO {
 
                 while (result.next()) {
                     Script script = new Script();
-                    script.setVersionNum(result.getInt("sc.version_num"));
-                    script.setDate(result.getDate("sc.date"));
-                    script.setTime(result.getTime("sc.time"));
-                    script.setText(result.getString("sc.text"));
+                    script.setVersionNum(result.getInt("version_num"));
+                    script.setDate(result.getDate("date"));
+                    script.setTime(result.getTime("time"));
+                    script.setText(result.getString("text"));
                     scripts.add(script);
                 }
             }
