@@ -139,7 +139,7 @@ public class CrawledIphone {
     }
 
     public String getMedia_nota() {
-        return media_nota;
+        return media_nota.replace(",", ".");
     }
 
     public void setMedia_nota(String media_nota) {

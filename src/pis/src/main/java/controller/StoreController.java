@@ -317,8 +317,9 @@ public class StoreController extends HttpServlet {
                                 
                                 // Pega o caminho absoluto da aplicação
                                 String appPath = request.getServletContext().getRealPath("");
+                                System.out.println(appPath);
                                 // Grava novo arquivo na pasta img no caminho absoluto
-                                savePath = appPath + File.separator + SAVE_DIR + File.separator + fileName;
+                                savePath = appPath + File.separator + fileName;
                                 File uploadedFile = new File(savePath);
                                 item.write(uploadedFile);
                             }else{
@@ -344,6 +345,7 @@ public class StoreController extends HttpServlet {
                     Date sqlDate = new Date(date.getTime());
                     
                     String source = data[0].getLoja();
+                    System.out.println(source);
                     
                     for(int i = 1; i<data.length; i++){
                         
@@ -373,8 +375,10 @@ public class StoreController extends HttpServlet {
                         iphoneVersion.setDate(sqlDate);
                         iphoneVersion.setCashPayment(cIphone.getPreco_avista());
                         iphoneVersion.setInstallmentPayment(cIphone.getPreco_aprazo());
-                        iphoneVersion.setRatingAverage(Double.parseDouble(cIphone.getMedia_nota()));
-                        iphoneVersion.setRatingAmount(Integer.parseInt(cIphone.getQuantidade_avaliacoes()));
+//                        if(cIphone.getMedia_nota() != null)
+//                            iphoneVersion.setRatingAverage(Double.parseDouble(cIphone.getMedia_nota()));
+//                        if(cIphone.getQuantidade_avaliacoes() != null)
+//                            iphoneVersion.setRatingAmount(Integer.parseInt(cIphone.getQuantidade_avaliacoes()));
                         iphoneVersionDao.create(iphoneVersion);
 
                         List<CrawledRating> cRatings = data[i].getAvaliacoes();
@@ -387,11 +391,18 @@ public class StoreController extends HttpServlet {
                             rating.setSecondaryMemory(iphone.getSecondaryMemory());
                             rating.setTitle(cRating.getTitulo());
                             rating.setDescription(cRating.getDescricao());
+                            
+                            //String ratingDateString = cRating.getData();
+                            //java.util.Date ratingDate = format.parse(ratingDateString);
+                            //Date ratingSqlDate = new Date(ratingDate.getTime());
                             rating.setDate(sqlDate);
+                            
                             rating.setRaterName(cRating.getAvaliador_nome());
-                            rating.setLikes(Integer.parseInt(cRating.getLikes()));
-                            rating.setDeslikes(Integer.parseInt(cRating.getDeslikes()));
-                            rating.setRating(Double.parseDouble(cRating.getNota()));
+                            if(cRating.getLikes() != null){
+                                rating.setLikes(Integer.parseInt(cRating.getLikes()));
+                                rating.setDeslikes(Integer.parseInt(cRating.getDeslikes()));
+                                rating.setRating(Double.parseDouble(cRating.getNota()));
+                            }
                             ratingDao.create(rating);                       
                         }
                     }

@@ -53,10 +53,11 @@
                             <p>2 - Importe o JSON resultante utilizando o input abaixo</p>
                             <form class="form" action="${pageContext.servletContext.contextPath}/store/crawling" enctype="multipart/form-data" method="POST">
                                 <div class="form-group input-group">
+                                    <input type="hidden" name="storeId" value="${store.id}">
                                     <label class="custom-file-label" for="crawling-file">JSON do Crawling</label>
                                     <input  type="file"
                                             class="form-control custom-file-input" id="crawling-file"
-                                            name="crawling" accept=".json" />
+                                            name="crawling_file" accept=".json" />
                                 </div>
 
                                 <div class="text-center">
@@ -73,7 +74,7 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title">Historico de Versoes</h4>
+                            <h4 class="modal-title">Historico de Execucoes</h4>
                             <button class="close" type="button" data-dismiss="modal"><span>&times;</span></button>
                         </div>
                         <div class="modal-body">

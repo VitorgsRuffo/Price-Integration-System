@@ -56,7 +56,7 @@ public class PgRatingDAO implements DAO {
             
         } catch (SQLException ex) {
             Logger.getLogger(PgRatingDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
-            throw ex;
+            //throw ex;
         }
     }
 

@@ -124,7 +124,7 @@ public class Iphone {
         return mainSource;
     }
 
-    public void setMainSource(String mainSourcse) {
+    public void setMainSource(String mainSource) {
         this.mainSource = mainSource;
     }
 }

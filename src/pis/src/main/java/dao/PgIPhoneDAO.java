@@ -55,13 +55,16 @@ public class PgIPhoneDAO implements DAO {
             statement.setString(10, iphone.getBackCam());
             statement.setString(11, iphone.getRamMemory());
             statement.setString(12, iphone.getVoltage());
+            System.out.println("Main source create:");
+            System.out.println(iphone.getMainSource());
             statement.setString(13, iphone.getMainSource());
 
             statement.executeUpdate();
             
         } catch (SQLException ex) {
             Logger.getLogger(PgIPhoneDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
-            throw ex;
+            
+           throw ex;
         }
     }
     
@@ -69,8 +72,8 @@ public class PgIPhoneDAO implements DAO {
         
         String master = "magalu";
         Iphone iphone = (Iphone) t;
-        String source = iphone.getMainSource();
-        
+        String source = iphone.getMainSource(); 
+
         try (PreparedStatement statement = connection.prepareStatement(MAIN_SOURCE_QUERY)) {
             statement.setString(1, iphone.getModelName());
             statement.setString(2, iphone.getSecondaryMemory());
@@ -84,8 +87,10 @@ public class PgIPhoneDAO implements DAO {
                         this.masterUpdate(iphone);
                         return;
                     }
-                    
-                    if (result.getString("main_source").equals(master)) {
+                    String bd_source = result.getString("main_source");
+                    System.out.println(bd_source);
+
+                    if (bd_source.equals(master)) {
                         this.notMasterUpdate(iphone);
                         return;
                     }
