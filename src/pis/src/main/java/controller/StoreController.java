@@ -117,11 +117,10 @@ public class StoreController extends HttpServlet {
                        
                     Store store = (Store) storeDao.read(storeId); 
                     Script script = scriptDao.readLastVersion(storeId);
-
+                    
                     request.setAttribute("store", store);
                     request.setAttribute("script", script);
                     
-                   
                     dispatcher = request.getRequestDispatcher("/store/update.jsp");
                     dispatcher.forward(request, response);
 
@@ -245,9 +244,9 @@ public class StoreController extends HttpServlet {
                     PgScriptDAO scriptDao = (PgScriptDAO) daoFactory.getScriptDAO();
                     Script lastScript = scriptDao.readLastVersion(store.getId());
                     
-                    if(!(lastScript.getText().equals(request.getParameter("scriptText")))) {
+                    if(lastScript.getText() == null || !(lastScript.getText().equals(request.getParameter("scriptText")))) {
                         Script script = new Script();
-
+                        
                         script.setStoreId(store.getId());
                         script.setText(request.getParameter("scriptText"));
 
@@ -257,14 +256,14 @@ public class StoreController extends HttpServlet {
                     
                         scriptDao.create(script);
                     }
-
+                    
                     response.sendRedirect(request.getContextPath() + "/index?update=success");
                     
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
-                    Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
+                    Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller1", ex);
                     response.sendRedirect(request.getContextPath() + servletPath + "?id="+request.getParameter("id")+"&update=failure");
                 } catch (Exception ex) {
-                    Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller", ex);
+                    Logger.getLogger(StoreController.class.getName()).log(Level.SEVERE, "Controller2", ex);
                     response.sendRedirect(request.getContextPath() + servletPath + "?id="+request.getParameter("id")+"&update=failure");
                 }
                 break;

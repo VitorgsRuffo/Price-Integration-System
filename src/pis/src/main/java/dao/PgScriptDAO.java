@@ -26,9 +26,11 @@ public class PgScriptDAO implements DAO {
                                 "VALUES(?, ?, ?, ?);";
     
     private static final String READ_LAST_VERSION_QUERY =
-                                "SELECT *, MAX(version_num) " +
+                                "SELECT * " +
                                 "FROM pis.script " +
-                                "WHERE store_id = ?;";
+                                "WHERE store_id = ? " +
+                                "order by version_num DESC " +
+                                "LIMIT 1;";
     
     public PgScriptDAO(Connection connection) {
         this.connection = connection;

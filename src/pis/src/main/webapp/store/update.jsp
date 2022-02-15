@@ -18,7 +18,7 @@
     </head>
     <body>
         <div class="container p-0 mt-3">
-            <h2 class="text-center">Editar Cadastro do Site<c:out value="${store.name}"/></h2>
+            <h2 class="text-center">Editar Cadastro do Site <c:out value="${store.name}"/></h2>
 
             <form
                 class="form"
@@ -32,10 +32,10 @@
                     <input id="site-name" class="form-control" type="text" name="name" value="${store.name}" data-value="${store.name}" required autofocus/>
                     <p class="help-block"></p>
                 </div>
-
+                    
                 <div class="form-group">
-                    <label class="control-label" for="site-url-logo">Link da logo do site</label>
-                    <input id="site-url-logo" class="form-control" type="url" name="url-logo" value="${store.urlLogo}" data-value="${store.urlLogo}" required autofocus/>
+                    <label class="control-label" for="site-name">Endereço</label>
+                    <input id="site-address" class="form-control" type="text" name="address" value="${store.address}" data-value="${store.name}" required autofocus/>
                     <p class="help-block"></p>
                 </div>
 
@@ -47,13 +47,12 @@
 
                 <div class="form-group">
                     <label for="script-text" class="control-label">Script</label>
-                    <!--<input id="script-text" class="form-control" type="text" name="nome" value="${store.nome}" required/>-->
-                    <textarea class="form-control" id="script-text" rows="8" value="${script.text}"></textarea>
+                    <input id="script-text" class="form-control" type="text" name="scriptText" value="${script.text}" data-value="${script.text}" required autofocus/>
                 </div>
                 
                 <div class="d-flex pt-3">
                     <div class="">
-                        <a class="btn btn-lg btn-white" href="${pageContext.servletContext.contextPath}/index.jsp">Voltar</a>
+                        <a class="btn btn-lg btn-white" href="${pageContext.servletContext.contextPath}/index">Voltar</a>
                     </div>
 
                     <div class="">
@@ -63,6 +62,5 @@
             </form>
         </div>
         
-        <%@include file="/templates/footer.jsp"%>
     </body>
 </html>

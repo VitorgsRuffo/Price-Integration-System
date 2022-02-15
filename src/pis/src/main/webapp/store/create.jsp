@@ -58,7 +58,7 @@
                 
                 <div class="d-flex">
                     <div class="text-center">
-                    <a class="btn btn-lg btn-white" href="${pageContext.servletContext.contextPath}/index.jsp">Voltar</a>
+                    <a class="btn btn-lg btn-white" href="${pageContext.servletContext.contextPath}/index">Voltar</a>
                 </div>
                 
                 <div class="text-center">
