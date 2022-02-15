@@ -395,6 +395,22 @@ public class StoreController extends HttpServlet {
                         }
                     }
                     
+                    //saving crawling script execution on database... (we consider that the inputed json was resulted from the execution of the last script version.)
+                    PgScriptDAO scriptDao = (PgScriptDAO) daoFactory.getScriptDAO();
+                    Script lastScript = scriptDao.readLastVersion(storeId);
+                    
+                    ScriptExecution scriptExecution = new ScriptExecution();
+                    scriptExecution.setStoreId(storeId);
+                    scriptExecution.setScriptVersionNum(lastScript.getVersionNum());
+                    long millis = System.currentTimeMillis();  
+                    scriptExecution.setDate(new Date(millis));
+                    scriptExecution.setTime(new Time(millis));
+                    
+                    PgScriptExecutionDAO scriptExeDao = (PgScriptExecutionDAO) daoFactory.getScriptExecutionDAO();
+                    scriptExeDao.create(scriptExecution);
+
+                    
+                    //redirecting user...
                     response.sendRedirect(request.getContextPath() + "/store/read?id=" + String.valueOf(storeId) + "&crawling=success");
 
                 } catch (FileUploadException ex) {
