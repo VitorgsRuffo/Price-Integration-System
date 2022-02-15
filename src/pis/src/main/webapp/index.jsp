@@ -24,10 +24,11 @@
             </div>
 
             <!-- Lista de lojas -->
-            <ul class="list-inline pt-4">
+            <ul class="list-inline pt-4 col-2">
                 <c:forEach var="store" items="${requestScope.storeList}">
                     <li class="list-inline-item d-flex">
-                        <a class="btn btn-default pl-0" href="${pageContext.servletContext.contextPath}/store/read?id=${store.id}"><c:out value="${store.name}"/></a>
+                        <a class="btn btn-default pl-0 " href="${pageContext.servletContext.contextPath}/store/read?id=${store.id}"><c:out value="${store.name}"/></a>
+                        
                         <a class="btn btn-default" data-toggle="tooltip" data-original-title="Atualizar" href="${pageContext.servletContext.contextPath}/store/update?id=${store.id}"><i class="fa fa-pencil"></i></a>
                         <a class="btn btn-default link-delete-store" 
                             href="#" data-href="${pageContext.servletContext.contextPath}/store/delete?id=${store.id}"

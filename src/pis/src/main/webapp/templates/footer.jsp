@@ -18,7 +18,7 @@
             <div class="footer w-100 px-4 py-2 d-flex justify-content-between align-items-center bg-success">
                 <div d-flex flex-column justify-content-center align-items-center>
                     <p class="text-white m-0">Disciplina de Banco de Dados</p>
-                    <p class="text-white m-0">Prof. Daniel Santos Kaster</p>
+                    <p class="text-white m-0">Prof. Daniel dos Santos Kaster</p>
                 </div>
                 
                 <h5 class="text-white m-0">

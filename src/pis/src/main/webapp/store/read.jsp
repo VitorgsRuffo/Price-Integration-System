@@ -27,6 +27,7 @@
                     <p class="p-0 m-0 pb-1">Endereço: <strong>${store.address}</strong></p>
                     <p class="p-0 m-0 pb-1 mb-4">Telefone: <strong>${store.phone}</strong></p>
                     <button class="btn btn-success link-load-crawling">Executar Crawling</button>
+                    <a href="${pageContext.servletContext.contextPath}/index" class="btn btn-default">Voltar</a>
                 </div>
 
                 <div class="col-6">
