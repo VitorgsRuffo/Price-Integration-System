@@ -35,7 +35,7 @@ public class CrawledRating {
     }
 
     public String getData() {
-        return data;
+        return data.replace("/", "-");
     }
 
     public void setData(String data) {

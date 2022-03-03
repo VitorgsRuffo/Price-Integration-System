@@ -139,11 +139,11 @@ public class CrawledIphone {
     }
 
     public String getMedia_nota() {
+        if (media_nota == null) return null;
         return media_nota.replace(",", ".");
     }
 
     public void setMedia_nota(String media_nota) {
-        media_nota = media_nota.replace(",", ".");
         this.media_nota = media_nota;
     }
 

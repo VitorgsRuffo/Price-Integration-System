@@ -345,16 +345,18 @@ public class StoreController extends HttpServlet {
                     Date sqlDate = new Date(date.getTime());
                     
                     String source = data[0].getLoja();
-                    System.out.println(source);
                     
                     for(int i = 1; i<data.length; i++){
                         
                         CrawledIphone cIphone = data[i].getIphone();
+                        if(cIphone == null) continue;
                         
                         Iphone iphone = new Iphone();
                         iphone.setModelName(cIphone.getModelo_nome());
                         iphone.setColor(cIphone.getCor());
-                        iphone.setSecondaryMemory(cIphone.getMem_int()); 
+                        String sec_mem = cIphone.getMem_int();
+                        if(sec_mem == null) continue;
+                        iphone.setSecondaryMemory(sec_mem); 
                         iphone.setVoltage(cIphone.getVoltagem()); 
                         iphone.setModelCod(cIphone.getModelo_cod());
                         iphone.setIphoneLink(cIphone.getLink_iphone());
@@ -375,27 +377,34 @@ public class StoreController extends HttpServlet {
                         iphoneVersion.setDate(sqlDate);
                         iphoneVersion.setCashPayment(cIphone.getPreco_avista());
                         iphoneVersion.setInstallmentPayment(cIphone.getPreco_aprazo());
-//                        if(cIphone.getMedia_nota() != null)
-//                            iphoneVersion.setRatingAverage(Double.parseDouble(cIphone.getMedia_nota()));
-//                        if(cIphone.getQuantidade_avaliacoes() != null)
-//                            iphoneVersion.setRatingAmount(Integer.parseInt(cIphone.getQuantidade_avaliacoes()));
+                        if(cIphone.getMedia_nota() != null)
+                            iphoneVersion.setRatingAverage(Double.parseDouble(cIphone.getMedia_nota()));
+                        if(cIphone.getQuantidade_avaliacoes() != null)
+                            iphoneVersion.setRatingAmount(Integer.parseInt(cIphone.getQuantidade_avaliacoes()));
                         iphoneVersionDao.create(iphoneVersion);
 
                         List<CrawledRating> cRatings = data[i].getAvaliacoes();
                         for(int j = 0; j<cRatings.size(); j++){
-                            CrawledRating cRating = cRatings.get(j); 
+                            
+                            CrawledRating cRating = cRatings.get(j);
+                            String title = cRating.getTitulo();
+                            String description = cRating.getDescricao();
+                            if (title == null || description == null) continue;
+                            
                             Rating rating = new Rating();
                             rating.setStoreId(storeId);
                             rating.setModelName(iphone.getModelName());
                             rating.setColor(iphone.getColor());
                             rating.setSecondaryMemory(iphone.getSecondaryMemory());
-                            rating.setTitle(cRating.getTitulo());
-                            rating.setDescription(cRating.getDescricao());
+                            rating.setTitle(title);
+                            rating.setDescription(description);
                             
-                            //String ratingDateString = cRating.getData();
-                            //java.util.Date ratingDate = format.parse(ratingDateString);
-                            //Date ratingSqlDate = new Date(ratingDate.getTime());
-                            rating.setDate(sqlDate);
+                            String ratingDateString = cRating.getData();
+                            if(!ratingDateString.equals("None")){
+                                java.util.Date ratingDate = format.parse(ratingDateString);
+                                Date ratingSqlDate = new Date(ratingDate.getTime());
+                                rating.setDate(sqlDate);
+                            }
                             
                             rating.setRaterName(cRating.getAvaliador_nome());
                             if(cRating.getLikes() != null){

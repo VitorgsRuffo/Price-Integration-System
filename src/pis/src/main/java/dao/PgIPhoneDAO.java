@@ -55,8 +55,6 @@ public class PgIPhoneDAO implements DAO {
             statement.setString(10, iphone.getBackCam());
             statement.setString(11, iphone.getRamMemory());
             statement.setString(12, iphone.getVoltage());
-            System.out.println("Main source create:");
-            System.out.println(iphone.getMainSource());
             statement.setString(13, iphone.getMainSource());
 
             statement.executeUpdate();
@@ -88,7 +86,6 @@ public class PgIPhoneDAO implements DAO {
                         return;
                     }
                     String bd_source = result.getString("main_source");
-                    System.out.println(bd_source);
 
                     if (bd_source.equals(master)) {
                         this.notMasterUpdate(iphone);
