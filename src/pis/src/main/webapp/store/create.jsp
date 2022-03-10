@@ -46,7 +46,7 @@
                 
                 <div class="form-group">
                     <label class="control-label" for="site-phone">Telefone</label>
-                    <input id="site-phone" class="form-control" type="number" name="phone" required autofocus/>
+                    <input id="site-phone" class="form-control" type="text" name="phone" required autofocus/>
                     <p class="help-block"></p>
                 </div>
                 
@@ -65,8 +65,8 @@
                     <button class="btn btn-lg btn-success" type="submit">Salvar</button>
                 </div>
                 </div>
-                
             </form>
         </div>
+    <script src="${pageContext.servletContext.contextPath}/assets/js/store.js"></script>
     </body>
 </html>

@@ -41,13 +41,14 @@
 
                 <div class="form-group">
                     <label class="control-label" for="site-phone">Telefone</label>
-                    <input id="site-phone" class="form-control" type="number" name="phone" value="${store.phone}" data-value="${store.phone}" required autofocus/>
+                    <input id="site-phone" class="form-control" type="text" name="phone" value="${store.phone}" data-value="${store.phone}" required autofocus/>
                     <p class="help-block"></p>
                 </div>
 
                 <div class="form-group">
-                    <label for="script-text" class="control-label">Script</label>
-                    <input id="script-text" class="form-control" type="text" name="scriptText" value="${script.text}" data-value="${script.text}" required autofocus/>
+                    <label class="control-label" for="site-script">Script</label>
+                    <TextArea id="site-script" class="form-control" rows="20" type="text" name="scriptText" value="${script.text}" ddata-value="${script.text}"></textarea>
+                    <p class="help-block"></p>
                 </div>
                 
                 <div class="d-flex pt-3">
@@ -61,6 +62,6 @@
                 </div>
             </form>
         </div>
-        
+    <script src="${pageContext.servletContext.contextPath}/assets/js/store.js"></script>
     </body>
 </html>
