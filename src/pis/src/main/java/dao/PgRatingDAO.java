@@ -55,8 +55,11 @@ public class PgRatingDAO implements DAO {
             statement.executeUpdate();
             
         } catch (SQLException ex) {
-            Logger.getLogger(PgRatingDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
-            //throw ex;
+            if (!ex.getMessage().contains("duplicate key")) {
+             
+                Logger.getLogger(PgRatingDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+                throw ex;
+            }
         }
     }
 

@@ -33,19 +33,19 @@ CREATE TABLE pis.scriptExecution (
 );
 
 CREATE TABLE pis.iphone (
-	model_name VARCHAR(20),
-	sec_mem VARCHAR(20),
+	model_name VARCHAR(50),
+	sec_mem VARCHAR(50),
 	color VARCHAR(30),
-	title VARCHAR(80),
-	iphone_link VARCHAR(200),
-	image_link VARCHAR(200),
-	model_cod VARCHAR(20),
-	display_size VARCHAR(20),
-	front_cam VARCHAR(20),
-	back_cam VARCHAR(20),
-	ram_mem VARCHAR(20),
-	voltage VARCHAR(20),
-	main_source VARCHAR(20),
+	title VARCHAR(400),
+	iphone_link VARCHAR(400),
+	image_link VARCHAR(400),
+	model_cod VARCHAR(50),
+	display_size VARCHAR(50),
+	front_cam VARCHAR(50),
+	back_cam VARCHAR(50),
+	ram_mem VARCHAR(50),
+	voltage VARCHAR(50),
+	main_source VARCHAR(50),
 	CONSTRAINT pk_iphone PRIMARY KEY(model_name, sec_mem, color)
 );
 
