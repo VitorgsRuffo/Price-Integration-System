@@ -42,7 +42,7 @@ public class PgStoreDAO implements DAO {
                                 "SELECT * " +
                                 "FROM pis.store JOIN pis.script ON (id = store_id) " +
                                 "WHERE id = ? " +
-                                "ORDER BY version_num DESC;";
+                                "ORDER BY version_num ASC;";
 
     
     private static final String DELETE_QUERY =
