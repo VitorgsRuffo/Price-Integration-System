@@ -33,8 +33,10 @@
                 <div class="col-6">
                     <h4>Histórico de Scripts</h4>
                     <div class="d-flex flex-column ">
-                    <c:forEach var="script" items="${store.scripts}">
-                        <a class="link-success link_version-history" href="" data-href="${pageContext.servletContext.contextPath}/store/read/script/executions?storeId=${script.storeId}&scriptVersionNum=${script.versionNum}">Script V${script.versionNum}</a>
+                    <c:forEach var="script" items="${store.scripts}" varStatus="loop">
+                        <a class="link-success link_version-history" href="" data-href="${pageContext.servletContext.contextPath}/store/read/script/executions?storeId=${script.storeId}&scriptVersionNum=${script.versionNum}">
+                            Script V${loop.count}
+                        </a>
                     </c:forEach>
                     </div>
                 </div>
@@ -74,7 +76,7 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title">Historico de Execucoes</h4>
+                            <h4 class="modal-title">Histórico de Execuções</h4>
                             <button class="close" type="button" data-dismiss="modal"><span>&times;</span></button>
                         </div>
                         <div class="modal-body">

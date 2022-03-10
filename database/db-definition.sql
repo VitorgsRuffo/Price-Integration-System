@@ -16,7 +16,7 @@ CREATE TABLE pis.script (
 	version_num INT DEFAULT nextval('pis.version_num_seq'),
 	date DATE,
 	time TIME,
-	text VARCHAR(2000),
+	text VARCHAR(10000),
 	CONSTRAINT pk_script PRIMARY KEY (store_id, version_num),
 	CONSTRAINT fk_script FOREIGN KEY (store_id)
 		REFERENCES pis.store(id) ON DELETE CASCADE
