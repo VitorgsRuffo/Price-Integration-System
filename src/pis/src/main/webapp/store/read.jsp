@@ -81,10 +81,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="container-fluid">
-                                <div class="d-flex flex-column">
-                                    <p class="p_date"></p>
-                                    <p class="p_time"></p>
-                                </div>
+                                <div class="d-flex flex-column" id="rows-wrapper"></div>
                             </div>
                         </div>
                         <div class="modal-footer">

@@ -131,6 +131,7 @@ public class PgStoreDAO implements DAO {
                     store.setLogoPath(result.getString("logo_path"));
 
                     Script script = new Script();
+                    script.setStoreId(result.getInt("store_id"));
                     script.setVersionNum(result.getInt("version_num"));
                     script.setDate(result.getDate("date"));
                     script.setTime(result.getTime("time"));

@@ -30,7 +30,7 @@ public class PgScriptExecutionDAO implements DAO {
                                 "SELECT date, time " +
                                 "FROM pis.scriptExecution " +
                                 "WHERE store_id = ? AND script_version_num = ? " +
-                                "ORDER BY date DESC, time DESC;";   
+                                "ORDER BY date ASC, time ASC;";   
     
     public PgScriptExecutionDAO(Connection connection) {
         this.connection = connection;

@@ -14,11 +14,46 @@ function readVersionHistory(e) {
     $.get($(this).data('href'), function (data) {
         var vhistory = JSON.parse(data);
         var $modal = $('.modal-version-history');
+        var pai = document.getElementById('rows-wrapper');
+        
+        if ($('#rows-wrapper').is(':empty')) {
+            if(vhistory.length == 0) {
+            
+                var novaDiv = document.createElement('div');
+                novaDiv.classList.add('d-flex');
+                novaDiv.classList.add('justify-content-center');
 
-        /*$modal.find('.p_date').html('<strong>ID: </strong>' + vhistory.date);
-        $modal.find(".p_login").html('<strong>Login: </strong>' + vhistory.login);
-        $modal.find('.p_nome').html('<strong>Nome: </strong>' + vhistory.nome);*/
-        console.log("Aqui");
+                var mensagem = document.createTextNode("Nenhuma execução realizada");
+                novaDiv.appendChild(mensagem);
+                pai.appendChild(novaDiv);
+            
+            } else {
+
+                for(let i=0; i<vhistory.length; i++ ) {
+
+                    var novaDiv = document.createElement('div');
+                    novaDiv.classList.add('d-flex');
+                    novaDiv.classList.add('justify-content-around');
+
+                    var indexElement = document.createElement('strong');
+                    var conteudoIndex = document.createTextNode(i+1);
+                    indexElement.appendChild(conteudoIndex);
+                    novaDiv.appendChild(indexElement);
+
+                    var span = document.createElement('span');
+                    var conteudoSpan = document.createTextNode(vhistory[i].date);
+                    span.appendChild(conteudoSpan);
+                    novaDiv.appendChild(span);
+
+                    span = document.createElement('span');
+                    conteudoSpan = document.createTextNode(vhistory[i].time );
+                    span.appendChild(conteudoSpan);
+                    novaDiv.appendChild(span);
+
+                    pai.appendChild(novaDiv);
+                }
+            }
+        }
         
         $modal.modal();
     });
@@ -27,18 +62,13 @@ function readVersionHistory(e) {
 function loadCrawling(e) {
     e.preventDefault();
     var $modal = $('.modal-execute-crawling');
-    console.log("oi");
-    
     $modal.modal();
-
 }
              
 function autosize(){
   var el = this;
   setTimeout(function(){
     el.style.cssText = 'height:auto; padding:0';
-    // for box-sizing other than "content-box" use:
-    // el.style.cssText = '-moz-box-sizing:content-box';
     el.style.cssText = 'height:' + el.scrollHeight + 'px';
   },0);
 }
