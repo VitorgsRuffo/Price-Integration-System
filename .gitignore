@@ -7,3 +7,5 @@ __pycache__/
 *.jl
 /src/pis/target/
 src/pis/src/main/webapp/conf/datasource.properties
+/administrative interface/src/pis/pis/target/
+/public interface/pis/target/
