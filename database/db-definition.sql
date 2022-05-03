@@ -1,38 +1,38 @@
 CREATE SCHEMA pis;
 
 CREATE SEQUENCE pis.store_id_seq;
-CREATE TABLE pis.store (
+CREATE TABLE pis.Stores (
 	id INT DEFAULT nextval('pis.store_id_seq'),
 	name VARCHAR(20) NOT NULL,
 	logo_path VARCHAR(20),
 	address VARCHAR(80),
 	phone VARCHAR(15),
-	CONSTRAINT pk_store PRIMARY KEY (id)
+	CONSTRAINT pk_stores PRIMARY KEY (id)
 );
 
 CREATE SEQUENCE pis.version_num_seq;
-CREATE TABLE pis.script (
+CREATE TABLE pis.Scripts (
 	store_id INT,
 	version_num INT DEFAULT nextval('pis.version_num_seq'),
 	date DATE,
 	time TIME,
 	text VARCHAR(10000),
-	CONSTRAINT pk_script PRIMARY KEY (store_id, version_num),
-	CONSTRAINT fk_script FOREIGN KEY (store_id)
-		REFERENCES pis.store(id) ON DELETE CASCADE
+	CONSTRAINT pk_scripts PRIMARY KEY (store_id, version_num),
+	CONSTRAINT fk_scripts FOREIGN KEY (store_id)
+		REFERENCES pis.Stores(id) ON DELETE CASCADE
 );
 
-CREATE TABLE pis.scriptExecution (
+CREATE TABLE pis.ScriptExecutions (
 	store_id INT,
 	script_version_num INT,
 	date DATE,
 	time TIME,
-	CONSTRAINT pk_script_execution PRIMARY KEY(store_id, script_version_num, date, time),
-	CONSTRAINT fk_script_execution FOREIGN KEY (store_id,script_version_num)
-		REFERENCES pis.script(store_id,version_num) ON DELETE CASCADE
+	CONSTRAINT pk_script_executions PRIMARY KEY(store_id, script_version_num, date, time),
+	CONSTRAINT fk_script_executions FOREIGN KEY (store_id,script_version_num)
+		REFERENCES pis.Scripts(store_id,version_num) ON DELETE CASCADE
 );
 
-CREATE TABLE pis.iphone (
+CREATE TABLE pis.Iphones (
 	model_name VARCHAR(50),
 	sec_mem VARCHAR(50),
 	color VARCHAR(30),
@@ -46,11 +46,11 @@ CREATE TABLE pis.iphone (
 	ram_mem VARCHAR(50),
 	voltage VARCHAR(50),
 	main_source VARCHAR(50),
-	CONSTRAINT pk_iphone PRIMARY KEY(model_name, sec_mem, color)
+	CONSTRAINT pk_iphones PRIMARY KEY(model_name, sec_mem, color)
 );
 
 CREATE SEQUENCE pis.iphoneVersion_id_seq;
-CREATE TABLE pis.iphoneVersion (
+CREATE TABLE pis.IphoneVersions (
 	id INT DEFAULT nextval('pis.iphoneVersion_id_seq'),
 	iphone_model_name VARCHAR(20),
 	iphone_sec_mem VARCHAR(10),
@@ -61,12 +61,14 @@ CREATE TABLE pis.iphoneVersion (
 	installment_payment VARCHAR(500),
 	rating_amount INT,
 	rating_average NUMERIC,
-	CONSTRAINT pk_iphoneVersion PRIMARY KEY(id, iphone_model_name, iphone_sec_mem, iphone_color, store_id),
-	CONSTRAINT fk_iphoneVersion FOREIGN KEY (iphone_model_name, iphone_sec_mem, iphone_color)
-		REFERENCES pis.iphone(model_name, sec_mem, color)
+	CONSTRAINT pk_iphone_versions PRIMARY KEY(id, iphone_model_name, iphone_sec_mem, iphone_color, store_id),
+	CONSTRAINT fk_iphone_versions FOREIGN KEY (iphone_model_name, iphone_sec_mem, iphone_color)
+		REFERENCES pis.Iphones(model_name, sec_mem, color),
+	CONSTRAINT fk_iphone_versions_store FOREIGN KEY (store_id)
+		REFERENCES pis.Stores(id)
 );
 
-CREATE TABLE pis.rating (
+CREATE TABLE pis.IphoneRatings (
 	iphone_model_name VARCHAR(20),
 	iphone_sec_mem VARCHAR(10),
 	iphone_color VARCHAR(30),
@@ -78,7 +80,9 @@ CREATE TABLE pis.rating (
 	likes INT,
 	deslikes INT,
 	date DATE,
-	CONSTRAINT pk_rating PRIMARY KEY(iphone_model_name, iphone_sec_mem, iphone_color, store_id, title, description),
-	CONSTRAINT fk_rating FOREIGN KEY(iphone_model_name, iphone_sec_mem, iphone_color)
-		REFERENCES pis.iphone(model_name, sec_mem, color)
+	CONSTRAINT pk_iphone_ratings PRIMARY KEY(iphone_model_name, iphone_sec_mem, iphone_color, store_id, title, description),
+	CONSTRAINT fk_iphone_ratings FOREIGN KEY(iphone_model_name, iphone_sec_mem, iphone_color)
+		REFERENCES pis.Iphones(model_name, sec_mem, color),
+	CONSTRAINT fk_iphone_ratings_store FOREIGN KEY (store_id)
+		REFERENCES pis.Stores(id)
 );
