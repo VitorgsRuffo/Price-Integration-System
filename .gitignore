@@ -8,4 +8,4 @@ __pycache__/
 /src/pis/target/
 src/pis/src/main/webapp/conf/datasource.properties
 /administrative interface/src/pis/pis/target/
-/public interface/src/pis/target/
+/public interface/src/pis/target/*
