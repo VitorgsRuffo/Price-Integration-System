@@ -102,7 +102,7 @@ public class SearchController extends HttpServlet {
 
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
                     request.getSession().setAttribute("error", ex.getMessage());
-                    response.sendRedirect(request.getContextPath() + "/index");
+                    response.sendRedirect(request.getContextPath() + "/teste");
                 }
                 break;
             }
