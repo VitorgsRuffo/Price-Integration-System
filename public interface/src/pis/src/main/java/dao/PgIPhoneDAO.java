@@ -21,19 +21,21 @@ public class PgIPhoneDAO implements DAO {
     
     private final Connection connection;
     
+    private static final String READ_BY_KEY_QUERY = "SELECT * FROM pis.Iphones WHERE model_name = ? AND sec_mem = ? AND color = ?";
+    
     private static final String CREATE_QUERY =
                                 "INSERT INTO pis.iphone(model_name, sec_mem, color, title, iphone_link, image_link, model_cod, display_size, front_cam, back_cam, ram_mem, voltage, main_source) " +
                                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     
     private static final String MASTER_UPDATE_QUERY = 
-                                "UPDATE pis.iphone SET voltage = ?, iphone_link = ?, image_link = ?, display_size = ?, front_cam = ?, back_cam = ?, ram_mem = ?, title = ?, main_source = ? " +
+                                "UPDATE pis.Iphones SET voltage = ?, iphone_link = ?, image_link = ?, display_size = ?, front_cam = ?, back_cam = ?, ram_mem = ?, title = ?, main_source = ? " +
                                 "WHERE model_name = ? AND sec_mem = ? AND color = ?;";
     
     private static final String NOT_MASTER_UPDATE_QUERY = 
-                                "UPDATE pis.iphone SET model_cod = ? WHERE model_name = ? AND sec_mem = ? AND color = ?;";
+                                "UPDATE pis.Iphones SET model_cod = ? WHERE model_name = ? AND sec_mem = ? AND color = ?;";
     
     private static final String MAIN_SOURCE_QUERY = 
-                                "SELECT main_source FROM pis.iphone WHERE model_name = ? AND sec_mem = ? AND color = ?;";
+                                "SELECT main_source FROM pis.Iphones WHERE model_name = ? AND sec_mem = ? AND color = ?;";
 
     public PgIPhoneDAO(Connection connection) {
         this.connection = connection;
@@ -139,6 +141,31 @@ public class PgIPhoneDAO implements DAO {
         }
     }
     
+    public Iphone readByKey(String modelName, String secMem, String color) throws SQLException {
+        
+        Iphone iphone = new Iphone();
+
+        try (PreparedStatement statement = connection.prepareStatement(READ_BY_KEY_QUERY)) {
+            statement.setString(1, modelName);
+            statement.setString(2, secMem);
+            statement.setString(3, color);
+
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) {
+                    iphone.setImageLink(result.getString("image_link"));
+                    //set remaining attributes...
+                } else {
+                    throw new SQLException("read error: iphone not found.");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PgStoreDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            throw ex;
+        }
+
+        return iphone;
+
+    }
 
     @Override
     public Object read(Integer id) throws SQLException {
