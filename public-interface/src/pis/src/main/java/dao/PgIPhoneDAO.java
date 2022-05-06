@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +21,7 @@ import model.Iphone;
 public class PgIPhoneDAO implements DAO {
     
     private final Connection connection;
-    
+       
     private static final String READ_BY_KEY_QUERY = "SELECT * FROM pis.Iphones WHERE model_name = ? AND sec_mem = ? AND color = ?";
     
     private static final String CREATE_QUERY =
@@ -36,7 +37,10 @@ public class PgIPhoneDAO implements DAO {
     
     private static final String MAIN_SOURCE_QUERY = 
                                 "SELECT main_source FROM pis.Iphones WHERE model_name = ? AND sec_mem = ? AND color = ?;";
+    
+    private static String ALL_BY_FILTERS_QUERY = "SELECT * FROM pis.Iphones WHERE LOWER(title) LIKE '%?%";
 
+    
     public PgIPhoneDAO(Connection connection) {
         this.connection = connection;
     }
@@ -165,6 +169,53 @@ public class PgIPhoneDAO implements DAO {
 
         return iphone;
 
+    }
+    
+    public List<Iphone> allByFilters(String query, String color, String secMem) throws SQLException {
+        List<Iphone> iphones = new ArrayList<Iphone>();
+        
+        try (PreparedStatement statement = connection.prepareStatement(ALL_BY_FILTERS_QUERY)){ 
+            statement.setString(1, query);
+            
+            int i = 2;
+
+            if(color != null){
+                if(color.equals("outro")){
+                    this.ALL_BY_FILTERS_QUERY = this.ALL_BY_FILTERS_QUERY.concat(" AND color NOT IN ('vermelho', 'azul', 'amarelo', 'branco', 'cinza', 'preto')");
+                }else{
+                    this.ALL_BY_FILTERS_QUERY = this.ALL_BY_FILTERS_QUERY.concat(" AND color = ?");
+                    statement.setString(i, color);
+                    i++;
+                }
+            }
+            
+            if(secMem != null){
+                this.ALL_BY_FILTERS_QUERY = this.ALL_BY_FILTERS_QUERY.concat(" AND sec_mem = ?");
+                statement.setString(i, secMem);
+                i++;
+            }
+            
+            this.ALL_BY_FILTERS_QUERY = this.ALL_BY_FILTERS_QUERY.concat(";");
+            
+            try(ResultSet result = statement.executeQuery(ALL_BY_FILTERS_QUERY)) {
+                while (result.next()) {
+                    Iphone iphone = new Iphone();
+                    
+                    iphone.setModelName(result.getString("model_name"));
+                    iphone.setColor(result.getString("color"));
+                    iphone.setSecondaryMemory(result.getString("sec_mem"));
+                    iphone.setTitle(result.getString("title"));
+                    iphone.setImageLink(result.getString("image_link"));
+                    
+                    iphones.add(iphone);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PgIPhoneVersionDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            throw ex;
+        }   
+        
+        return iphones;
     }
 
     @Override

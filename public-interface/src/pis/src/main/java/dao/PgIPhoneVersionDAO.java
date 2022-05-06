@@ -29,8 +29,8 @@ public class PgIPhoneVersionDAO implements DAO {
     private static final String ALL_BY_KEY_QUERY =
                                 "SELECT date, cash_payment, installment_payment, rating_amout, rating_average " +
                                 "FROM pis.IphoneVersions " +
-                                "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND store_id = ? AND color = ?" +
-                                "ORDER BY date DESC";
+                                "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND color = ?" +
+                                "ORDER BY cash_payment ASC";
     
     private static final String ALL_ORDER_BY_CASH_PAYMENT_QUERY = "SELECT * " + 
                                                                   "FROM pis.IphoneVersions " +
@@ -112,14 +112,13 @@ public class PgIPhoneVersionDAO implements DAO {
 
     }
     
-    public List<IphoneVersion> allByKey(String iphoneModel, int secondaryMemory, int storeId, String color) throws SQLException {
-        List<IphoneVersion> iphoneVersionsExec = new ArrayList<>();
+    public List<IphoneVersion> allByKey(String iphoneModel, String secondaryMemory, String color) throws SQLException {
+        List<IphoneVersion> iphoneVersions = new ArrayList<>();
 
         try (PreparedStatement statement = connection.prepareStatement(ALL_BY_KEY_QUERY)){
             statement.setString(1, iphoneModel);
-            statement.setInt(2, secondaryMemory);
-            statement.setInt(3, storeId);
-            statement.setString(4, color);
+            statement.setString(2, secondaryMemory);
+            statement.setString(3, color);
             
             try(ResultSet result = statement.executeQuery()) {
                 while (result.next()) {
@@ -129,7 +128,7 @@ public class PgIPhoneVersionDAO implements DAO {
                     iphoneVersion.setInstallmentPayment(result.getString("installment_payment"));
                     iphoneVersion.setRatingAmount(result.getInt("rating_amount"));
                     iphoneVersion.setRatingAverage(result.getDouble("rating_average"));
-                    iphoneVersionsExec.add(iphoneVersion);
+                    iphoneVersions.add(iphoneVersion);
                 }
             }
         } catch (SQLException ex) {
@@ -137,6 +136,6 @@ public class PgIPhoneVersionDAO implements DAO {
             throw ex;
         }
 
-        return iphoneVersionsExec;
+        return iphoneVersions;
     }
 }

@@ -16,6 +16,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -109,7 +110,73 @@ public class SearchController extends HttpServlet {
             }
 
             case "/search": {
-                
+                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    
+                    //getting query parameters...
+                    String parameter;
+                    
+                    parameter = request.getParameter("page");
+                    int page = (parameter==null) ? (1) : (Integer.parseInt(parameter));
+                    
+                    parameter = request.getParameter("q");
+                    String query = (parameter==null) ? ("") : (parameter);
+                    query = query.toLowerCase();
+                    
+                    parameter = request.getParameter("minPrice");
+                    Double minPrice = (parameter==null) ? (0.0) : (Double.parseDouble(parameter));
+                    
+                    parameter = request.getParameter("maxPrice");
+                    Double maxPrice = (parameter==null) ? (1000000.00) : (Double.parseDouble(parameter));
+                    
+                    String color = request.getParameter("color");
+                    
+                    String secMem = request.getParameter("secMem");
+                    
+                    String orderBy = request.getParameter("orderBy");
+                    
+                    
+                    //get necessary DAO(s)...
+                    PgIPhoneDAO iphoneDAO = (PgIPhoneDAO) daoFactory.getIphoneDAO();
+                    PgIPhoneVersionDAO iphoneVersionDAO = (PgIPhoneVersionDAO) daoFactory.getIphoneVersionDAO();
+
+                    
+                    //query the database...
+                    List<Iphone> selectedIphones = new ArrayList<Iphone>();
+                    
+                    //List<Iphone> iphones = iphoneDAO.allByFilters(query, color, secMem);
+
+//                    int iphonesLen = iphones.size();
+//                    for (int i = 0; i<iphonesLen; i++){
+//                        Iphone iphone = iphones.get(i);
+//                        List<IphoneVersion> versions = iphoneVersionDAO.allByKey(iphone.getModelName(), iphone.getSecondaryMemory(), iphone.getColor());
+//                        if(versions.get(0).getCashPayment() >= minPrice && versions.get(0).getCashPayment() <= maxPrice){ //applying price filter...
+//                            iphone.setVersions(versions);
+//                            selectedIphones.add(iphone);
+//                        }
+//                    }
+//                    
+//                    //applying order by:
+//                    if(orderBy != null){
+//                        if(orderBy.equals("asc")){
+//                            
+//                        }else{
+//                        
+//                        }
+//                    }
+                    
+                    //apxpend result to request
+                    request.setAttribute("iphones", selectedIphones);
+                    
+                    //call view
+                    dispatcher = request.getRequestDispatcher("/search.jsp");
+                    dispatcher.forward(request, response);
+               
+
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+                    request.getSession().setAttribute("error", ex.getMessage());
+                    response.sendRedirect(request.getContextPath() + "/index?search=failure");
+                }
+                break;
             }
         }
     }
