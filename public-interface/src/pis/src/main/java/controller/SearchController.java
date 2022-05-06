@@ -66,37 +66,41 @@ public class SearchController extends HttpServlet {
                     //reading cheapest and most expensive iphones from database...
                     PgIPhoneVersionDAO iphoneVersionDAO = (PgIPhoneVersionDAO) daoFactory.getIphoneVersionDAO();
                     List<IphoneVersion> iphoneVersions = iphoneVersionDAO.allOrderByCashPayment();
-                    IphoneVersion cheapestIphone = iphoneVersions.get(0);
-                    IphoneVersion mostExpensiveIphone = iphoneVersions.get(iphoneVersions.size() - 1);
+                    
+                    if(!iphoneVersions.isEmpty()) {
+                        
+                        IphoneVersion cheapestIphone = iphoneVersions.get(0);
+                        IphoneVersion mostExpensiveIphone = iphoneVersions.get(iphoneVersions.size() - 1);
 
-                    //reading those iphones images links...
-                    PgIPhoneDAO iphoneDAO = (PgIPhoneDAO) daoFactory.getIphoneDAO();
+                        //reading those iphones images links...
+                        PgIPhoneDAO iphoneDAO = (PgIPhoneDAO) daoFactory.getIphoneDAO();
 
-                    Iphone cIp = iphoneDAO.readByKey(cheapestIphone.getModelName(),
-                            cheapestIphone.getSecondaryMemory(),
-                            cheapestIphone.getColor());
-                    String cheapestIphoneImgLink = cIp.getImageLink();
+                        Iphone cIp = iphoneDAO.readByKey(cheapestIphone.getModelName(),
+                                cheapestIphone.getSecondaryMemory(),
+                                cheapestIphone.getColor());
+                        String cheapestIphoneImgLink = cIp.getImageLink();
 
-                    Iphone eIp = iphoneDAO.readByKey(mostExpensiveIphone.getModelName(),
-                            mostExpensiveIphone.getSecondaryMemory(),
-                            mostExpensiveIphone.getColor());
-                    String mostExpensiveIphoneImgLink = eIp.getImageLink();
+                        Iphone eIp = iphoneDAO.readByKey(mostExpensiveIphone.getModelName(),
+                                mostExpensiveIphone.getSecondaryMemory(),
+                                mostExpensiveIphone.getColor());
+                        String mostExpensiveIphoneImgLink = eIp.getImageLink();
 
-                    //reading those iphones store names...
-                    DAO storeDAO = daoFactory.getStoreDAO();
+                        //reading those iphones store names...
+                        DAO storeDAO = daoFactory.getStoreDAO();
 
-                    Store cSt = (Store) storeDAO.read(cheapestIphone.getStoreId());
-                    String cheapestIphoneStoreName = cSt.getName();
-                    Store eSt = (Store) storeDAO.read(mostExpensiveIphone.getStoreId());
-                    String mostExpensiveIphoneStoreName = eSt.getName();
+                        Store cSt = (Store) storeDAO.read(cheapestIphone.getStoreId());
+                        String cheapestIphoneStoreName = cSt.getName();
+                        Store eSt = (Store) storeDAO.read(mostExpensiveIphone.getStoreId());
+                        String mostExpensiveIphoneStoreName = eSt.getName();
 
-                    request.setAttribute("cheapestIphone", cheapestIphone);
-                    request.setAttribute("mostExpensiveIphone", mostExpensiveIphone);
-                    request.setAttribute("cheapestIphoneImgLink", cheapestIphoneImgLink);
-                    request.setAttribute("mostExpensiveIphoneImgLink", mostExpensiveIphoneImgLink);
-                    request.setAttribute("cheapestIphoneStoreName", cheapestIphoneStoreName);
-                    request.setAttribute("mostExpensiveIphoneStoreName", mostExpensiveIphoneStoreName);
-
+                        request.setAttribute("cheapestIphone", cheapestIphone);
+                        request.setAttribute("mostExpensiveIphone", mostExpensiveIphone);
+                        request.setAttribute("cheapestIphoneImgLink", cheapestIphoneImgLink);
+                        request.setAttribute("mostExpensiveIphoneImgLink", mostExpensiveIphoneImgLink);
+                        request.setAttribute("cheapestIphoneStoreName", cheapestIphoneStoreName);
+                        request.setAttribute("mostExpensiveIphoneStoreName", mostExpensiveIphoneStoreName);
+                        
+                    }
                     dispatcher = request.getRequestDispatcher("/index.jsp");
                     dispatcher.forward(request, response);
 
