@@ -41,18 +41,19 @@ class AmericanasSpider(scrapy.Spider):
             preco_avista, preco_aprazo = iphone_div.css('div.price-info__ContainerPriceInstalmentCash-sc-1td1088-2 span')[0:2]
             preco_avista = preco_avista.css('::text').get()
             preco_aprazo = preco_aprazo.css('::text').get()
+            link_imagem = iphone_div.css('source::attr(srcset)').get()
 
             time.sleep(2)
 
-            yield scrapy.Request(iphone_abs_link, headers=self.headers, callback=self.parse_iphone_page, cb_kwargs=dict(preco_avista=preco_avista, preco_aprazo=preco_aprazo))
+            yield scrapy.Request(iphone_abs_link, headers=self.headers, callback=self.parse_iphone_page, cb_kwargs=dict(preco_avista=preco_avista, preco_aprazo=preco_aprazo, link_imagem=link_imagem))
             
             processed_iphones += 1
             if processed_iphones >= self.maximum_iphones_to_process:
                 break
 
 
-    def parse_iphone_page(self, response, preco_avista, preco_aprazo):
-        iphone = self.parse_iphone(response, preco_avista, preco_aprazo)
+    def parse_iphone_page(self, response, preco_avista, preco_aprazo, link_imagem):
+        iphone = self.parse_iphone(response, preco_avista, preco_aprazo, link_imagem)
         if iphone is None:
             return
         ratings = self.parse_ratings(response)
@@ -62,7 +63,7 @@ class AmericanasSpider(scrapy.Spider):
         }
 
 
-    def parse_iphone(self, response, preco_avista, preco_aprazo):
+    def parse_iphone(self, response, preco_avista, preco_aprazo, link_imagem):
         table_attributes_mapping = {
             'Código': 'modelo_cod',
             'Tamanho do Display': 'tam_tela',
@@ -98,7 +99,7 @@ class AmericanasSpider(scrapy.Spider):
             'modelo_nome' : modelo_nome,
             'modelo_cod': '',
             'link_iphone': response.url, 
-            'link_imagem': response.css('.main-image__Container-sc-1i1hq2n-1.iCNHlx div picture img::attr(src)').get(), 
+            'link_imagem': link_imagem,
             'tam_tela': '', 
             'resolucao_cam_front': '', 
             'resolucao_cam_tras': '', 
