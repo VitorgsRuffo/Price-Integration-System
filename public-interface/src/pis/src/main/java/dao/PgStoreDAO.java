@@ -24,27 +24,27 @@ public class PgStoreDAO implements DAO {
     private final Connection connection;
 
     private static final String CREATE_QUERY =
-                                "INSERT INTO pis.store(name, logo_path, address, phone) " +
+                                "INSERT INTO pis.stores(name, logo_path, address, phone) " +
                                 "VALUES(?, ?, ?, ?);";
     
     private static final String UPDATE_QUERY =
-                                "UPDATE pis.store " +
+                                "UPDATE pis.stores " +
                                 "SET name = ?, logo_path = ?, address = ?, phone = ? " +
                                 "WHERE id = ?;";
     
     private static final String READ_QUERY =
                                 "SELECT name, logo_path, address, phone " +
-                                "FROM pis.store " +
+                                "FROM pis.stores " +
                                 "WHERE id = ?;";  
 
     
     private static final String DELETE_QUERY =
-                                "DELETE FROM pis.store " +
+                                "DELETE FROM pis.stores " +
                                 "WHERE id = ?;";
     
     private static final String ALL_QUERY =
                                 "SELECT id, name " +
-                                "FROM pis.store " +
+                                "FROM pis.stores " +
                                 "ORDER BY id ASC;";    
         
     public PgStoreDAO(Connection connection) {

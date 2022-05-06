@@ -22,18 +22,18 @@ public class PgIPhoneDAO implements DAO {
     private final Connection connection;
     
     private static final String CREATE_QUERY =
-                                "INSERT INTO pis.iphone(model_name, sec_mem, color, title, iphone_link, image_link, model_cod, display_size, front_cam, back_cam, ram_mem, voltage, main_source) " +
+                                "INSERT INTO pis.iphones(model_name, sec_mem, color, title, iphone_link, image_link, model_cod, display_size, front_cam, back_cam, ram_mem, voltage, main_source) " +
                                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     
     private static final String MASTER_UPDATE_QUERY = 
-                                "UPDATE pis.iphone SET voltage = ?, iphone_link = ?, image_link = ?, display_size = ?, front_cam = ?, back_cam = ?, ram_mem = ?, title = ?, main_source = ? " +
+                                "UPDATE pis.iphones SET voltage = ?, iphone_link = ?, image_link = ?, display_size = ?, front_cam = ?, back_cam = ?, ram_mem = ?, title = ?, main_source = ? " +
                                 "WHERE model_name = ? AND sec_mem = ? AND color = ?;";
     
     private static final String NOT_MASTER_UPDATE_QUERY = 
-                                "UPDATE pis.iphone SET model_cod = ? WHERE model_name = ? AND sec_mem = ? AND color = ?;";
+                                "UPDATE pis.iphones SET model_cod = ? WHERE model_name = ? AND sec_mem = ? AND color = ?;";
     
     private static final String MAIN_SOURCE_QUERY = 
-                                "SELECT main_source FROM pis.iphone WHERE model_name = ? AND sec_mem = ? AND color = ?;";
+                                "SELECT main_source FROM pis.iphones WHERE model_name = ? AND sec_mem = ? AND color = ?;";
 
     public PgIPhoneDAO(Connection connection) {
         this.connection = connection;
