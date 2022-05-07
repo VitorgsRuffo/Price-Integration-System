@@ -137,34 +137,11 @@ public class SearchController extends HttpServlet {
                     
                     //get necessary DAO(s)...
                     PgIPhoneDAO iphoneDAO = (PgIPhoneDAO) daoFactory.getIphoneDAO();
-                    PgIPhoneVersionDAO iphoneVersionDAO = (PgIPhoneVersionDAO) daoFactory.getIphoneVersionDAO();
-
                     
                     //query the database...
-                    List<Iphone> selectedIphones = new ArrayList<Iphone>();
+                    List<Iphone> selectedIphones = iphoneDAO.allAlongWithCheapestVersion(query, minPrice, maxPrice, color, secMem, orderBy, page);
                     
-                    //List<Iphone> iphones = iphoneDAO.allByFilters(query, color, secMem);
-
-//                    int iphonesLen = iphones.size();
-//                    for (int i = 0; i<iphonesLen; i++){
-//                        Iphone iphone = iphones.get(i);
-//                        List<IphoneVersion> versions = iphoneVersionDAO.allByKey(iphone.getModelName(), iphone.getSecondaryMemory(), iphone.getColor());
-//                        if(versions.get(0).getCashPayment() >= minPrice && versions.get(0).getCashPayment() <= maxPrice){ //applying price filter...
-//                            iphone.setVersions(versions);
-//                            selectedIphones.add(iphone);
-//                        }
-//                    }
-//                    
-//                    //applying order by:
-//                    if(orderBy != null){
-//                        if(orderBy.equals("asc")){
-//                            
-//                        }else{
-//                        
-//                        }
-//                    }
-                    
-                    //apxpend result to request
+                    //append result to request
                     request.setAttribute("iphones", selectedIphones);
                     
                     //call view
