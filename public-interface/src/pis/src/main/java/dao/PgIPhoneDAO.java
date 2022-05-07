@@ -177,24 +177,6 @@ public class PgIPhoneDAO implements DAO {
         return iphone;
 
     }
-    
-    /*
-    SELECT code, MIN(price) as cheapestPrice
-    FROM ball JOIN ballVersions
-      ON code = ballCode
-    WHERE length(color) > 3
-    GROUP BY code
-    HAVING MIN(price) > 50.0 AND MIN(price) < 100.00
-    ORDER BY cheapestPrice ASC
-    OFFSET (1-1)*2
-    LIMIT 2
-    */
-//    "SELECT ip.model_name, ip.color, ip.sec_mem, MIN(ipv.cash_payment) AS cheapest_price " +
-//    "FROM pis.Iphones AS ip JOIN IphoneVersions AS ipv " +
-//    "ON ip.model_name = ipv.model_name AND ip.color = ipv.color AND ip.sec_mem = ipv.sec_mem "
-    
-//    "WHERE LOWER(title) LIKE '%?%";
-
         
     public List<Iphone> allAlongWithCheapestVersion(String query, Double minPrice, Double maxPrice, String color, String secMem, String orderBy, int page) throws SQLException {
         List<Iphone> iphones = new ArrayList<Iphone>();
