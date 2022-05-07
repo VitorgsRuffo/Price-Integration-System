@@ -21,7 +21,7 @@ public class IphoneVersion {
     private String installmentPayment;
     private double ratingAverage;
     private int ratingAmount;
-
+    
     public int getId() {
         return id;
     }

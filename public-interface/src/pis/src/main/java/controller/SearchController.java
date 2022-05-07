@@ -16,6 +16,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -109,7 +110,50 @@ public class SearchController extends HttpServlet {
             }
 
             case "/search": {
-                
+                try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    
+                    //getting query parameters...
+                    String parameter;
+                    
+                    parameter = request.getParameter("page");
+                    int page = (parameter==null) ? (1) : (Integer.parseInt(parameter));
+                    
+                    parameter = request.getParameter("q");
+                    String query = (parameter==null) ? ("") : (parameter);
+                    query = query.toLowerCase();
+                    
+                    parameter = request.getParameter("minPrice");
+                    Double minPrice = (parameter==null) ? (0.0) : (Double.parseDouble(parameter));
+                    
+                    parameter = request.getParameter("maxPrice");
+                    Double maxPrice = (parameter==null) ? (1000000.00) : (Double.parseDouble(parameter));
+                    
+                    String color = request.getParameter("color");
+                    
+                    String secMem = request.getParameter("secMem");
+                    
+                    String orderBy = request.getParameter("orderBy");
+                    
+                    
+                    //get necessary DAO(s)...
+                    PgIPhoneDAO iphoneDAO = (PgIPhoneDAO) daoFactory.getIphoneDAO();
+                    
+                    //query the database...
+                    List<Iphone> selectedIphones = iphoneDAO.allAlongWithCheapestVersion(query, minPrice, maxPrice, color, secMem, orderBy, page);
+                    
+                    //append result to request
+                    request.setAttribute("iphones", selectedIphones);
+                    
+                    //call view
+                    dispatcher = request.getRequestDispatcher("/search.jsp");
+                    dispatcher.forward(request, response);
+               
+
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+                    request.getSession().setAttribute("error", ex.getMessage());
+                    response.sendRedirect(request.getContextPath() + "/index?search=failure");
+                }
+                break;
             }
         }
     }
