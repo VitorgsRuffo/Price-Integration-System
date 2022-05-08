@@ -4,6 +4,8 @@
  */
 package model;
 
+import java.util.List;
+
 /**
  *
  * @author vitor
@@ -22,7 +24,9 @@ public class Iphone {
     private String ramMemory;
     private String title;
     private String mainSource;
-
+    private List<IphoneVersion> versions;
+    
+    
     public String getModelName() {
         return modelName;
     }
@@ -126,5 +130,13 @@ public class Iphone {
 
     public void setMainSource(String mainSource) {
         this.mainSource = mainSource;
+    }
+    
+    public List<IphoneVersion> getVersions() {
+        return versions;
+    }
+
+    public void setVersions(List<IphoneVersion> versions) {
+        this.versions = versions;
     }
 }
