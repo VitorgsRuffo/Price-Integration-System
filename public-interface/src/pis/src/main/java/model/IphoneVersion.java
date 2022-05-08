@@ -17,7 +17,7 @@ public class IphoneVersion {
     private String color;
     private String secondaryMemory;
     private Date date;
-    private String cashPayment;
+    private Double cashPayment;
     private String installmentPayment;
     private double ratingAverage;
     private int ratingAmount;
@@ -70,11 +70,11 @@ public class IphoneVersion {
         this.date = date;
     }
 
-    public String getCashPayment() {
+    public Double getCashPayment() {
         return cashPayment;
     }
 
-    public void setCashPayment(String cashPayment) {
+    public void setCashPayment(Double cashPayment) {
         this.cashPayment = cashPayment;
     }
 

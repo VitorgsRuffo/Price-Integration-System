@@ -49,7 +49,7 @@ public class PgIPhoneVersionDAO implements DAO {
             statement.setString(3, iphoneVersion.getColor());
             statement.setInt(4, iphoneVersion.getStoreId());
             statement.setDate(5, iphoneVersion.getDate());
-            statement.setString(6, iphoneVersion.getCashPayment());
+            statement.setDouble(6, iphoneVersion.getCashPayment());
             statement.setString(7, iphoneVersion.getInstallmentPayment());
             statement.setInt(8, iphoneVersion.getRatingAmount());
             statement.setDouble(9, iphoneVersion.getRatingAverage());
@@ -95,7 +95,7 @@ public class PgIPhoneVersionDAO implements DAO {
                     iphoneVersion.setColor(result.getString("iphone_color"));
                     iphoneVersion.setSecondaryMemory(result.getString("iphone_sec_mem"));
                     iphoneVersion.setDate(result.getDate("date"));
-                    iphoneVersion.setCashPayment(result.getString("cash_payment"));
+                    iphoneVersion.setCashPayment(result.getDouble("cash_payment"));
                     iphoneVersion.setInstallmentPayment(result.getString("installment_payment"));
                     iphoneVersion.setRatingAmount(result.getInt("rating_amount"));
                     iphoneVersion.setRatingAverage(result.getDouble("rating_average"));
@@ -124,7 +124,7 @@ public class PgIPhoneVersionDAO implements DAO {
                 while (result.next()) {
                     IphoneVersion iphoneVersion = new IphoneVersion();
                     iphoneVersion.setDate(result.getDate("date"));
-                    iphoneVersion.setCashPayment(result.getString("cash_payment"));
+                    iphoneVersion.setCashPayment(result.getDouble("cash_payment"));
                     iphoneVersion.setInstallmentPayment(result.getString("installment_payment"));
                     iphoneVersion.setRatingAmount(result.getInt("rating_amount"));
                     iphoneVersion.setRatingAverage(result.getDouble("rating_average"));
