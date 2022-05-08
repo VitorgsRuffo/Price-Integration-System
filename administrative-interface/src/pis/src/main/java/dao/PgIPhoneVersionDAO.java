@@ -23,12 +23,12 @@ public class PgIPhoneVersionDAO implements DAO {
     private final Connection connection;
 
     private static final String CREATE_QUERY =
-                                "INSERT INTO pis.iphoneVersion(iphone_model_name, iphone_sec_mem, iphone_color, store_id, date, cash_payment, installment_payment, rating_amount, rating_average) " +
+                                "INSERT INTO pis.iphoneversions(iphone_model_name, iphone_sec_mem, iphone_color, store_id, date, cash_payment, installment_payment, rating_amount, rating_average) " +
                                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
     
     private static final String ALL_BY_KEY_QUERY =
                                 "SELECT date, cash_payment, installment_payment, rating_amout, rating_average " +
-                                "FROM pis.iphoneVersion " +
+                                "FROM pis.iphoneVersions " +
                                 "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND color = ?" +
                                 "ORDER BY cash_payment ASC";
 
@@ -45,7 +45,7 @@ public class PgIPhoneVersionDAO implements DAO {
             statement.setString(3, iphoneVersion.getColor());
             statement.setInt(4, iphoneVersion.getStoreId());
             statement.setDate(5, iphoneVersion.getDate());
-            statement.setString(6, iphoneVersion.getCashPayment());
+            statement.setDouble(6, iphoneVersion.getCashPayment());
             statement.setString(7, iphoneVersion.getInstallmentPayment());
             statement.setInt(8, iphoneVersion.getRatingAmount());
             statement.setDouble(9, iphoneVersion.getRatingAverage());
@@ -90,7 +90,7 @@ public class PgIPhoneVersionDAO implements DAO {
                 while (result.next()) {
                     IphoneVersion iphoneVersion = new IphoneVersion();
                     iphoneVersion.setDate(result.getDate("date"));
-                    iphoneVersion.setCashPayment(result.getString("cash_payment"));
+                    iphoneVersion.setCashPayment(result.getDouble("cash_payment"));
                     iphoneVersion.setInstallmentPayment(result.getString("installment_payment"));
                     iphoneVersion.setRatingAmount(result.getInt("rating_amount"));
                     iphoneVersion.setRatingAverage(result.getDouble("rating_average"));

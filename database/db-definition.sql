@@ -57,7 +57,7 @@ CREATE TABLE pis.IphoneVersions (
 	iphone_color VARCHAR(30),
 	store_id INT,
 	date date,
-	cash_payment VARCHAR(30),
+	cash_payment NUMERIC(7,2),
 	installment_payment VARCHAR(500),
 	rating_amount INT,
 	rating_average NUMERIC,
