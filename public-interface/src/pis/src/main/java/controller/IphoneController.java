@@ -59,7 +59,35 @@ public class IphoneController extends HttpServlet {
         
         switch (request.getServletPath()) {
             case "/iphone": {
-                
+                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    
+                    //getting query parameters...
+                    String modelName = request.getParameter("modelName");
+                    String color = request.getParameter("color");
+                    String secMem = request.getParameter("secMem");
+                    
+                    //get necessary DAO(s)...
+                    PgIPhoneDAO iphoneDAO = (PgIPhoneDAO) daoFactory.getIphoneDAO();
+                    
+                    
+                    //query the database...
+
+                    
+                    //append result to request
+                    //request.setAttribute("", );
+                    //request.setAttribute("", );
+                    //request.setAttribute("", );
+                    //request.setAttribute("", );
+
+                    //call view
+                    dispatcher = request.getRequestDispatcher("/iphone.jsp");
+                    dispatcher.forward(request, response);
+               
+
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+                    request.getSession().setAttribute("error", ex.getMessage());
+                    response.sendRedirect(request.getContextPath() + "/search?read=failure");
+                }
                 break;
             }
         }

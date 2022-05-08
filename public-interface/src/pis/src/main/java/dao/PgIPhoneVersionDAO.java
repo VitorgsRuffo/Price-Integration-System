@@ -34,7 +34,7 @@ public class PgIPhoneVersionDAO implements DAO {
     
     private static final String ALL_ORDER_BY_CASH_PAYMENT_QUERY = "SELECT * " + 
                                                                   "FROM pis.IphoneVersions " +
-                                                                  "ORDER BY CAST(split_part(cash_payment, '$', 2) AS float)";
+                                                                  "ORDER BY cash_payment;";
 
     public PgIPhoneVersionDAO(Connection connection) {
         this.connection = connection;
