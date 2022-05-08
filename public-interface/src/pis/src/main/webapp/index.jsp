@@ -17,13 +17,13 @@
     <body>
         <%@include file="/templates/header.jsp"%>
 
-        <div id="home" class="container w-50 p-4 d-flex flex-column align-items-center justify-content-center">                             
+        <div id="home" class="container p-4 d-flex flex-column align-items-center justify-content-center">                             
             <a class="w-100" href="">
                 <div class="d-flex">
-                    <div class="col-6">
+                    <div class="col">
                         <img class="img-fluid" src="${cheapestIphoneImgLink}"/>
                     </div>
-                    <div class="col-6 p-3 d-flex flex-column justify-content-between">
+                    <div class="col p-3 d-flex flex-column justify-content-between">
                         <h2>Iphone mais barato registrado</h2>
                         <h3>${cheapestIphone.modelName}</h3>
                         <span>
