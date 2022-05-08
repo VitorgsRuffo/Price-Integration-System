@@ -359,7 +359,6 @@ public class StoreController extends HttpServlet {
                         iphone.setSecondaryMemory(sec_mem); 
                         iphone.setVoltage(cIphone.getVoltagem()); 
                         iphone.setModelCod(cIphone.getModelo_cod());
-                        iphone.setIphoneLink(cIphone.getLink_iphone());
                         iphone.setImageLink(cIphone.getLink_imagem());
                         iphone.setDisplaySize(cIphone.getTam_tela());
                         iphone.setFrontCam(cIphone.getResolucao_cam_front());
@@ -381,7 +380,9 @@ public class StoreController extends HttpServlet {
                             iphoneVersion.setRatingAverage(Double.parseDouble(cIphone.getMedia_nota()));
                         if(cIphone.getQuantidade_avaliacoes() != null)
                             iphoneVersion.setRatingAmount(Integer.parseInt(cIphone.getQuantidade_avaliacoes()));
+                        iphoneVersion.setIphoneLink(cIphone.getLink_iphone());
                         iphoneVersionDao.create(iphoneVersion);
+
 
                         List<CrawledRating> cRatings = data[i].getAvaliacoes();
                         for(int j = 0; j<cRatings.size(); j++){

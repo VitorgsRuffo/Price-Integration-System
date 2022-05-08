@@ -22,11 +22,11 @@ public class PgIPhoneDAO implements DAO {
     private final Connection connection;
     
     private static final String CREATE_QUERY =
-                                "INSERT INTO pis.iphone(model_name, sec_mem, color, title, iphone_link, image_link, model_cod, display_size, front_cam, back_cam, ram_mem, voltage, main_source) " +
-                                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+                                "INSERT INTO pis.iphone(model_name, sec_mem, color, title, image_link, model_cod, display_size, front_cam, back_cam, ram_mem, voltage, main_source) " +
+                                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     
     private static final String MASTER_UPDATE_QUERY = 
-                                "UPDATE pis.iphone SET voltage = ?, iphone_link = ?, image_link = ?, display_size = ?, front_cam = ?, back_cam = ?, ram_mem = ?, title = ?, main_source = ? " +
+                                "UPDATE pis.iphone SET voltage = ?, image_link = ?, display_size = ?, front_cam = ?, back_cam = ?, ram_mem = ?, title = ?, main_source = ? " +
                                 "WHERE model_name = ? AND sec_mem = ? AND color = ?;";
     
     private static final String NOT_MASTER_UPDATE_QUERY = 
@@ -47,15 +47,14 @@ public class PgIPhoneDAO implements DAO {
             statement.setString(2, iphone.getSecondaryMemory());
             statement.setString(3, iphone.getColor());
             statement.setString(4, iphone.getTitle());
-            statement.setString(5, iphone.getIphoneLink());
-            statement.setString(6, iphone.getImageLink());
-            statement.setString(7, iphone.getModelCod());
-            statement.setString(8, iphone.getDisplaySize());
-            statement.setString(9, iphone.getFrontCam());
-            statement.setString(10, iphone.getBackCam());
-            statement.setString(11, iphone.getRamMemory());
-            statement.setString(12, iphone.getVoltage());
-            statement.setString(13, iphone.getMainSource());
+            statement.setString(5, iphone.getImageLink());
+            statement.setString(6, iphone.getModelCod());
+            statement.setString(7, iphone.getDisplaySize());
+            statement.setString(8, iphone.getFrontCam());
+            statement.setString(9, iphone.getBackCam());
+            statement.setString(10, iphone.getRamMemory());
+            statement.setString(11, iphone.getVoltage());
+            statement.setString(12, iphone.getMainSource());
 
             statement.executeUpdate();
             
@@ -104,17 +103,16 @@ public class PgIPhoneDAO implements DAO {
         
         try (PreparedStatement statement = connection.prepareStatement(MASTER_UPDATE_QUERY)) {
             statement.setString(1, iphone.getVoltage());
-            statement.setString(2, iphone.getIphoneLink());
-            statement.setString(3, iphone.getImageLink());
-            statement.setString(4, iphone.getDisplaySize());
-            statement.setString(5, iphone.getFrontCam());
-            statement.setString(6, iphone.getBackCam());
-            statement.setString(7, iphone.getRamMemory());
-            statement.setString(8, iphone.getTitle());
-            statement.setString(9, iphone.getMainSource());
-            statement.setString(10, iphone.getModelName());
-            statement.setString(11, iphone.getSecondaryMemory());
-            statement.setString(12, iphone.getColor());
+            statement.setString(2, iphone.getImageLink());
+            statement.setString(3, iphone.getDisplaySize());
+            statement.setString(4, iphone.getFrontCam());
+            statement.setString(5, iphone.getBackCam());
+            statement.setString(6, iphone.getRamMemory());
+            statement.setString(7, iphone.getTitle());
+            statement.setString(8, iphone.getMainSource());
+            statement.setString(9, iphone.getModelName());
+            statement.setString(10, iphone.getSecondaryMemory());
+            statement.setString(11, iphone.getColor());
             
             statement.executeUpdate();
            

@@ -23,8 +23,8 @@ public class PgIPhoneVersionDAO implements DAO {
     private final Connection connection;
 
     private static final String CREATE_QUERY =
-                                "INSERT INTO pis.iphoneVersion(iphone_model_name, iphone_sec_mem, iphone_color, store_id, date, cash_payment, installment_payment, rating_amount, rating_average) " +
-                                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
+                                "INSERT INTO pis.iphoneVersion(iphone_model_name, iphone_sec_mem, iphone_color, store_id, date, cash_payment, installment_payment, rating_amount, rating_average, iphone_link) " +
+                                "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     
     private static final String ALL_BY_KEY_QUERY =
                                 "SELECT date, cash_payment, installment_payment, rating_amout, rating_average " +
@@ -49,6 +49,7 @@ public class PgIPhoneVersionDAO implements DAO {
             statement.setString(7, iphoneVersion.getInstallmentPayment());
             statement.setInt(8, iphoneVersion.getRatingAmount());
             statement.setDouble(9, iphoneVersion.getRatingAverage());
+            statement.setString(10, iphoneVersion.getIphoneLink());
 
             statement.executeUpdate();
             

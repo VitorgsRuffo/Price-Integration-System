@@ -21,6 +21,8 @@ public class IphoneVersion {
     private String installmentPayment;
     private double ratingAverage;
     private int ratingAmount;
+    private String iphoneLink;
+
     
     public int getId() {
         return id;
@@ -100,5 +102,13 @@ public class IphoneVersion {
 
     public void setRatingAmount(int ratingAmount) {
         this.ratingAmount = ratingAmount;
+    }
+    
+    public String getIphoneLink() {
+        return iphoneLink;
+    }
+
+    public void setIphoneLink(String iphoneLink) {
+        this.iphoneLink = iphoneLink;
     }
 }
