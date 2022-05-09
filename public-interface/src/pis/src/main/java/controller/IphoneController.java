@@ -76,21 +76,14 @@ public class IphoneController extends HttpServlet {
                     PgIPhoneDAO iphoneDAO = (PgIPhoneDAO) daoFactory.getIphoneDAO();
                     PgRatingDAO ratingDAO = (PgRatingDAO) daoFactory.getRatingDAO();
                     PgIPhoneVersionDAO iphoneVersionDAO = (PgIPhoneVersionDAO) daoFactory.getIphoneVersionDAO();
-
-                    /* to do list:
-                        - write the code for this route using dao abstractions (methods)...
-                        - implement methods...
-                    */
                     
                     //query the database...
-
-                    //3 - price graph data:
-                    List<IphoneVersion> allVersions = iphoneVersionDAO.allByKey(modelName, secMem, color, "date");
-                    
                     
                     //2, 1:
                     List<IphoneVersion> lastVersions = iphoneVersionDAO.lastVersionOnEachStoreByKey(modelName, secMem, color);
                     
+                    //3:
+                    List<IphoneVersion> allVersions = iphoneVersionDAO.allByKey(modelName, secMem, color, "date");
                     
                     //5, 1:
                     Iphone iphone = iphoneDAO.readByKey(modelName, secMem, color);

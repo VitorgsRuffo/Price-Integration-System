@@ -36,6 +36,22 @@ public class PgIPhoneVersionDAO implements DAO {
                                                                   "FROM pis.IphoneVersions " +
                                                                   "ORDER BY cash_payment;";
 
+    private static final String LAST_VERSION_ON_EACH_STORE_BY_KEY_QUERY = "SELECT v1.*, s.name " +
+                                                                          "FROM ( " +
+                                                                                  "pis.IphoneVersions AS v1 " +
+                                                                                  "JOIN ( " +
+                                                                                          "SELECT iphone_model_name, iphone_sec_mem, iphone_color, store_id, MAX(date) " +
+                                                                                          "FROM pis.IphoneVersions "+ 
+                                                                                          "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND iphone_color = ? " +
+                                                                                          "GROUP BY iphone_model_name, iphone_sec_mem, iphone_color, store_id " +
+                                                                                       ") AS v2 " +
+                                                                                  "ON v1.iphone_model_name = v2.iphone_model_name AND v1.iphone_sec_mem = v2.iphone_sec_mem AND v1.iphone_color = v2.iphone_color " +
+                                                                                  "AND v1.store_id = v2.store_id AND v1.date = v2.date " +
+                                                                               " ) " +
+                                                                          "JOIN pis.stores AS s " +
+                                                                          "ON v1.store_id = s.id " +
+                                                                          "ORDER BY v1.cash_payment ASC;";
+    
     public PgIPhoneVersionDAO(Connection connection) {
         this.connection = connection;
     }
@@ -139,4 +155,33 @@ public class PgIPhoneVersionDAO implements DAO {
 
         return iphoneVersions;
     }
+    
+    public List<IphoneVersion> lastVersionOnEachStoreByKey(String modelName, String secMem, String color) throws SQLException {
+        List<IphoneVersion> iphoneVersions = new ArrayList<>();
+
+        try (PreparedStatement statement = connection.prepareStatement(LAST_VERSION_ON_EACH_STORE_BY_KEY_QUERY)){
+            statement.setString(1, modelName);
+            statement.setString(2, secMem);
+            statement.setString(3, color);
+            
+            try(ResultSet result = statement.executeQuery()) {
+                while (result.next()) {
+                    IphoneVersion iphoneVersion = new IphoneVersion();
+                    iphoneVersion.setDate(result.getDate("date"));
+                    iphoneVersion.setCashPayment(result.getString("cash_payment"));
+                    iphoneVersion.setInstallmentPayment(result.getString("installment_payment"));
+                    iphoneVersion.setRatingAmount(result.getInt("rating_amount"));
+                    iphoneVersion.setRatingAverage(result.getDouble("rating_average"));
+                    iphoneVersion.setIphoneLink(result.getString("iphone_link"));
+                    iphoneVersion.setStoreName(result.getString("s.name"));
+                    iphoneVersions.add(iphoneVersion);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PgIPhoneVersionDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            throw ex;
+        }
+
+        return iphoneVersions;
+    }   
 }
