@@ -39,11 +39,11 @@ public class PgIPhoneDAO implements DAO {
     private static final String MAIN_SOURCE_QUERY = 
                                 "SELECT main_source FROM pis.Iphones WHERE model_name = ? AND sec_mem = ? AND color = ?;";
     
-    private static String ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = "SELECT * FROM pis.Iphones AS ip JOIN ( " +
-                                                                    "SELECT ip.model_name, ip.color, ip.sec_mem, MIN(ipv.cash_payment) AS cheapest_price " +
-                                                                    "FROM pis.Iphones AS ip JOIN IphoneVersions AS ipv " +
-                                                                    "ON ip.model_name = ipv.model_name AND ip.color = ipv.color AND ip.sec_mem = ipv.sec_mem " +
-                                                                    "WHERE ";
+    private String ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = "SELECT * FROM pis.Iphones AS ip JOIN ( " +
+                                                            "SELECT ip.model_name, ip.color, ip.sec_mem, MIN(ipv.cash_payment) AS cheapest_price " +
+                                                            "FROM pis.Iphones AS ip JOIN pis.IphoneVersions AS ipv " +
+                                                            "ON ip.model_name = ipv.iphone_model_name AND ip.color = ipv.iphone_color AND ip.sec_mem = ipv.iphone_sec_mem " +
+                                                            "WHERE";
 
     private static String ALL_BY_FILTERS_QUERY = "SELECT * FROM pis.Iphones WHERE LOWER(title) LIKE '%?%";
 
@@ -180,79 +180,90 @@ public class PgIPhoneDAO implements DAO {
         
     public List<Iphone> allAlongWithCheapestVersion(String query, Double minPrice, Double maxPrice, String color, String secMem, String orderBy, int page) throws SQLException {
         List<Iphone> iphones = new ArrayList<Iphone>();
+                
+        //dynamically building the query to meet the filtering requeriments...
+        //query filtering...
+        String[] queryParts = query.split(" ");
         
-        try (PreparedStatement statement = connection.prepareStatement(ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY)){ 
+        for(int j = 0; j < queryParts.length; j++){
+            if(j == 0)
+                this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" LOWER(ip.title) LIKE ?");
+            else
+                this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" AND LOWER(ip.title) LIKE ?");
+        }
+
+        //color filtering...
+        if(color != null){
+            if(color.equals("outro")){
+                this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" AND color NOT IN ('vermelho', 'azul', 'amarelo', 'branco', 'cinza', 'preto')");
+            }else{
+                this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" AND color = ?");
+            }
+        }
+        
+        //secondary memory filtering...
+        if(secMem != null){
+            this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" AND sec_mem = ?");
+        }
+        
+        
+        //price filtering...
+        this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" GROUP BY ip.model_name, ip.color, ip.sec_mem HAVING MIN(cash_payment) >= ? AND MIN(cash_payment) <= ?");      
+        
+        //finishing the outer SELECT...
+        this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" ) AS ipipv ON ip.model_name = ipipv.model_name AND ip.color = ipipv.color AND ip.sec_mem = ipipv.sec_mem");
+        
+        //sorting...
+        if(orderBy != null){
+            if(orderBy.equals("asc"))
+                this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" ORDER BY cheapest_price ASC");
+
+            else if (orderBy.equals("desc"))
+                this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" ORDER BY cheapest_price DESC");
+        }
+        
+        //paging...
+        this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" OFFSET (?-1)*10 LIMIT 10");  
+        
+        
+        try (PreparedStatement statement = connection.prepareStatement(this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY)){ 
             
             int i = 1;
-            
-            //dynamically building the query to meet the filtering requeriments...
-            //query filtering...
-            String[] queryParts = query.split(" ");
-            
-            for(int j = 0; j < queryParts.length; j++){
-                if(j == 0)
-                    this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" LOWER(ip.title) LIKE '%?%'");
-                else
-                    this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" AND LOWER(ip.title) LIKE '%?%'");
-                
-                statement.setString(i, queryParts[j]);
+
+            for(int j = 0; j<queryParts.length; j++){
+                statement.setString(i, "%".concat(queryParts[j]).concat("%"));
                 i++;
             }
 
-            //color filtering...
             if(color != null){
-                if(color.equals("outro")){
-                    this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" AND color NOT IN ('vermelho', 'azul', 'amarelo', 'branco', 'cinza', 'preto')");
-                }else{
-                    this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" AND color = ?");
+                if(!color.equals("outro")){
                     statement.setString(i, color);
                     i++;
                 }
             }
-            
-            //secondary memory filtering...
+
             if(secMem != null){
-                this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" AND sec_mem = ?");
                 statement.setString(i, secMem);
                 i++;
             }
             
-            
-            //price filtering...
-            this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" GROUP BY ip.model_name, ip.color, ip.sec_mem HAVING MIN(cash_payment) >= ? AND MIN(cash_payment) <= ?");
             statement.setDouble(i, minPrice);
             i++;
             statement.setDouble(i, maxPrice);
             i++;
-            
-            //sorting...
-            if(orderBy != null){
-                if(orderBy.equals("asc"))
-                    this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" ORDER BY cheapest_price ASC");
 
-                else if (orderBy.equals("desc"))
-                    this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" ORDER BY cheapest_price DESC");
-            }
-            
-            //paging...
-            this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" OFFSET (?-1)*10 LIMIT 10");
             statement.setInt(i, page);
-            
-            
-            //finishing the outer SELECT...
-            this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY = this.ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY.concat(" ) AS ipipv ON ip.model_name = ipipv.model_name AND ip.color = ipipv.color AND ip.sec_mem = ipipv.sec_mem;");
-
-            
+                        
             //saving results...
-            try(ResultSet result = statement.executeQuery(ALL_ALONG_WITH_CHEAPEST_VERSION_QUERY)) {
+            try(ResultSet result = statement.executeQuery()) {
                 while (result.next()) {
                     Iphone iphone = new Iphone();
                     
-                    iphone.setModelName(result.getString("ip.model_name"));
-                    iphone.setColor(result.getString("ip.color"));
-                    iphone.setSecondaryMemory(result.getString("ip.sec_mem"));
-                    iphone.setTitle(result.getString("ip.title"));
-                    iphone.setImageLink(result.getString("ip.image_link"));
+                    iphone.setModelName(result.getString("model_name"));
+                    iphone.setColor(result.getString("color"));
+                    iphone.setSecondaryMemory(result.getString("sec_mem"));
+                    iphone.setTitle(result.getString("title"));
+                    iphone.setImageLink(result.getString("image_link"));
                     
                     IphoneVersion version = new IphoneVersion();
                     version.setCashPayment(result.getDouble("cheapest_price"));
