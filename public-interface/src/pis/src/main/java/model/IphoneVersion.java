@@ -22,6 +22,7 @@ public class IphoneVersion {
     private double ratingAverage;
     private int ratingAmount;
     private String iphoneLink;
+    private String storeName;
 
     
     public int getId() {
@@ -110,5 +111,13 @@ public class IphoneVersion {
 
     public void setIphoneLink(String iphoneLink) {
         this.iphoneLink = iphoneLink;
+    }
+    
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
     }
 }

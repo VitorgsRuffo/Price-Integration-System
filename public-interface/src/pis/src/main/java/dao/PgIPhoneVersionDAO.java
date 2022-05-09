@@ -27,10 +27,10 @@ public class PgIPhoneVersionDAO implements DAO {
                                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);";
     
     private static final String ALL_BY_KEY_QUERY =
-                                "SELECT date, cash_payment, installment_payment, rating_amout, rating_average " +
+                                "SELECT * " +
                                 "FROM pis.IphoneVersions " +
-                                "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND color = ?" +
-                                "ORDER BY cash_payment ASC";
+                                "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND iphone_color = ?" +
+                                "ORDER BY ? ASC";
     
     private static final String ALL_ORDER_BY_CASH_PAYMENT_QUERY = "SELECT * " + 
                                                                   "FROM pis.IphoneVersions " +
@@ -112,13 +112,14 @@ public class PgIPhoneVersionDAO implements DAO {
 
     }
     
-    public List<IphoneVersion> allByKey(String iphoneModel, String secondaryMemory, String color) throws SQLException {
+    public List<IphoneVersion> allByKey(String iphoneModel, String secondaryMemory, String color, String orderBy) throws SQLException {
         List<IphoneVersion> iphoneVersions = new ArrayList<>();
 
         try (PreparedStatement statement = connection.prepareStatement(ALL_BY_KEY_QUERY)){
             statement.setString(1, iphoneModel);
             statement.setString(2, secondaryMemory);
             statement.setString(3, color);
+            statement.setString(4, orderBy);
             
             try(ResultSet result = statement.executeQuery()) {
                 while (result.next()) {
