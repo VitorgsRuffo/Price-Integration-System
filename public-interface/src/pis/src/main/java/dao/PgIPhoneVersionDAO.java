@@ -168,7 +168,7 @@ public class PgIPhoneVersionDAO implements DAO {
                 while (result.next()) {
                     IphoneVersion iphoneVersion = new IphoneVersion();
                     iphoneVersion.setDate(result.getDate("date"));
-                    iphoneVersion.setCashPayment(result.getString("cash_payment"));
+                    iphoneVersion.setCashPayment(result.getDouble("cash_payment"));
                     iphoneVersion.setInstallmentPayment(result.getString("installment_payment"));
                     iphoneVersion.setRatingAmount(result.getInt("rating_amount"));
                     iphoneVersion.setRatingAverage(result.getDouble("rating_average"));
