@@ -8,6 +8,8 @@ import dao.DAO;
 import dao.DAOFactory;
 import java.io.IOException;
 import dao.PgIPhoneDAO;
+import dao.PgIPhoneVersionDAO;
+import dao.PgRatingDAO;
 import dao.PgStoreDAO;
 import java.io.File;
 import java.io.FileReader;
@@ -60,6 +62,51 @@ public class IphoneController extends HttpServlet {
         switch (request.getServletPath()) {
             case "/iphone": {
                 
+                //getting query parameters...
+                String modelName = request.getParameter("modelName");
+                String color = request.getParameter("color");
+                String secMem = request.getParameter("secMem");
+                String query = request.getParameter("q");
+                if(query == null)
+                    query = "";
+                
+                 try (DAOFactory daoFactory = DAOFactory.getInstance()) {
+                    
+                    //get necessary DAO(s)...
+                    PgIPhoneDAO iphoneDAO = (PgIPhoneDAO) daoFactory.getIphoneDAO();
+                    PgRatingDAO ratingDAO = (PgRatingDAO) daoFactory.getRatingDAO();
+                    PgIPhoneVersionDAO iphoneVersionDAO = (PgIPhoneVersionDAO) daoFactory.getIphoneVersionDAO();
+                    
+                    //query the database...
+                    
+                    //2, 1:
+                    List<IphoneVersion> lastVersions = iphoneVersionDAO.lastVersionOnEachStoreByKey(modelName, secMem, color);
+                    
+                    //3:
+                    List<IphoneVersion> allVersions = iphoneVersionDAO.allByKey(modelName, secMem, color, "date");
+                    
+                    //5, 1:
+                    Iphone iphone = iphoneDAO.readByKey(modelName, secMem, color);
+                    
+                    //6:
+                    List<Rating> ratings = ratingDAO.allByIphoneKeyWithStoreName(modelName, secMem, color); 
+                    
+                    
+                    //append result to request
+                    request.setAttribute("lastVersions", lastVersions);
+                    request.setAttribute("allVersions", allVersions);
+                    request.setAttribute("iphoneInfo", iphone);
+                    request.setAttribute("ratings", ratings);
+
+                    //call view
+                    dispatcher = request.getRequestDispatcher("/iphone.jsp");
+                    dispatcher.forward(request, response);
+               
+
+                } catch (ClassNotFoundException | IOException | SQLException ex) {
+                    request.getSession().setAttribute("error", ex.getMessage());
+                    response.sendRedirect(request.getContextPath() + "/search?q=" + query + "&read=failure");
+                }
                 break;
             }
         }

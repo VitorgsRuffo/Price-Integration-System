@@ -31,6 +31,13 @@ public class PgRatingDAO implements DAO {
                                 "FROM pis.iphoneratings " +
                                 "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND iphone_color = ? AND store_id = ? " +
                                 "ORDER BY date DESC";
+    
+    private static final String ALL_BY_IP_KEY_WITH_STORE_NAME_QUERY = "SELECT * "+
+                                                                      "FROM pis.IphoneRatings AS r "+
+                                                                      "JOIN pis.Stores AS s "+
+                                                                      "ON r.store_id = s.id "+
+                                                                      "WHERE r.iphone_model_name = ? AND r.iphone_sec_mem = ? AND r.iphone_color = ?;";
+    
 
     public PgRatingDAO(Connection connection) {
         this.connection = connection;
@@ -111,5 +118,35 @@ public class PgRatingDAO implements DAO {
         }
 
         return ratingList;
+    }
+    
+    public List<Rating> allByIphoneKeyWithStoreName(String modelName, String secMem, String color) throws SQLException {
+        List<Rating> ratings = new ArrayList<>();
+
+        try (PreparedStatement statement = connection.prepareStatement(ALL_BY_IP_KEY_WITH_STORE_NAME_QUERY)){
+            statement.setString(1, modelName);
+            statement.setString(2, secMem);
+            statement.setString(3, color);
+
+            try(ResultSet result = statement.executeQuery()) {
+                while (result.next()) {
+                    Rating rating = new Rating();
+                    rating.setTitle(result.getString("title"));
+                    rating.setDescription(result.getString("description"));
+                    rating.setRaterName(result.getString("rater_name"));
+                    rating.setDate(result.getDate("date"));
+                    rating.setRating(result.getDouble("rating"));
+                    rating.setLikes(result.getInt("likes"));
+                    rating.setDeslikes(result.getInt("deslikes"));
+                    rating.setStoreName(result.getString("s.name"));
+                    ratings.add(rating);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(PgRatingDAO.class.getName()).log(Level.SEVERE, "DAO", ex);
+            throw ex;
+        }
+
+        return ratings;
     }   
 }

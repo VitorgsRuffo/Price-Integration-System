@@ -37,7 +37,6 @@ CREATE TABLE pis.Iphones (
 	sec_mem VARCHAR(50),
 	color VARCHAR(30),
 	title VARCHAR(400),
-	iphone_link VARCHAR(400),
 	image_link VARCHAR(400),
 	model_cod VARCHAR(50),
 	display_size VARCHAR(50),
@@ -61,6 +60,7 @@ CREATE TABLE pis.IphoneVersions (
 	installment_payment VARCHAR(500),
 	rating_amount INT,
 	rating_average NUMERIC,
+	iphone_link VARCHAR(400),
 	CONSTRAINT pk_iphone_versions PRIMARY KEY(id, iphone_model_name, iphone_sec_mem, iphone_color, store_id),
 	CONSTRAINT fk_iphone_versions FOREIGN KEY (iphone_model_name, iphone_sec_mem, iphone_color)
 		REFERENCES pis.Iphones(model_name, sec_mem, color),

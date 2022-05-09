@@ -16,7 +16,6 @@ public class Iphone {
     private String secondaryMemory;
     private String voltage;
     private String modelCod;
-    private String iphoneLink;
     private String imageLink;
     private String displaySize;
     private String frontCam;
@@ -66,14 +65,6 @@ public class Iphone {
 
     public void setModelCod(String modelCod) {
         this.modelCod = modelCod;
-    }
-
-    public String getIphoneLink() {
-        return iphoneLink;
-    }
-
-    public void setIphoneLink(String iphoneLink) {
-        this.iphoneLink = iphoneLink;
     }
 
     public String getImageLink() {

@@ -22,6 +22,7 @@ public class Rating {
     private int likes;
     private int deslikes;
     private double rating;
+    private String storeName;
 
 
     public int getStoreId() {
@@ -110,5 +111,13 @@ public class Rating {
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+    
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
     }
 }
