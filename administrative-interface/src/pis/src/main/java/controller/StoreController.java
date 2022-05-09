@@ -374,7 +374,14 @@ public class StoreController extends HttpServlet {
                         iphoneVersion.setColor(iphone.getColor());
                         iphoneVersion.setSecondaryMemory(iphone.getSecondaryMemory());
                         iphoneVersion.setDate(sqlDate);
-                        iphoneVersion.setCashPayment(cIphone.getPreco_avista());
+                        
+                        String unformattedPrice = cIphone.getPreco_avista();
+                        unformattedPrice = unformattedPrice.replace(" ", "");
+                        unformattedPrice = unformattedPrice.replace("R$", "");
+                        unformattedPrice = unformattedPrice.replace(".", "");
+                        unformattedPrice = unformattedPrice.replace(",", ".");
+                        iphoneVersion.setCashPayment(Double.parseDouble(unformattedPrice));
+                        
                         iphoneVersion.setInstallmentPayment(cIphone.getPreco_aprazo());
                         if(cIphone.getMedia_nota() != null)
                             iphoneVersion.setRatingAverage(Double.parseDouble(cIphone.getMedia_nota()));

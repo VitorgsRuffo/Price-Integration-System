@@ -30,10 +30,10 @@ public class PgIPhoneDAO implements DAO {
                                 "WHERE model_name = ? AND sec_mem = ? AND color = ?;";
     
     private static final String NOT_MASTER_UPDATE_QUERY = 
-                                "UPDATE pis.iphone SET model_cod = ? WHERE model_name = ? AND sec_mem = ? AND color = ?;";
+                                "UPDATE pis.iphones SET model_cod = ? WHERE model_name = ? AND sec_mem = ? AND color = ?;";
     
     private static final String MAIN_SOURCE_QUERY = 
-                                "SELECT main_source FROM pis.iphone WHERE model_name = ? AND sec_mem = ? AND color = ?;";
+                                "SELECT main_source FROM pis.iphones WHERE model_name = ? AND sec_mem = ? AND color = ?;";
 
     public PgIPhoneDAO(Connection connection) {
         this.connection = connection;

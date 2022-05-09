@@ -26,7 +26,7 @@ public class PgIPhoneDAO implements DAO {
     private static final String READ_BY_KEY_QUERY = "SELECT * FROM pis.Iphones WHERE model_name = ? AND sec_mem = ? AND color = ?";
     
     private static final String CREATE_QUERY =
-                                "INSERT INTO pis.iphone(model_name, sec_mem, color, title, iphone_link, image_link, model_cod, display_size, front_cam, back_cam, ram_mem, voltage, main_source) " +
+                                "INSERT INTO pis.iphones(model_name, sec_mem, color, title, iphone_link, image_link, model_cod, display_size, front_cam, back_cam, ram_mem, voltage, main_source) " +
                                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     
     private static final String MASTER_UPDATE_QUERY = 
