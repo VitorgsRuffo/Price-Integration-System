@@ -1,0 +1,80 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+ 
+    Created on : May 9, 2022, 1:28:29 AM
+    Author     : wellinton
+
+*/
+
+.cabecalho {
+    border-bottom: 1px solid #000;
+    color: #000;
+}
+
+.page-item.active .page-link {
+    background-color: #212529 !important;
+    border-color: #212529 !important;
+}
+
+.thumbs {
+    margin-left: 5px;
+}
+.thumb h6{
+    padding-top: 10px;
+}
+
+.thumb:hover {
+    position: relative;
+    bottom: 2px;   
+/*    border: 1px solid rgba(0,0,0,0.2);*/
+    box-shadow: rgba(99, 99, 99, 0.5) 0px 2px 8px 0px;
+}
+.thumbs a {
+    text-align: center;
+    color: #000;
+    padding-top: 8px;
+    padding: 15px;
+    text-decoration: none;
+}
+.thumbs a:hover {
+    color: rgba(0,0,0,0.6);
+}
+
+.thumb .price {
+    color: green;
+    font-size: 20px;
+    font-weight: bold;
+}
+.thumb .price span {
+    color: rgba(0,0,0,0.5);
+    font-size: 13px;
+    font-weight: 400;
+}
+
+#result-key {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.nenhum-iphone {
+    color: #000;
+}
+
+.button-next a,
+.button-prev a {
+    color: #000 !important;
+    cursor: pointer;
+}
+
+.page-link {
+    color: #000 !important;
+}
+
+.pagination .active a {
+    color: #fff !important;
+}
+
+.pagination .disabled a {
+    color: rgba(0,0,0,0.4) !important;
+}
