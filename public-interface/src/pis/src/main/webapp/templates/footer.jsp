@@ -15,7 +15,7 @@
     
     <body>
         <div class="container-fluid m-0 p-0">
-            <div class="footer w-100 px-4 py-2 d-flex justify-content-between align-items-center bg-dark">
+            <div class="footer w-100 px-4 py-2 d-flex justify-content-between align-items-center bg-dark ">
                 <div d-flex flex-column justify-content-center align-items-center>
                     <p class="text-white m-0">Disciplina de Banco de Dados</p>
                     <p class="text-white m-0">Prof. Daniel dos Santos Kaster</p>
@@ -32,5 +32,6 @@
                 </div>
             </div>    
         </div>
+        <%@include file="../include/scripts.jsp"%>
     </body>
 </html>

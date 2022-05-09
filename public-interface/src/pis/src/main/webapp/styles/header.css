@@ -11,6 +11,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
 #header {
     color: white;
 }
+#header .title a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 20px;
+}
 #header .fa-search:before {
     color: white;
 }

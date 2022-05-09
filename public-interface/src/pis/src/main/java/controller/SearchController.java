@@ -9,18 +9,8 @@ import dao.DAOFactory;
 import dao.PgIPhoneDAO;
 import java.io.IOException;
 import dao.PgIPhoneVersionDAO;
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
-import java.sql.Date;
-import java.sql.Time;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -29,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Iphone;
 import model.IphoneVersion;
-import model.Rating;
 import model.Store;
 
 /**
@@ -127,17 +116,16 @@ public class SearchController extends HttpServlet {
                     query = query.toLowerCase();
                     
                     parameter = request.getParameter("minPrice");
-                    Double minPrice = (parameter==null) ? (0.0) : (Double.parseDouble(parameter));
+                    Double minPrice = (parameter==null || parameter.isEmpty()) ? (0.0) : (Double.parseDouble(parameter));
                     
                     parameter = request.getParameter("maxPrice");
-                    Double maxPrice = (parameter==null) ? (1000000.00) : (Double.parseDouble(parameter));
+                    Double maxPrice = (parameter==null || parameter.isEmpty()) ? (1000000.00) : (Double.parseDouble(parameter));
                     
                     String color = request.getParameter("color");
                     
                     String secMem = request.getParameter("secMem");
                     
                     String orderBy = request.getParameter("orderBy");
-                    
                     
                     //get necessary DAO(s)...
                     PgIPhoneDAO iphoneDAO = (PgIPhoneDAO) daoFactory.getIphoneDAO();
@@ -149,7 +137,7 @@ public class SearchController extends HttpServlet {
                     request.setAttribute("iphones", selectedIphones);
                     
                     //call view
-                    dispatcher = request.getRequestDispatcher("/search.jsp");
+                    dispatcher = request.getRequestDispatcher("/pages/search.jsp");
                     dispatcher.forward(request, response);
                
 
