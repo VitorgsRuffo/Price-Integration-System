@@ -95,7 +95,6 @@ public class SearchController extends HttpServlet {
                     dispatcher.forward(request, response);
 
                 } catch (ClassNotFoundException | IOException | SQLException ex) {
-                    System.out.println(ex);
                     request.getSession().setAttribute("error", ex.getMessage());
                     response.sendRedirect(request.getContextPath() + "/teste");
                 }

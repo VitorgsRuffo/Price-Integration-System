@@ -124,17 +124,16 @@ public class PgIPhoneVersionDAO implements DAO {
         }
 
         return iphoneVersions;
-        
-
     }
     
     public List<IphoneVersion> allByKey(String iphoneModel, String secondaryMemory, String color) throws SQLException {
         List<IphoneVersion> iphoneVersions = new ArrayList<>();
-
+        
         try (PreparedStatement statement = connection.prepareStatement(ALL_BY_KEY_QUERY)){
             statement.setString(1, iphoneModel);
             statement.setString(2, secondaryMemory);
-            statement.setString(3, color);            
+            statement.setString(3, color); 
+            
             try(ResultSet result = statement.executeQuery()) {
                 while (result.next()) {
                     IphoneVersion iphoneVersion = new IphoneVersion();
@@ -161,9 +160,6 @@ public class PgIPhoneVersionDAO implements DAO {
             statement.setString(1, modelName);
             statement.setString(2, secMem);
             statement.setString(3, color);
-            
-            
-            System.out.println(statement.toString());
             
             try(ResultSet result = statement.executeQuery()) {
                 while (result.next()) {

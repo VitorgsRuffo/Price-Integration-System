@@ -54,9 +54,6 @@ public class IphoneController extends HttpServlet {
                 String modelName = request.getParameter("modelName");
                 String color = request.getParameter("color");
                 String secMem = request.getParameter("secMem");
-                System.out.println(modelName);
-                System.out.println(color);
-                System.out.println(secMem);
                 String query = request.getParameter("q");
                 if(query == null)
                     query = "";
@@ -71,25 +68,23 @@ public class IphoneController extends HttpServlet {
                     //query the database...
                     
                     //2, 1:
-                    //List<IphoneVersion> lastVersions = iphoneVersionDAO.lastVersionOnEachStoreByKey(modelName, secMem, color);
+                    List<IphoneVersion> lastVersions = iphoneVersionDAO.lastVersionOnEachStoreByKey(modelName, secMem, color);
                     
                     //3:
                     List<IphoneVersion> allVersions = iphoneVersionDAO.allByKey(modelName, secMem, color);
-                    for(int i = 0; i<allVersions.size(); i++)
-                        System.out.println(allVersions.get(i).getDate());
 
                     //5, 1:
-                    //Iphone iphone = iphoneDAO.readByKey(modelName, secMem, color);
+                    Iphone iphone = iphoneDAO.readByKey(modelName, secMem, color);
                     
                     //6:
-                    //List<Rating> ratings = ratingDAO.allByIphoneKeyWithStoreName(modelName, secMem, color); 
+                    List<Rating> ratings = ratingDAO.allByIphoneKeyWithStoreName(modelName, secMem, color); 
                     
                     
                     //append result to request
-                    //request.setAttribute("lastVersions", lastVersions);
+                    request.setAttribute("lastVersions", lastVersions);
                     request.setAttribute("allVersions", allVersions);
-                    //request.setAttribute("iphoneInfo", iphone);
-                    //request.setAttribute("ratings", ratings);
+                    request.setAttribute("iphoneInfo", iphone);
+                    request.setAttribute("ratings", ratings);
 
                     //call view
                     dispatcher = request.getRequestDispatcher("/pages/iphone.jsp");

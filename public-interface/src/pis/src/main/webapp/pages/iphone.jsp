@@ -68,8 +68,8 @@
                 </c:forEach>
             </div>
 
-            <div class="estatisticas container">
-                <h3>Gráfico de Variações de preços ao longo do tempo ${allVersions} </h3>
+            <div class="estatisticas container d-flex flex-column align-items-center">
+                <h3>Gráfico de Variações de preços ao longo do tempo</h3>
                 <canvas id="plot-container"></canvas>                 
                 <script type="text/javascript">
                     
