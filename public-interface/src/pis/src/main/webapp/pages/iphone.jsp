@@ -19,6 +19,9 @@
     
     <body>
         <%@include file="/templates/header.jsp"%>
+        <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
         
         <div class="container-fluid iphone-page">
             <div class="col-12 d-flex pt-3">
@@ -66,8 +69,45 @@
             </div>
 
             <div class="estatisticas container">
-                <h3>Gráfico de Variações de preços ao longo do tempo</h3>
-                <div>Grafico</div>
+                <h3>Gráfico de Variações de preços ao longo do tempo ${allVersions} </h3>
+                <canvas id="plot-container"></canvas>                 
+                <script type="text/javascript">
+                    
+                    let data = [];
+                    <c:forEach var="version" items="${allVersions}" varStatus="loop">
+                    
+                        data.push({'x': "${version.date}", 'y': "${version.cashPayment}"});
+                    </c:forEach>
+
+                    const ctx = document.querySelector("#plot-container").getContext('2d');
+                    const config = {
+                      type: 'line',
+                      data: {
+                        labels: [],
+                        datasets: [{
+                          data: data,
+                          label: "Preço ao longo do tempo (BRL)",
+                          borderColor: "#3e95cd",
+                          fill: false
+                        }]
+                      },
+                      options: {
+                        scales: {
+                          xAxes: [{
+                            type: 'time',
+                            time: {
+                                unit:'day'
+                            },
+                            distribution: 'linear',
+                          }],
+                          title: {
+                            display: false,
+                          }
+                        }
+                      }
+                    };
+                    new Chart(ctx, config);
+                </script>
             </div>
 
             <div class="ficha-tecnica container">
@@ -144,5 +184,6 @@
             
         </div>
         <%@include file="/templates/footer.jsp"%>
+       
     </body>
 </html>
