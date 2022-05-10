@@ -4,24 +4,13 @@
  */
 package controller;
 
-import dao.DAO;
 import dao.DAOFactory;
 import java.io.IOException;
 import dao.PgIPhoneDAO;
 import dao.PgIPhoneVersionDAO;
 import dao.PgRatingDAO;
-import dao.PgStoreDAO;
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
-import java.sql.Date;
-import java.sql.Time;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -31,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import model.Iphone;
 import model.IphoneVersion;
 import model.Rating;
-import model.Store;
 
 
 /**
@@ -99,7 +87,7 @@ public class IphoneController extends HttpServlet {
                     request.setAttribute("ratings", ratings);
 
                     //call view
-                    dispatcher = request.getRequestDispatcher("/iphone.jsp");
+                    dispatcher = request.getRequestDispatcher("/pages/iphone.jsp");
                     dispatcher.forward(request, response);
                
 
