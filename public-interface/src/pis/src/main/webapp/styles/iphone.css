@@ -7,3 +7,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     Author     : wellinton
 */
 
+#plot-container { 
+    display: block;
+    width: 50%;
+} 
