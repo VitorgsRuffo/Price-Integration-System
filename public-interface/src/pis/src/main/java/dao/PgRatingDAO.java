@@ -138,7 +138,7 @@ public class PgRatingDAO implements DAO {
                     rating.setRating(result.getDouble("rating"));
                     rating.setLikes(result.getInt("likes"));
                     rating.setDeslikes(result.getInt("deslikes"));
-                    rating.setStoreName(result.getString("s.name"));
+                    rating.setStoreName(result.getString("name"));
                     ratings.add(rating);
                 }
             }

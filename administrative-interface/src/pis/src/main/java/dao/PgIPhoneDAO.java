@@ -22,11 +22,11 @@ public class PgIPhoneDAO implements DAO {
     private final Connection connection;
     
     private static final String CREATE_QUERY =
-                                "INSERT INTO pis.iphone(model_name, sec_mem, color, title, image_link, model_cod, display_size, front_cam, back_cam, ram_mem, voltage, main_source) " +
+                                "INSERT INTO pis.iphones(model_name, sec_mem, color, title, image_link, model_cod, display_size, front_cam, back_cam, ram_mem, voltage, main_source) " +
                                 "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
     
     private static final String MASTER_UPDATE_QUERY = 
-                                "UPDATE pis.iphone SET voltage = ?, image_link = ?, display_size = ?, front_cam = ?, back_cam = ?, ram_mem = ?, title = ?, main_source = ? " +
+                                "UPDATE pis.iphones SET voltage = ?, image_link = ?, display_size = ?, front_cam = ?, back_cam = ?, ram_mem = ?, title = ?, main_source = ? " +
                                 "WHERE model_name = ? AND sec_mem = ? AND color = ?;";
     
     private static final String NOT_MASTER_UPDATE_QUERY = 
