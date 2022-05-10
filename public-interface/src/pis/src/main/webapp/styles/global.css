@@ -7,6 +7,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     Author     : wellinton
 */
 
+*{
+    font-family: 'Roboto', sans-serif;
+}
 a {
     color: #000;
     text-decoration: none;

@@ -11,3 +11,98 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     display: block;
     width: 50%;
 } 
+
+.iphone-page {
+    color: #000;
+}
+
+/* iphone-info */
+.iphone-info {
+    background-color: #F0F0F0;
+    padding: 20px;
+}
+.iphone-info h1 {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-bottom: 25px;
+    margin-bottom: 25px;
+}
+.iphone-info h3 {
+    color: green;
+    font-size: 40px;
+}
+.iphone-info a {
+    color: #000;
+    text-decoration: none;
+    font-size: 18px;
+}
+.iphone-info a:hover {
+    color:green;
+}
+.iphone-info .ratings {
+    font-size: 15px;
+    margin-bottom: 20px;
+}
+.iphone-info .best-price {
+    font-size: 12px;
+    font-weight: 600;
+}
+.iphone-page p {
+    margin: 0;
+    padding: 0;
+}
+.version-img {
+    margin: auto 0;
+}
+
+
+/* comparacao-precos */
+.comparacao-precos,
+.estatisticas,
+.ficha-tecnica,
+.avaliacoes {
+    padding-top: 30px;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+    padding-bottom: 30px;
+}
+
+.iphone-version {
+    
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+
+.iphone-version-info {
+    margin-left: 50px;
+}
+
+.iphone-version-info .price {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.iphone-version-info a {
+    color: #000;
+    text-decoration: none;
+}
+.iphone-version-info a:hover{
+    color: green;
+}
+
+.ficha-tecnica .table td {
+    text-transform: capitalize;
+}
+
+.avaliacoes div {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-bottom: 10px;
+}
+.avaliacoes h5 {
+   font-weight: 400; 
+}
+
+.avaliacoes p {
+    font-size: 14px;
+}
+.avaliacoes strong {
+    font-size: 15px;
+}

@@ -161,8 +161,18 @@ public class PgIPhoneDAO implements DAO {
 
             try (ResultSet result = statement.executeQuery()) {
                 if (result.next()) {
+                    iphone.setModelName(result.getString("model_name"));
+                    iphone.setColor(result.getString("color"));
+                    iphone.setSecondaryMemory(result.getString("sec_mem"));
+                    iphone.setVoltage(result.getString("voltage"));
+                    iphone.setModelCod(result.getString("model_cod"));
                     iphone.setImageLink(result.getString("image_link"));
-                    //set remaining attributes...
+                    iphone.setDisplaySize(result.getString("display_size"));
+                    iphone.setFrontCam(result.getString("front_cam"));
+                    iphone.setBackCam(result.getString("back_cam"));
+                    iphone.setRamMemory(result.getString("ram_mem"));
+                    iphone.setTitle(result.getString("title"));
+                    
                 } else {
                     throw new SQLException("read error: iphone not found.");
                 }

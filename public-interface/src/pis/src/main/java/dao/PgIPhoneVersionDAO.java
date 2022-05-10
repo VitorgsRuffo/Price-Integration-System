@@ -40,7 +40,7 @@ public class PgIPhoneVersionDAO implements DAO {
                                                                           "FROM ( " +
                                                                                   "pis.IphoneVersions AS v1 " +
                                                                                   "JOIN ( " +
-                                                                                          "SELECT iphone_model_name, iphone_sec_mem, iphone_color, store_id, MAX(date) " +
+                                                                                          "SELECT iphone_model_name, iphone_sec_mem, iphone_color, store_id, MAX(date) AS date " +
                                                                                           "FROM pis.IphoneVersions "+ 
                                                                                           "WHERE iphone_model_name = ? AND iphone_sec_mem = ? AND iphone_color = ? " +
                                                                                           "GROUP BY iphone_model_name, iphone_sec_mem, iphone_color, store_id " +
@@ -162,6 +162,9 @@ public class PgIPhoneVersionDAO implements DAO {
             statement.setString(2, secMem);
             statement.setString(3, color);
             
+            
+            System.out.println(statement.toString());
+            
             try(ResultSet result = statement.executeQuery()) {
                 while (result.next()) {
                     IphoneVersion iphoneVersion = new IphoneVersion();
@@ -171,7 +174,7 @@ public class PgIPhoneVersionDAO implements DAO {
                     iphoneVersion.setRatingAmount(result.getInt("rating_amount"));
                     iphoneVersion.setRatingAverage(result.getDouble("rating_average"));
                     iphoneVersion.setIphoneLink(result.getString("iphone_link"));
-                    iphoneVersion.setStoreName(result.getString("s.name"));
+                    iphoneVersion.setStoreName(result.getString("name"));
                     iphoneVersions.add(iphoneVersion);
                 }
             }
