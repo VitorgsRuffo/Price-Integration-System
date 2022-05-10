@@ -63,9 +63,9 @@ CREATE TABLE pis.IphoneVersions (
 	iphone_link VARCHAR(400),
 	CONSTRAINT pk_iphone_versions PRIMARY KEY(id, iphone_model_name, iphone_sec_mem, iphone_color, store_id),
 	CONSTRAINT fk_iphone_versions FOREIGN KEY (iphone_model_name, iphone_sec_mem, iphone_color)
-		REFERENCES pis.Iphones(model_name, sec_mem, color),
+		REFERENCES pis.Iphones(model_name, sec_mem, color) ON DELETE CASCADE;,
 	CONSTRAINT fk_iphone_versions_store FOREIGN KEY (store_id)
-		REFERENCES pis.Stores(id)
+		REFERENCES pis.Stores(id) ON DELETE CASCADE;
 );
 
 CREATE TABLE pis.IphoneRatings (
@@ -82,7 +82,7 @@ CREATE TABLE pis.IphoneRatings (
 	date DATE,
 	CONSTRAINT pk_iphone_ratings PRIMARY KEY(iphone_model_name, iphone_sec_mem, iphone_color, store_id, title, description),
 	CONSTRAINT fk_iphone_ratings FOREIGN KEY(iphone_model_name, iphone_sec_mem, iphone_color)
-		REFERENCES pis.Iphones(model_name, sec_mem, color),
+		REFERENCES pis.Iphones(model_name, sec_mem, color) ON DELETE CASCADE,
 	CONSTRAINT fk_iphone_ratings_store FOREIGN KEY (store_id)
-		REFERENCES pis.Stores(id)
+		REFERENCES pis.Stores(id) ON DELETE CASCADE
 );
