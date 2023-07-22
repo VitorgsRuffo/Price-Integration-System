@@ -1,2 +1,2 @@
 # Price-Integration-System
-This is a database college assignment that aims to implement a price integration system.
+This is a database university assignment that aims to implement a price integration system.
